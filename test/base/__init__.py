@@ -1,9 +1,14 @@
 """ Basic and helper things for testing the Taskcluster Python client"""
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, print_function
 import unittest
 import os
 import logging
 import time
+import json
+import mock
+import re
+from operator import itemgetter
 
 # Mocks really ought not to overwrite this
 _sleep = time.sleep
@@ -13,6 +18,15 @@ log.setLevel(logging.DEBUG)
 log.addHandler(logging.NullHandler())
 if os.environ.get('DEBUG_TASKCLUSTER_CLIENT'):
     log.addHandler(logging.StreamHandler())
+
+SOURCE_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'taskcluster'
+)
+APIS_JSON_FILE = os.path.join(SOURCE_DIR, 'apis.json')
+with open(APIS_JSON_FILE, "r") as fh:
+    APIS_JSON = json.load(fh)
+SIGNED = "SIGNED"
+ROUTING_KEY_WHITELIST = ("name", "multipleWords", "constant")
 
 
 class TCTest(unittest.TestCase):
@@ -100,3 +114,117 @@ class AuthClient(object):
             'expires': self.expires,
             'scopes': self.scopes
         }
+
+
+class FakeGenerated(object):
+    """Inherit this before the generated object.
+
+    e.g. class FakeAuth(FakeGenerated, Auth):
+    """
+    def __init__(self, *args, **kwargs):
+        super(FakeGenerated, self).__init__(*args, **kwargs)
+        self.replaceMethods()
+
+    def replaceMethods(self):
+        self._makeHttpRequest = mock.MagicMock()
+        self._makeTopicExchange = mock.MagicMock()
+
+    def buildSignedUrl(self, url):
+        return url + SIGNED
+
+
+class GeneratedTC(TCTest):
+    """Base class to test a generated class.
+
+    Set self.testClass to the FakeGenerated object
+    """
+    maxDiff = None
+    testClass = None
+
+    def _get_replDict(self, argumentNames):
+        """Create a replacement dictionary to string format a url.
+
+        Each {var} is replaced with 'var', e.g. {clientId} -> 'clientId'
+        """
+        a = self.testClass()
+        replDict = {'baseUrl': a.options['baseUrl']}
+        for name in argumentNames:
+            replDict[name] = name
+        return replDict
+
+    def try_function(self, functionName, method, argumentNames=None, signUrl=False):
+        """For entry functions, verify the _makeHttpRequest arguments are
+        correct.
+        """
+        a = self.testClass()
+        argumentNames = argumentNames or []
+        kwargs = {}
+        replDict = self._get_replDict(argumentNames)
+        expectedUrl = a.urls[functionName].format(**replDict)
+        if signUrl:
+            expectedUrl += SIGNED
+            kwargs['signUrl'] = signUrl
+        getattr(a, functionName)(*argumentNames, **kwargs)
+        expectedArgs = [method, expectedUrl]
+        if 'payload' in argumentNames:
+            expectedArgs.append('payload')
+        a._makeHttpRequest.assert_called_once_with(*expectedArgs)
+
+    def try_topic(self, functionName, exchangeName):
+        """For entry topic exchanges, verify the _makeTopicExchange arguments
+        are correct.
+        """
+        a = self.testClass()
+        exchangeUrl = '%s/%s' % (a.options['exchangePrefix'].rstrip('/'),
+                                 exchangeName)
+        getattr(a, functionName)("routingKeyPattern")
+        a._makeTopicExchange.assert_called_once_with(
+            exchangeUrl,
+            a.routingKeys[functionName],
+            "routingKeyPattern"
+        )
+
+    def url_check(self, className):
+        """Make sure self.urls reflects the api.
+        """
+        urls = {}
+        for entry in APIS_JSON[className]['reference']['entries']:
+            if entry['type'] == 'function':
+                urls[entry['name']] = '{baseUrl}' + re.sub('<(.*?)>', '{\\1}', (entry['route']))
+        a = self.testClass()
+        if urls:
+            self.assertEqual(urls, a.urls)
+        else:
+            self.assertFalse(hasattr(a, 'urls'))
+
+    def routingKeys_check(self, className):
+        """Make sure self.routingKeys reflects the api.
+
+        This is a bit more complicated because the list of dicts is unsorted.
+        """
+        routingKeys = {}
+        for entry in APIS_JSON[className]['reference']['entries']:
+            if 'routingKey' in entry:
+                routingKeys[str(entry['name'])] = []
+                for r in entry['routingKey']:
+                    rk = {}
+                    for item in ROUTING_KEY_WHITELIST:
+                        if item in r:
+                            rk[item] = r[item]
+                    routingKeys[entry['name']].append(rk)
+        a = self.testClass()
+        # http://stackoverflow.com/a/73050
+
+        def sort_list_of_dicts(list_to_sort):
+            return sorted(list_to_sort, key=itemgetter('name'))
+
+        if routingKeys:
+            keys = sorted(routingKeys.keys())
+            self.assertEqual(keys, sorted(a.routingKeys.keys()))
+            for key in sorted(routingKeys.keys()):
+                self.assertEqual(
+                    sort_list_of_dicts(routingKeys[key]),
+                    sort_list_of_dicts(a.routingKeys[key])
+                )
+        else:
+            self.assertFalse(hasattr(a, 'routingKeys'))

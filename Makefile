@@ -2,22 +2,33 @@ PYTHON := python
 TOX_ENV ?= py35
 VENV := .tox/$(TOX_ENV)
 
-.PHONY: test
-test: $(VENV)/bin/python
-	FLAKE8=$(VENV)/bin/flake8 PYTHON=$(VENV)/bin/python \
-	TOX=$(VENV)/bin/tox COVERAGE=$(VENV)/bin/coverage ./test.sh
-
 JS_CLIENT_BRANCH=master
 APIS_JSON=$(PWD)/taskcluster/apis.json
 APIS_JS_HREF=https://raw.githubusercontent.com/taskcluster/taskcluster-client/$(JS_CLIENT_BRANCH)/lib/apis.js
 
+.PHONY: test
+test: nosetests lint
+
+.PHONY: nosetests
+nosetests: $(VENV)/bin/python
+	$(VENV)/bin/python setup.py test $$TEST_ARGS
+	$(VENV)/bin/coverage html
+
+.PHONY: lint
+lint: $(VENV)/bin/python
+	$(VENV)/bin/flake8 --max-line-length=100 taskcluster test
+
 .PHONY: update
-update: update-api update-readme docs
+update: update-api gencode update-readme docs
 
 .PHONY: update-api
 update-api: $(VENV)/bin/python
 	API_REF_OUT="$(APIS_JSON)" $(VENV)/bin/python fetchApi.py
 	@python -mjson.tool $(APIS_JSON) > /dev/null || echo "apis.json cannot be parsed by python's JSON"
+
+.PHONY: gencode
+gencode: $(VENV)/bin/python
+	APIS_JSON="$(APIS_JSON)" $(VENV)/bin/python genCode.py
 
 .PHONY: update-readme
 update-readme: $(VENV)/bin/python
@@ -37,7 +48,7 @@ clean:
 	rm -rf node-$(NODE_VER)-$(NODE_PLAT) node_modules
 	rm -rf *.egg *.egg-info dist/
 	find . -name "*.py?" -exec rm {} +
-	rm -rf .tox htmlcov .coverage
+	rm -rf .tox htmlcov .coverage nosetests.xml
 	rm -rf env-*
 
 .PHONY: docs

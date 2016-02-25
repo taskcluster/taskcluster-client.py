@@ -368,6 +368,7 @@
           "method": "put",
           "name": "createWorkerType",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#",
+          "query": [],
           "route": "/worker-type/<workerType>",
           "scopes": [
             [
@@ -387,6 +388,7 @@
           "method": "post",
           "name": "updateWorkerType",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#",
+          "query": [],
           "route": "/worker-type/<workerType>/update",
           "scopes": [
             [
@@ -405,6 +407,7 @@
           "method": "get",
           "name": "workerType",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#",
+          "query": [],
           "route": "/worker-type/<workerType>",
           "scopes": [
             [
@@ -425,6 +428,7 @@
           "description": "Delete a worker type definition.  This method will only delete\nthe worker type definition from the storage table.  The actual\ndeletion will be handled by a background worker.  As soon as this\nmethod is called for a worker type, the background worker will\nimmediately submit requests to cancel all spot requests for this\nworker type as well as killing all instances regardless of their\nstate.  If you want to gracefully remove a worker type, you must\neither ensure that no tasks are created with that worker type name\nor you could theoretically set maxCapacity to 0, though, this is\nnot a supported or tested action",
           "method": "delete",
           "name": "removeWorkerType",
+          "query": [],
           "route": "/worker-type/<workerType>",
           "scopes": [
             [
@@ -441,6 +445,7 @@
           "method": "get",
           "name": "listWorkerTypes",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/list-worker-types-response.json#",
+          "query": [],
           "route": "/list-worker-types",
           "stability": "experimental",
           "title": "List Worker Types",
@@ -454,6 +459,7 @@
           "input": "http://schemas.taskcluster.net/aws-provisioner/v1/create-secret-request.json#",
           "method": "put",
           "name": "createSecret",
+          "query": [],
           "route": "/secret/<token>",
           "scopes": [
             [
@@ -472,6 +478,7 @@
           "method": "get",
           "name": "getSecret",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/get-secret-response.json#",
+          "query": [],
           "route": "/secret/<token>",
           "stability": "experimental",
           "title": "Get a Secret",
@@ -485,6 +492,7 @@
           "description": "An instance will report in by giving its instance id as well\nas its security token.  The token is given and checked to ensure\nthat it matches a real token that exists to ensure that random\nmachines do not check in.  We could generate a different token\nbut that seems like overkill",
           "method": "get",
           "name": "instanceStarted",
+          "query": [],
           "route": "/instance-started/<instanceId>/<token>",
           "stability": "experimental",
           "title": "Report an instance starting",
@@ -497,6 +505,7 @@
           "description": "Remove a secret.  After this call, a call to `getSecret` with the given\ntoken will return no information.\n\nIt is very important that the consumer of a \nsecret delete the secret from storage before handing over control\nto untrusted processes to prevent credential and/or secret leakage.",
           "method": "delete",
           "name": "removeSecret",
+          "query": [],
           "route": "/secret/<token>",
           "stability": "experimental",
           "title": "Remove a Secret",
@@ -510,6 +519,7 @@
           "method": "get",
           "name": "getLaunchSpecs",
           "output": "http://schemas.taskcluster.net/aws-provisioner/v1/get-launch-specs-response.json#",
+          "query": [],
           "route": "/worker-type/<workerType>/launch-specifications",
           "scopes": [
             [
@@ -528,6 +538,7 @@
           "description": "This method is a left over and will be removed as soon as the\ntools.tc.net UI is updated to use the per-worker state\n\n**DEPRECATED.**",
           "method": "get",
           "name": "awsState",
+          "query": [],
           "route": "/aws-state",
           "scopes": [
             [
@@ -545,6 +556,7 @@
           "description": "Return the state of a given workertype as stored by the provisioner. \nThis state is stored as three lists: 1 for all instances, 1 for requests\nwhich show in the ec2 api and 1 list for those only tracked internally\nin the provisioner.",
           "method": "get",
           "name": "state",
+          "query": [],
           "route": "/state/<workerType>",
           "scopes": [
             [
@@ -560,6 +572,7 @@
           "description": "Documented later...\n\n**Warning** this api end-point is **not stable**.",
           "method": "get",
           "name": "ping",
+          "query": [],
           "route": "/ping",
           "stability": "experimental",
           "title": "Ping Server",
@@ -570,6 +583,7 @@
           "description": "**Warning** this api end-point is **not stable**.",
           "method": "get",
           "name": "backendStatus",
+          "query": [],
           "route": "/backend-status",
           "stability": "experimental",
           "title": "Backend Status",
@@ -580,6 +594,7 @@
           "description": "Get an API reference!\n\n**Warning** this api end-point is **not stable**.",
           "method": "get",
           "name": "apiReference",
+          "query": [],
           "route": "/api-reference",
           "stability": "experimental",
           "title": "api reference",
