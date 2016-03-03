@@ -130,6 +130,8 @@ def docstringify(s, level=4):
     wrapper = textwrap.TextWrapper(subsequent_indent=' ' * level,
                                    expand_tabs=True, width=100)
     for line in s.splitlines():
+        if line == '':
+            lines.append('')
         lines.extend(wrapper.wrap(line))
         wrapper.initial_indent = ' ' * level
 

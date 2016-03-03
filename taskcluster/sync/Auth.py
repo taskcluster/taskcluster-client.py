@@ -21,32 +21,38 @@ class Auth(baseclient.BaseClient):
       * Manage clients and roles,
       * Inspect or audit clients and roles,
       * Gain access to various services guarded by this API.
+
     ### Clients
     The authentication service manages _clients_, at a high-level each client
     consists of a `clientId`, an `accessToken`, scopes, and some metadata.
     The `clientId` and `accessToken` can be used for authentication when
     calling TaskCluster APIs.
+
     The client's scopes control the client's access to TaskCluster resources.
     The scopes are *expanded* by substituting roles, as defined below.
     Every client has an implicit scope named `assume:client-id:<clientId>`,
     allowing additional access to be granted to the client without directly
     editing the client's scopes.
+
     ### Roles
     A _role_ consists of a `roleId`, a set of scopes and a description.
     Each role constitutes a simple _expansion rule_ that says if you have
     the scope: `assume:<roleId>` you get the set of scopes the role has.
     Think of the `assume:<roleId>` as a scope that allows a client to assume
     a role.
+
     As in scopes the `*` kleene star also have special meaning if it is
     located at the end of a `roleId`. If you have a role with the following
     `roleId`: `my-prefix*`, then any client which has a scope staring with
     `assume:my-prefix` will be allowed to assume the role.
+
     As previously mentioned each client gets the scope:
     `assume:client-id:<clientId>`, it trivially follows that you can create a
     role with the `roleId`: `client-id:<clientId>` to assign additional
     scopes to a client. You can also create a role `client-id:user-*`
     if you wish to assign a set of scopes to all clients whose `clientId`
     starts with `user-`.
+
     ### Guarded Services
     The authentication service also has API end-points for delegating access
     to some guarded service such as AWS S3, or Azure Table Storage.
@@ -125,11 +131,14 @@ class Auth(baseclient.BaseClient):
         Create a new client and get the `accessToken` for this client.
         You should store the `accessToken` from this API call as there is no
         other way to retrieve it.
+
         If you loose the `accessToken` you can call `resetAccessToken` to reset
         it, and a new `accessToken` will be returned, but you cannot retrieve the
         current `accessToken`.
+
         If a client with the same `clientId` already exists this operation will
         fail. Use `updateClient` if you wish to update an existing client.
+
         The caller's scopes must satisfy `scopes`.
 
         This method takes:
@@ -148,6 +157,7 @@ class Auth(baseclient.BaseClient):
         Reset a clients `accessToken`, this will revoke the existing
         `accessToken`, generate a new `accessToken` and return it from this
         call.
+
         There is no way to retrieve an existing `accessToken`, so if you loose it
         you must reset the accessToken to acquire it again.
 
@@ -185,6 +195,7 @@ class Auth(baseclient.BaseClient):
 
         Enable a client that was disabled with `disableClient`.  If the client
         is already enabled, this does nothing.
+
         This is typically used by identity providers to re-enable clients that
         had been disabled when the corresponding identity's scopes changed.
 
@@ -202,6 +213,7 @@ class Auth(baseclient.BaseClient):
         Disable Client
 
         Disable a client.  If the client is already disabled, this does nothing.
+
         This is typically used by identity providers to disable clients when the
         corresponding identity's scopes no longer satisfy the client's scopes.
 
@@ -269,7 +281,9 @@ class Auth(baseclient.BaseClient):
         Create Role
 
         Create a new role.
+
         The caller's scopes must satisfy the new role's scopes.
+
         If there already exists a role with the same `roleId` this operation
         will fail. Use `updateRole` to modify an existing role.
 
@@ -287,6 +301,7 @@ class Auth(baseclient.BaseClient):
         Update Role
 
         Update an existing role.
+
         The caller's scopes must satisfy all of the new scopes being added, but
         need not satisfy all of the client's existing scopes.
 
@@ -357,12 +372,15 @@ class Auth(baseclient.BaseClient):
         The `level` parameter can be `read-write` or `read-only` and determines
         which type of credentials are returned. Please note that the `level`
         parameter is required in the scope guarding access.
+
         The credentials are set to expire after an hour, but this behavior is
         subject to change. Hence, you should always read the `expires` property
         from the response, if you intend to maintain active credentials in your
         application.
+
         Please note that your `prefix` may not start with slash `/`. Such a prefix
         is allowed on S3, but we forbid it here to discourage bad behavior.
+
         Also note that if your `prefix` doesn't end in a slash `/`, the STS
         credentials may allow access to unexpected keys, as S3 does not treat
         slashes specially.  For example, a prefix of `my-folder` will allow
@@ -411,6 +429,7 @@ class Auth(baseclient.BaseClient):
 
         Validate the request signature given on input and return list of scopes
         that the authenticating client has.
+
         This method is used by other services that wish rely on TaskCluster
         credentials for authentication. This way we can use Hawk without having
         the secret credentials leave this service.
@@ -428,9 +447,11 @@ class Auth(baseclient.BaseClient):
 
         Utility method to test client implementations of TaskCluster
         authentication.
+
         Rather than using real credentials, this endpoint accepts requests with
         clientId `tester` and accessToken `no-secret`. That client's scopes are
         based on `clientScopes` in the request body.
+
         The request is validated, with any certificate, authorizedScopes, etc.
         applied, and the resulting scopes are checked against `requiredScopes`
         from the request body. On success, the response contains the clientId
@@ -449,14 +470,17 @@ class Auth(baseclient.BaseClient):
 
         Utility method similar to `testAuthenticate`, but with the GET method,
         so it can be used with signed URLs (bewits).
+
         Rather than using real credentials, this endpoint accepts requests with
         clientId `tester` and accessToken `no-secret`. That client's scopes are
         `['test:*', 'auth:create-client:test:*']`.  The call fails if the
         `test:authenticate-get` scope is not available.
+
         The request is validated, with any certificate, authorizedScopes, etc.
         applied, and the resulting scopes are checked, just like any API call.
         On success, the response contains the clientId and scopes as seen by
         the API method.
+
         This method may later be extended to allow specification of client and
         required scopes via query arguments.
 
@@ -474,6 +498,7 @@ class Auth(baseclient.BaseClient):
         Ping Server
 
         Documented later...
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.

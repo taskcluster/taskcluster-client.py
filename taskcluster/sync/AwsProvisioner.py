@@ -21,6 +21,7 @@ class AwsProvisioner(baseclient.BaseClient):
     aws-provisioner.taskcluster.net/v1.  This API can also perform basic instance
     management tasks in addition to maintaining the internal state of worker type
     configuration information.
+
     The Provisioner runs at a configurable interval.  Each iteration of the
     provisioner fetches a current copy the state that the AWS EC2 api reports.  In
     each iteration, we ask the Queue how many tasks are pending for that worker
@@ -28,11 +29,13 @@ class AwsProvisioner(baseclient.BaseClient):
     submit requests for new instances.  We use pricing information, capacity and
     utility factor information to decide which instance type in which region would
     be the optimal configuration.
+
     Each EC2 instance type will declare a capacity and utility factor.  Capacity is
     the number of tasks that a given machine is capable of running concurrently.
     Utility factor is a relative measure of performance between two instance types.
     We multiply the utility factor by the spot price to compare instance types and
     regions when making the bidding choices.
+
     When a new EC2 instance is instantiated, its user data contains a token in
     `securityToken` that can be used with the `getSecret` method to retrieve
     the worker's credentials and any needed passwords or other restricted
@@ -78,13 +81,16 @@ class AwsProvisioner(baseclient.BaseClient):
         configure different regions to have different sets of instance types
         so ensure that all instance types are available in all regions.
         This function is idempotent.
+
         Once a worker type is in the provisioner, a back ground process will
         begin creating instances for it based on its capacity bounds and its
         pending task count from the Queue.  It is the worker's responsibility
         to shut itself down.  The provisioner has a limit (currently 96hours)
         for all instances to prevent zombie instances from running indefinitely.
+
         The provisioner will ensure that all instances created are tagged with
         aws resource tags containing the provisioner id and the worker type.
+
         If provided, the secrets in the global, region and instance type sections
         are available using the secrets api.  If specified, the scopes provided
         will be used to generate a set of temporary credentials available with
@@ -111,6 +117,7 @@ class AwsProvisioner(baseclient.BaseClient):
         end point that you will need to delete the lastModified and workerType
         keys from the object returned, since those fields are not allowed
         the request body for this method
+
         Otherwise, all input requirements and actions are the same as the
         create method.
 
@@ -193,6 +200,7 @@ class AwsProvisioner(baseclient.BaseClient):
         Insert a secret into the secret storage.  The supplied secrets will
         be provided verbatime via `getSecret`, while the supplied scopes will
         be converted into credentials by `getSecret`.
+
         This method is not ordinarily used in production; instead, the provisioner
         creates a new secret directly for each spot bid.
 
@@ -212,6 +220,7 @@ class AwsProvisioner(baseclient.BaseClient):
         Retrieve a secret from storage.  The result contains any passwords or
         other restricted information verbatim as well as a temporary credential
         based on the scopes specified when the secret was created.
+
         It is important that this secret is deleted by the consumer (`removeSecret`),
         or else the secrets will be visible to any process which can access the
         user data associated with the instance.
@@ -256,6 +265,7 @@ class AwsProvisioner(baseclient.BaseClient):
 
         Remove a secret.  After this call, a call to `getSecret` with the given
         token will return no information.
+
         It is very important that the consumer of a
         secret delete the secret from storage before handing over control
         to untrusted processes to prevent credential and/or secret leakage.
@@ -276,6 +286,7 @@ class AwsProvisioner(baseclient.BaseClient):
         This method returns a preview of all possible launch specifications
         that this worker type definition could submit to EC2.  It is used to
         test worker types, nothing more
+
         **This API end-point is experimental and may be subject to change without warning.**
 
         This method takes:
@@ -295,6 +306,7 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method is a left over and will be removed as soon as the
         tools.tc.net UI is updated to use the per-worker state
+
         **DEPRECATED.**
 
         This method takes no arguments.
@@ -331,6 +343,7 @@ class AwsProvisioner(baseclient.BaseClient):
         Ping Server
 
         Documented later...
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.
@@ -362,6 +375,7 @@ class AwsProvisioner(baseclient.BaseClient):
         api reference
 
         Get an API reference!
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.

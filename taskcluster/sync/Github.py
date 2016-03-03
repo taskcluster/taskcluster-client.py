@@ -18,6 +18,7 @@ class Github(baseclient.BaseClient):
     The github service, typically available at
     `github.taskcluster.net`, is responsible for publishing pulse
     messages in response to GitHub events.
+
     This document describes the API end-point for consuming GitHub
     web hooks
     '''
@@ -52,6 +53,7 @@ class Github(baseclient.BaseClient):
         Ping Server
 
         Documented later...
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.

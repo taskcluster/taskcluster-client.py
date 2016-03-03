@@ -101,6 +101,7 @@ class Secrets(baseclient.BaseClient):
         Ping Server
 
         Documented later...
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.

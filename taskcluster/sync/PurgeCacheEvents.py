@@ -18,6 +18,7 @@ class PurgeCacheEvents(baseclient.BaseClient):
     The purge-cache service, typically available at
     `purge-cache.taskcluster.net`, is responsible for publishing a pulse
     message for workers, so they can purge cache upon request.
+
     This document describes the exchange offered for workers by the
     cache-purge service.
     '''

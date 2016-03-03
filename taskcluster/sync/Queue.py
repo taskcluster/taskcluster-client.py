@@ -18,6 +18,7 @@ class Queue(baseclient.BaseClient):
     The queue, typically available at `queue.taskcluster.net`, is responsible
     for accepting tasks and track their state as they are executed by
     workers. In order ensure they are eventually resolved.
+
     This document describes the API end-points offered by the queue. These
     end-points targets the following audience:
      * Schedulers, who create tasks to be executed,
@@ -96,16 +97,19 @@ class Queue(baseclient.BaseClient):
         List Task Group
 
         List taskIds of all tasks sharing the same `taskGroupId`.
+
         As a task-group may contain an unbounded number of tasks, this end-point
         may return a `continuationToken`. To continue listing tasks you must
         `listTaskGroup` again with the `continuationToken` as the query-string
         option `continuationToken`.
+
         By default this end-point will try to return up to 1000 members in one
         request. But it **may return less**, even if more tasks are available.
         It may also return a `continuationToken` even though there are no more
         results. However, you can only be sure to have seen all results if you
         keep calling `listTaskGroup` with the last `continationToken` until you
         get a result without a `continuationToken`.
+
         If you're not interested in listing all the members at once, you may
         use the query-string option `limit` to return fewer.
 
@@ -126,18 +130,22 @@ class Queue(baseclient.BaseClient):
 
         Create a new task, this is an **idempotent** operation, so repeat it if
         you get an internal server error or network connection is dropped.
+
         **Task `deadline´**, the deadline property can be no more than 5 days
         into the future. This is to limit the amount of pending tasks not being
         taken care of. Ideally, you should use a much shorter deadline.
+
         **Task expiration**, the `expires` property must be greater than the
         task `deadline`. If not provided it will default to `deadline` + one
         year. Notice, that artifacts created by task must expire before the task.
+
         **Task specific routing-keys**, using the `task.routes` property you may
         define task specific routing-keys. If a task has a task specific
         routing-key: `<route>`, then when the AMQP message about the task is
         published, the message will be CC'ed with the routing-key:
         `route.<route>`. This is useful if you want another component to listen
         for completed tasks you have posted.
+
         **Important** Any scopes the task requires are also required for creating
         the task. Please see the Request Payload (Task Definition) for details.
 
@@ -158,14 +166,17 @@ class Queue(baseclient.BaseClient):
         upload a task definition without having scheduled. The task won't be
         reported as pending until it is scheduled, see the scheduleTask API
         end-point.
+
         The purpose of this API end-point is allow schedulers to upload task
         definitions without the tasks becoming _pending_ immediately. This useful
         if you have a set of dependent tasks. Then you can upload all the tasks
         and when the dependencies of a tasks have been resolved, you can schedule
         the task by calling `/task/:taskId/schedule`. This eliminates the need to
         store tasks somewhere else while waiting for dependencies to resolve.
+
         **Important** Any scopes the task requires are also required for defining
         the task. Please see the Request Payload (Task Definition) for details.
+
         **Note** this operation is **idempotent**, as long as you upload the same
         task definition as previously defined this operation is safe to retry.
 
@@ -186,6 +197,7 @@ class Queue(baseclient.BaseClient):
         can schedule the task to be scheduled using this method.
         This will announce the task as pending and workers will be allowed, to
         claim it and resolved the task.
+
         **Note** this operation is **idempotent** and will not fail or complain
         if called with `taskId` that is already scheduled, or even resolved.
         To reschedule a task previously resolved, use `rerunTask`.
@@ -207,9 +219,11 @@ class Queue(baseclient.BaseClient):
         _completed_. This is useful if your task completes unsuccessfully, and
         you just want to run it from scratch again. This will also reset the
         number of `retries` allowed.
+
         Remember that `retries` in the task status counts the number of runs that
         the queue have started because the worker stopped responding, for example
         because a spot node died.
+
         **Remark** this operation is idempotent, if you try to rerun a task that
         isn't either `failed` or `completed`, this operation will just return the
         current task status.
@@ -235,6 +249,7 @@ class Queue(baseclient.BaseClient):
         with `queue.scheduleTask`, but a new run can be created with
         `queue.rerun`. These semantics is equivalent to calling
         `queue.scheduleTask` immediately followed by `queue.cancelTask`.
+
         **Remark** this operation is idempotent, if you try to cancel a task that
         isn't `unscheduled`, `pending` or `running`, this operation will just
         return the current task status.
@@ -327,6 +342,7 @@ class Queue(baseclient.BaseClient):
         Report a run failed, resolving the run as `failed`. Use this to resolve
         a run that failed because the task specific code behaved unexpectedly.
         For example the task exited non-zero, or didn't produce expected output.
+
         Don't use this if the task couldn't be run because if malformed payload,
         or other unexpected condition. In these cases we have a task exception,
         which should be reported with `reportException`.
@@ -348,11 +364,13 @@ class Queue(baseclient.BaseClient):
 
         Resolve a run as _exception_. Generally, you will want to report tasks as
         failed instead of exception. You should `reportException` if,
+
           * The `task.payload` is invalid,
           * Non-existent resources are referenced,
           * Declared actions cannot be executed due to unavailable resources,
           * The worker had to shutdown prematurely, or,
           * The worker experienced an unknown error.
+
         Do not use this to signal that some user-specified code crashed for any
         reason specific to this code. If user-specific code hits a resource that
         is temporarily unavailable worker should report task _failed_.
@@ -375,19 +393,23 @@ class Queue(baseclient.BaseClient):
         This API end-point creates an artifact for a specific run of a task. This
         should **only** be used by a worker currently operating on this task, or
         from a process running within the task (ie. on the worker).
+
         All artifacts must specify when they `expires`, the queue will
         automatically take care of deleting artifacts past their
         expiration point. This features makes it feasible to upload large
         intermediate artifacts from data processing applications, as the
         artifacts can be set to expire a few days later.
+
         We currently support 4 different `storageType`s, each storage type have
         slightly different features and in some cases difference semantics.
+
         **S3 artifacts**, is useful for static files which will be stored on S3.
         When creating an S3 artifact the queue will return a pre-signed URL
         to which you can do a `PUT` request to upload your artifact. Note
         that `PUT` request **must** specify the `content-length` header and
         **must** give the `content-type` header the same value as in the request
         to `createArtifact`.
+
         **Azure artifacts**, are stored in _Azure Blob Storage_ service, which
         given the consistency guarantees and API interface offered by Azure is
         more suitable for artifacts that will be modified during the execution
@@ -399,12 +421,14 @@ class Queue(baseclient.BaseClient):
         refer to MSDN for further information on how to use these.
         **Warning: azure artifact is currently an experimental feature subject
         to changes and data-drops.**
+
         **Reference artifacts**, only consists of meta-data which the queue will
         store for you. These artifacts really only have a `url` property and
         when the artifact is requested the client will be redirect the URL
         provided with a `303` (See Other) redirect. Please note that we cannot
         delete artifacts you upload to other service, we can only delete the
         reference to the artifact, when it expires.
+
         **Error artifacts**, only consists of meta-data which the queue will
         store for you. These artifacts are only meant to indicate that you the
         worker or the task failed to generate a specific artifact, that you
@@ -414,12 +438,14 @@ class Queue(baseclient.BaseClient):
         get a `403` (Forbidden) response. This is mainly designed to ensure that
         dependent tasks can distinguish between artifacts that were suppose to
         be generated and artifacts for which the name is misspelled.
+
         **Artifact immutability**, generally speaking you cannot overwrite an
         artifact when created. But if you repeat the request with the same
         properties the request will succeed as the operation is idempotent.
         This is useful if you need to refresh a signed URL while uploading.
         Do not abuse this to overwrite artifacts created by another entity!
         Such as worker-host overwriting artifact created by worker-code.
+
         As a special case the `url` property on _reference artifacts_ can be
         updated. You should only use this to update the `url` property for
         reference artifacts your process has created.
@@ -442,10 +468,12 @@ class Queue(baseclient.BaseClient):
         Get Artifact from Run
 
         Get artifact by `<name>` from a specific run.
+
         **Public Artifacts**, in-order to get an artifact you need the scope
         `queue:get-artifact:<name>`, where `<name>` is the name of the artifact.
         But if the artifact `name` starts with `public/`, authentication and
         authorization is not necessary to fetch the artifact.
+
         **API Clients**, this method will redirect you to the artifact, if it is
         stored externally. Either way, the response may not be JSON. So API
         client users might want to generate a signed URL for this end-point and
@@ -471,14 +499,17 @@ class Queue(baseclient.BaseClient):
         Get Artifact from Latest Run
 
         Get artifact by `<name>` from the last run of a task.
+
         **Public Artifacts**, in-order to get an artifact you need the scope
         `queue:get-artifact:<name>`, where `<name>` is the name of the artifact.
         But if the artifact `name` starts with `public/`, authentication and
         authorization is not necessary to fetch the artifact.
+
         **API Clients**, this method will redirect you to the artifact, if it is
         stored externally. Either way, the response may not be JSON. So API
         client users might want to generate a signed URL for this end-point and
         use that URL with a normal HTTP client.
+
         **Remark**, this end-point is slightly slower than
         `queue.getArtifact`, so consider that if you already know the `runId` of
         the latest run. Otherwise, just us the most convenient API end-point.
@@ -539,6 +570,7 @@ class Queue(baseclient.BaseClient):
 
         Get an approximate number of pending tasks for the given `provisionerId`
         and `workerType`.
+
         The underlying Azure Storage Queues only promises to give us an estimate.
         Furthermore, we cache the result in memory for 20 seconds. So consumers
         should be no means expect this to be an accurate number.
@@ -562,6 +594,7 @@ class Queue(baseclient.BaseClient):
         Ping Server
 
         Documented later...
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.

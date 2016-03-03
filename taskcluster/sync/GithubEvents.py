@@ -18,6 +18,7 @@ class GithubEvents(baseclient.BaseClient):
     The github service, typically available at
     `github.taskcluster.net`, is responsible for publishing a pulse
     message for supported github events.
+
     This document describes the exchange offered by the taskcluster
     github service
     '''

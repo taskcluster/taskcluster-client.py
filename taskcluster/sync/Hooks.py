@@ -16,11 +16,14 @@ class Hooks(baseclient.BaseClient):
     '''
     Hooks API Documentation
     Hooks are a mechanism for creating tasks in response to events.
+
     Hooks are identified with a `hookGroupId` and a `hookId`.
+
     When an event occurs, the resulting task is automatically created.  The
     task is created using the scope `assume:hook-id:<hookGroupId>/<hookId>`,
     which must have scopes to make the createTask call, including satisfying all
     scopes in `task.scopes`.
+
     Hooks can have a 'schedule' indicating specific times that new tasks should
     be created.  Each schedule is in a simple cron format, per
     https://www.npmjs.com/package/cron-parser.  For example:
@@ -143,6 +146,7 @@ class Hooks(baseclient.BaseClient):
         Create a hook
 
         This endpoint will create a new hook.
+
         The caller's credentials must include the role that will be used to
         create the task.  That role must satisfy task.scopes as well as the
         necessary scopes to add the task to the queue.
