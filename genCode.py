@@ -15,7 +15,28 @@ from jinja2 import Environment, FileSystemLoader
 
 from taskcluster.runtimeclient import ROUTING_KEY_BLACKLIST
 
+BASE_DIR = os.path.dirname(__file__)
 GENERATED_STRING = "# This file is generated!  Do not edit!"
+CODE_DEFS = {
+    "sync": {
+        "clientModule": "taskcluster.sync.syncclient",
+        "clientClass": "SyncClient",
+        "codeDir": os.path.join(BASE_DIR, 'taskcluster', "sync"),
+        "testDir": os.path.join(BASE_DIR, 'test'),
+        "testTemplate": "test.template",
+        "defStatement": "def",
+        "returnStatement": "return",
+    },
+    "async": {
+        "clientModule": "taskcluster.async.asyncclient",
+        "clientClass": "AsyncClient",
+        "codeDir": os.path.join(BASE_DIR, 'taskcluster', "async"),
+        "testDir": os.path.join(BASE_DIR, 'test', "async"),
+        "testTemplate": "async_test.template",
+        "returnStatement": "return await",
+        "defStatement": "async def",
+    },
+}
 
 
 def loadJson(filename):
@@ -23,15 +44,15 @@ def loadJson(filename):
         return json.load(fh)
 
 
-def createInitPy(pydir, modules):
+def createInitPy(pydir, name, modules):
     initpy = os.path.join(pydir, '__init__.py')
     print(initpy)
     with open(initpy, 'w') as fh:
         print("#!/usr/bin/env python", file=fh)
         print(GENERATED_STRING, file=fh)
         for module in modules:
-            print("from taskcluster.sync.{module} import {module}".format(module=module),
-                  file=fh)
+            print("from taskcluster.{name}.{module} import {module}".format(
+                  name=name, module=module), file=fh)
         print("__all__ = [", file=fh)
         for module in modules:
             print("    {module},".format(module=module), file=fh)
@@ -108,10 +129,10 @@ def anglesToBraces(s):
         return re.sub('<(.*?)>', '{\\1}', s)
 
 
-def render(env, templateName, serviceName, defn):
+def render(env, templateName, serviceName, apiDefn, codeDefn):
     template = env.get_template(templateName)
-    api = defn['reference']
-    url = defn['referenceUrl']
+    api = apiDefn['reference']
+    url = apiDefn['referenceUrl']
     return template.render(
         serviceName=serviceName,
         api=api,
@@ -120,6 +141,7 @@ def render(env, templateName, serviceName, defn):
         createRoutingKeys=createRoutingKeys,
         generatedString=GENERATED_STRING,
         referenceUrl=url,
+        **codeDefn
     )
 
 
@@ -136,32 +158,32 @@ def typesetDocstring(s, level=4):
     return '\n'.join(lines)
 
 
-def renderCode(name, defn, codeDir, testDir):
+def renderCode(name, apiDefn, codeDefn):
     env = Environment(loader=FileSystemLoader('templates'))
     env.filters['docstring'] = typesetDocstring
     env.filters['anglesToBraces'] = anglesToBraces
-    code = render(env, 'code.template', name, defn)
-    with open(os.path.join(codeDir, '{}.py'.format(name)),
+    code = render(env, 'code.template', name, apiDefn, codeDefn)
+    with open(os.path.join(codeDefn['codeDir'], '{}.py'.format(name)),
               'w', encoding='utf-8') as fh:
         print(code, file=fh)
-    test = render(env, 'test.template', name, defn)
-    with open(os.path.join(testDir, 'test{}.py'.format(name)),
+    test = render(env, codeDefn['testTemplate'], name, apiDefn, codeDefn)
+    # TODO do we need to rename the async files to not conflict?
+    with open(os.path.join(codeDefn['testDir'], 'test{}.py'.format(name)),
               'w', encoding='utf-8') as fh:
         print(test, file=fh)
 
 
 if __name__ == '__main__':
-    baseDir = os.path.dirname(__file__)
     jsonFile = os.environ.get(
         "APIS_JSON",
-        os.path.join(baseDir, "taskcluster", "apis.json")
+        os.path.join(BASE_DIR, "taskcluster", "apis.json")
     )
-    codeDir = os.path.join(baseDir, 'taskcluster', 'sync')
-    testDir = os.path.join(baseDir, 'test')
-    if not os.path.exists(codeDir):
-        os.makedirs(codeDir)
     apiDef = loadJson(jsonFile)
-    createInitPy(codeDir, sorted(apiDef.keys()))
-    for name, defn in apiDef.items():
-        print(name)
-        renderCode(name, defn, codeDir, testDir)
+    for key, value in CODE_DEFS.items():
+        codeDir = value['codeDir']
+        if not os.path.exists(codeDir):
+            os.makedirs(codeDir)
+        createInitPy(codeDir, key, sorted(apiDef.keys()))
+        for name, defn in apiDef.items():
+            print("{} {}".format(key, name))
+            renderCode(name, defn, value)

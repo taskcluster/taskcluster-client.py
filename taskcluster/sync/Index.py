@@ -7,12 +7,12 @@ Task Index API Documentation
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class Index(baseclient.BaseClient):
+class Index(SyncClient):
     '''
     Task Index API Documentation
     The task index, typically available at `index.taskcluster.net`, is
@@ -134,7 +134,7 @@ class Index(baseclient.BaseClient):
         route = self.makeRoute('findTask', replDict={
             'namespace': namespace,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def listNamespaces(self, namespace, payload):
         '''
@@ -155,7 +155,7 @@ class Index(baseclient.BaseClient):
         route = self.makeRoute('listNamespaces', replDict={
             'namespace': namespace,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def listTasks(self, namespace, payload):
         '''
@@ -176,7 +176,7 @@ class Index(baseclient.BaseClient):
         route = self.makeRoute('listTasks', replDict={
             'namespace': namespace,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def insertTask(self, namespace, payload):
         '''
@@ -191,7 +191,7 @@ class Index(baseclient.BaseClient):
         route = self.makeRoute('insertTask', replDict={
             'namespace': namespace,
         })
-        return self._makeHttpRequest('put', route, payload)
+        return self.makeHttpRequest('put', route, payload)
 
     def findArtifactFromTask(self, namespace, name):
         '''
@@ -209,7 +209,7 @@ class Index(baseclient.BaseClient):
             'namespace': namespace,
             'name': name,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -222,4 +222,4 @@ class Index(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('ping')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)

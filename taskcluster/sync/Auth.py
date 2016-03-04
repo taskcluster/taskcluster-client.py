@@ -7,12 +7,12 @@ Authentication API
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class Auth(baseclient.BaseClient):
+class Auth(SyncClient):
     '''
     Authentication API
     Authentication related API end-points for TaskCluster and related
@@ -102,7 +102,7 @@ class Auth(baseclient.BaseClient):
         '''
         route = self.makeRoute('listClients')
         validOptions = ['prefix']
-        return self._makeHttpRequest('get', route, options=options, validOptions=validOptions)
+        return self.makeHttpRequest('get', route, options=options, validOptions=validOptions)
 
     def client(self, clientId):
         '''
@@ -116,7 +116,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('client', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def createClient(self, clientId, payload):
         '''
@@ -141,7 +141,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('createClient', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('put', route, payload)
+        return self.makeHttpRequest('put', route, payload)
 
     def resetAccessToken(self, clientId):
         '''
@@ -160,7 +160,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('resetAccessToken', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('post', route)
+        return self.makeHttpRequest('post', route)
 
     def updateClient(self, clientId, payload):
         '''
@@ -178,7 +178,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('updateClient', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def enableClient(self, clientId):
         '''
@@ -196,7 +196,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('enableClient', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('post', route)
+        return self.makeHttpRequest('post', route)
 
     def disableClient(self, clientId):
         '''
@@ -213,7 +213,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('disableClient', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('post', route)
+        return self.makeHttpRequest('post', route)
 
     def deleteClient(self, clientId):
         '''
@@ -228,7 +228,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('deleteClient', replDict={
             'clientId': clientId,
         })
-        return self._makeHttpRequest('delete', route)
+        return self.makeHttpRequest('delete', route)
 
     def listRoles(self):
         '''
@@ -240,7 +240,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('listRoles')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def role(self, roleId):
         '''
@@ -255,7 +255,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('role', replDict={
             'roleId': roleId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def createRole(self, roleId, payload):
         '''
@@ -274,7 +274,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('createRole', replDict={
             'roleId': roleId,
         })
-        return self._makeHttpRequest('put', route, payload)
+        return self.makeHttpRequest('put', route, payload)
 
     def updateRole(self, roleId, payload):
         '''
@@ -291,7 +291,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('updateRole', replDict={
             'roleId': roleId,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def deleteRole(self, roleId):
         '''
@@ -306,7 +306,7 @@ class Auth(baseclient.BaseClient):
         route = self.makeRoute('deleteRole', replDict={
             'roleId': roleId,
         })
-        return self._makeHttpRequest('delete', route)
+        return self.makeHttpRequest('delete', route)
 
     def expandScopes(self, payload):
         '''
@@ -318,7 +318,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('expandScopes')
-        return self._makeHttpRequest('get', route, payload)
+        return self.makeHttpRequest('get', route, payload)
 
     def currentScopes(self):
         '''
@@ -331,7 +331,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('currentScopes')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def awsS3Credentials(self, level, bucket, prefix):
         '''
@@ -367,7 +367,7 @@ class Auth(baseclient.BaseClient):
             'bucket': bucket,
             'prefix': prefix,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def azureTableSAS(self, account, table):
         '''
@@ -385,7 +385,7 @@ class Auth(baseclient.BaseClient):
             'account': account,
             'table': table,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def authenticateHawk(self, payload):
         '''
@@ -401,7 +401,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('authenticateHawk')
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def testAuthenticate(self, payload):
         '''
@@ -422,7 +422,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('testAuthenticate')
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def testAuthenticateGet(self):
         '''
@@ -447,7 +447,7 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('testAuthenticateGet')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -460,4 +460,4 @@ class Auth(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('ping')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)

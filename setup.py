@@ -14,6 +14,7 @@ tests_require = [
     'nose==1.3.4',
     'httmock==1.2.2',
     'rednose==0.4.1',
+    'nose-exclude',
     'mock==1.0.1',
     'setuptools-lint==0.3',
     'flake8==2.2.5',
@@ -21,7 +22,7 @@ tests_require = [
     'hypothesis',
     'pgpy',
     'tox==2.3.1',
-    'coverage==4.0.3',
+    'coverage==4.1b2',
 ]
 
 # requests has a policy of not breaking apis between major versions
@@ -36,6 +37,12 @@ install_requires = [
 gencode_requires = [
     'jinja2',
 ]
+
+async_requires = [
+    'aiohttp',
+]
+
+packages = ['taskcluster', 'taskcluster.sync']
 
 # from http://testrun.org/tox/latest/example/basic.html
 class Tox(TestCommand):
@@ -65,6 +72,10 @@ if sys.version_info[:2] == (2, 7):
         'subprocess32==3.2.6',
     ])
 
+if sys.version_info >= (3, 5):
+    install_requires.extend(async_requires)
+    packages.append('taskcluster.async')
+
 if __name__ == '__main__':
     setup(
         name='taskcluster',
@@ -73,7 +84,7 @@ if __name__ == '__main__':
         author='John Ford',
         author_email='jhford@mozilla.com',
         url='https://github.com/taskcluster/taskcluster-client.py',
-        packages=['taskcluster'],
+        packages=packages,
         package_data={
             'taskcluster': ['**.json']
         },

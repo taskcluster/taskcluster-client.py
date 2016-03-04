@@ -7,12 +7,12 @@ Purge-Cache Exchanges
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class PurgeCacheEvents(baseclient.BaseClient):
+class PurgeCacheEvents(SyncClient):
     '''
     Purge-Cache Exchanges
     The purge-cache service, typically available at

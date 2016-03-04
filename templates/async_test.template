@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+{{generatedString}}
+from __future__ import absolute_import, division, print_function
+
+from test.async import AsyncGeneratedTC
+from taskcluster.async import {{serviceName}}
+
+
+class TestAsync{{serviceName}}(AsyncGeneratedTC):
+    """Test the generated Test{{serviceName}} class.
+    """
+    testClass = {{serviceName}}
+
+    def test_routes(self):
+        """Test{{serviceName}} | all urls match the json baseUrls
+        """
+        self.route_check('{{serviceName}}')
+
+    def test_routingKeys(self):
+        """Test{{serviceName}} | all routingKeys match the json routingKeys
+        """
+        self.routingKeys_check('{{serviceName}}')
+
+{%- if api.entries -%}
+    {%- for entry in api['entries'] -%}
+        {%- if entry['type'] == 'function' %}
+
+    def test_single_async_{{entry.name}}(self):
+        """TestAsync{{serviceName}} | {{serviceName}}.{{entry.name}} single
+        """
+        self.try_function(
+            '{{entry.name}}',
+            '{{entry.method}}',
+            argumentNames=[{{argumentString(entry)}}],
+            {%- if entry.query %}
+            validOptions={{entry.query}},
+            {%- endif %}
+        )
+
+    def test_multi_async_{{entry.name}}(self):
+        """TestAsync{{serviceName}} | {{serviceName}}.{{entry.name}} multi
+        """
+        self.try_async_function(
+            '{{entry.name}}',
+            '{{entry.method}}',
+            argumentNames=[{{argumentString(entry)}}],
+            {%- if entry.query %}
+            validOptions={{entry.query}},
+            {%- endif %}
+        )
+
+        {%- elif entry['type'] == 'topic-exchange' %}
+
+    def test_{{entry['name']}}(self):
+        """Test{{serviceName}} | {{serviceName}}.{{entry.name}} topic exchange
+        """
+        self.try_topic('{{entry.name}}', '{{entry.exchange}}')
+
+        {%- endif -%}
+    {%- endfor -%}
+{%- endif -%}

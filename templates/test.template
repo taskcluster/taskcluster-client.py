@@ -3,7 +3,7 @@
 {{generatedString}}
 from __future__ import absolute_import, division, print_function
 
-from base import GeneratedTC
+from test.base import GeneratedTC
 from taskcluster.sync import {{serviceName}}
 
 

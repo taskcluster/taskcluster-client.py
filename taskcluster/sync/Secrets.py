@@ -7,12 +7,12 @@ TaskCluster Secrets API Documentation
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class Secrets(baseclient.BaseClient):
+class Secrets(SyncClient):
     '''
     TaskCluster Secrets API Documentation
     The secrets service, is a simple key/value store for secret data
@@ -46,7 +46,7 @@ class Secrets(baseclient.BaseClient):
         route = self.makeRoute('set', replDict={
             'name': name,
         })
-        return self._makeHttpRequest('put', route, payload)
+        return self.makeHttpRequest('put', route, payload)
 
     def remove(self, name):
         '''
@@ -60,7 +60,7 @@ class Secrets(baseclient.BaseClient):
         route = self.makeRoute('remove', replDict={
             'name': name,
         })
-        return self._makeHttpRequest('delete', route)
+        return self.makeHttpRequest('delete', route)
 
     def get(self, name):
         '''
@@ -74,7 +74,7 @@ class Secrets(baseclient.BaseClient):
         route = self.makeRoute('get', replDict={
             'name': name,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def list(self):
         '''
@@ -85,7 +85,7 @@ class Secrets(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('list')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -98,4 +98,4 @@ class Secrets(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('ping')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
