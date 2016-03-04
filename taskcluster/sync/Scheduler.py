@@ -147,7 +147,7 @@ class Scheduler(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url, payload)
 
-    def status(self, taskGraphId, signUrl=False):
+    def status(self, taskGraphId):
         '''
         Task Graph Status
 
@@ -164,11 +164,9 @@ class Scheduler(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskGraphId=taskGraphId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def info(self, taskGraphId, signUrl=False):
+    def info(self, taskGraphId):
         '''
         Task Graph Information
 
@@ -186,11 +184,9 @@ class Scheduler(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskGraphId=taskGraphId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def inspect(self, taskGraphId, signUrl=False):
+    def inspect(self, taskGraphId):
         '''
         Inspect Task Graph
 
@@ -214,11 +210,9 @@ class Scheduler(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskGraphId=taskGraphId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def inspectTask(self, taskGraphId, taskId, signUrl=False):
+    def inspectTask(self, taskGraphId, taskId):
         '''
         Inspect Task from a Task-Graph
 
@@ -244,11 +238,9 @@ class Scheduler(baseclient.BaseClient):
             taskGraphId=taskGraphId,
             taskId=taskId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -261,6 +253,4 @@ class Scheduler(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

@@ -121,7 +121,7 @@ class Index(baseclient.BaseClient):
         self.classOptions['baseUrl'] = 'https://index.taskcluster.net/v1'
         super(Index, self).__init__(*args, **kwargs)
 
-    def findTask(self, namespace, signUrl=False):
+    def findTask(self, namespace):
         '''
         Find Indexed Task
 
@@ -135,8 +135,6 @@ class Index(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             namespace=namespace,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def listNamespaces(self, namespace, payload):
@@ -199,7 +197,7 @@ class Index(baseclient.BaseClient):
         )
         return self._makeHttpRequest('put', url, payload)
 
-    def findArtifactFromTask(self, namespace, name, signUrl=False):
+    def findArtifactFromTask(self, namespace, name):
         '''
         Get Artifact From Indexed Task
 
@@ -216,11 +214,9 @@ class Index(baseclient.BaseClient):
             namespace=namespace,
             name=name,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -233,6 +229,4 @@ class Index(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

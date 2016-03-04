@@ -130,7 +130,7 @@ class AwsProvisioner(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url, payload)
 
-    def workerType(self, workerType, signUrl=False):
+    def workerType(self, workerType):
         '''
         Get Worker Type
 
@@ -147,8 +147,6 @@ class AwsProvisioner(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             workerType=workerType,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def removeWorkerType(self, workerType):
@@ -175,7 +173,7 @@ class AwsProvisioner(baseclient.BaseClient):
         )
         return self._makeHttpRequest('delete', url)
 
-    def listWorkerTypes(self, signUrl=False):
+    def listWorkerTypes(self):
         '''
         List Worker Types
 
@@ -189,8 +187,6 @@ class AwsProvisioner(baseclient.BaseClient):
         url = self.urls['listWorkerTypes'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def createSecret(self, token, payload):
@@ -213,7 +209,7 @@ class AwsProvisioner(baseclient.BaseClient):
         )
         return self._makeHttpRequest('put', url, payload)
 
-    def getSecret(self, token, signUrl=False):
+    def getSecret(self, token):
         '''
         Get a Secret
 
@@ -232,11 +228,9 @@ class AwsProvisioner(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             token=token,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def instanceStarted(self, instanceId, token, signUrl=False):
+    def instanceStarted(self, instanceId, token):
         '''
         Report an instance starting
 
@@ -255,8 +249,6 @@ class AwsProvisioner(baseclient.BaseClient):
             instanceId=instanceId,
             token=token,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def removeSecret(self, token):
@@ -279,7 +271,7 @@ class AwsProvisioner(baseclient.BaseClient):
         )
         return self._makeHttpRequest('delete', url)
 
-    def getLaunchSpecs(self, workerType, signUrl=False):
+    def getLaunchSpecs(self, workerType):
         '''
         Get All Launch Specifications for WorkerType
 
@@ -296,11 +288,9 @@ class AwsProvisioner(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             workerType=workerType,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def awsState(self, signUrl=False):
+    def awsState(self):
         '''
         Get AWS State for all worker types
 
@@ -314,11 +304,9 @@ class AwsProvisioner(baseclient.BaseClient):
         url = self.urls['awsState'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def state(self, workerType, signUrl=False):
+    def state(self, workerType):
         '''
         Get AWS State for a worker type
 
@@ -334,11 +322,9 @@ class AwsProvisioner(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             workerType=workerType,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -351,11 +337,9 @@ class AwsProvisioner(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def backendStatus(self, signUrl=False):
+    def backendStatus(self):
         '''
         Backend Status
 
@@ -366,11 +350,9 @@ class AwsProvisioner(baseclient.BaseClient):
         url = self.urls['backendStatus'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def apiReference(self, signUrl=False):
+    def apiReference(self):
         '''
         api reference
 
@@ -383,6 +365,4 @@ class AwsProvisioner(baseclient.BaseClient):
         url = self.urls['apiReference'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

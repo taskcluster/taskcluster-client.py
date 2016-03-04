@@ -30,29 +30,15 @@ class Test{{serviceName}}(GeneratedTC):
     {%- for entry in api['entries'] -%}
         {%- if entry['type'] == 'function' %}
 
-    def test_{{entry.name}}_unsigned(self):
+    def test_{{entry.name}}(self):
         """Test{{serviceName}} | {{serviceName}}.{{entry.name}} unsigned
         """
         self.try_function(
             '{{entry.name}}',
             '{{entry.method}}',
             argumentNames=[{{argumentString(entry)}}],
-            signUrl=False
         )
 
-            {%- if entry['method'] == 'get' %}{# get methods can be signed/unsigned #}
-
-    def test_{{entry.name}}_signed(self):
-        """Test{{serviceName}} | {{serviceName}}.{{entry.name}} signed
-        """
-        self.try_function(
-            '{{entry.name}}',
-            '{{entry.method}}',
-            argumentNames=[{{argumentString(entry)}}],
-            signUrl=True
-        )
-
-            {%- endif %}
         {%- elif entry['type'] == 'topic-exchange' %}
 
     def test_{{entry['name']}}(self):

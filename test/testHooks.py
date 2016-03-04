@@ -26,132 +26,74 @@ class TestHooks(GeneratedTC):
         """
         self.routingKeys_check('Hooks')
 
-    def test_listHookGroups_unsigned(self):
+    def test_listHookGroups(self):
         """TestHooks | Hooks.listHookGroups unsigned
         """
         self.try_function(
             'listHookGroups',
             'get',
             argumentNames=[],
-            signUrl=False
         )
 
-    def test_listHookGroups_signed(self):
-        """TestHooks | Hooks.listHookGroups signed
-        """
-        self.try_function(
-            'listHookGroups',
-            'get',
-            argumentNames=[],
-            signUrl=True
-        )
-
-    def test_listHooks_unsigned(self):
+    def test_listHooks(self):
         """TestHooks | Hooks.listHooks unsigned
         """
         self.try_function(
             'listHooks',
             'get',
             argumentNames=['hookGroupId', ],
-            signUrl=False
         )
 
-    def test_listHooks_signed(self):
-        """TestHooks | Hooks.listHooks signed
-        """
-        self.try_function(
-            'listHooks',
-            'get',
-            argumentNames=['hookGroupId', ],
-            signUrl=True
-        )
-
-    def test_hook_unsigned(self):
+    def test_hook(self):
         """TestHooks | Hooks.hook unsigned
         """
         self.try_function(
             'hook',
             'get',
             argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=False
         )
 
-    def test_hook_signed(self):
-        """TestHooks | Hooks.hook signed
-        """
-        self.try_function(
-            'hook',
-            'get',
-            argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=True
-        )
-
-    def test_getHookStatus_unsigned(self):
+    def test_getHookStatus(self):
         """TestHooks | Hooks.getHookStatus unsigned
         """
         self.try_function(
             'getHookStatus',
             'get',
             argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=False
         )
 
-    def test_getHookStatus_signed(self):
-        """TestHooks | Hooks.getHookStatus signed
-        """
-        self.try_function(
-            'getHookStatus',
-            'get',
-            argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=True
-        )
-
-    def test_getHookSchedule_unsigned(self):
+    def test_getHookSchedule(self):
         """TestHooks | Hooks.getHookSchedule unsigned
         """
         self.try_function(
             'getHookSchedule',
             'get',
             argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=False
         )
 
-    def test_getHookSchedule_signed(self):
-        """TestHooks | Hooks.getHookSchedule signed
-        """
-        self.try_function(
-            'getHookSchedule',
-            'get',
-            argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=True
-        )
-
-    def test_createHook_unsigned(self):
+    def test_createHook(self):
         """TestHooks | Hooks.createHook unsigned
         """
         self.try_function(
             'createHook',
             'put',
             argumentNames=['hookGroupId', 'hookId', 'payload', ],
-            signUrl=False
         )
 
-    def test_updateHook_unsigned(self):
+    def test_updateHook(self):
         """TestHooks | Hooks.updateHook unsigned
         """
         self.try_function(
             'updateHook',
             'post',
             argumentNames=['hookGroupId', 'hookId', 'payload', ],
-            signUrl=False
         )
 
-    def test_removeHook_unsigned(self):
+    def test_removeHook(self):
         """TestHooks | Hooks.removeHook unsigned
         """
         self.try_function(
             'removeHook',
             'delete',
             argumentNames=['hookGroupId', 'hookId', ],
-            signUrl=False
         )

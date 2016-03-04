@@ -56,7 +56,7 @@ class Queue(baseclient.BaseClient):
         self.classOptions['baseUrl'] = 'https://queue.taskcluster.net/v1'
         super(Queue, self).__init__(*args, **kwargs)
 
-    def task(self, taskId, signUrl=False):
+    def task(self, taskId):
         '''
         Get Task Definition
 
@@ -71,11 +71,9 @@ class Queue(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskId=taskId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def status(self, taskId, signUrl=False):
+    def status(self, taskId):
         '''
         Get task status
 
@@ -88,11 +86,9 @@ class Queue(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskId=taskId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def listTaskGroup(self, taskGroupId, signUrl=False):
+    def listTaskGroup(self, taskGroupId):
         '''
         List Task Group
 
@@ -120,8 +116,6 @@ class Queue(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskGroupId=taskGroupId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def createTask(self, taskId, payload):
@@ -263,7 +257,7 @@ class Queue(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url)
 
-    def pollTaskUrls(self, provisionerId, workerType, signUrl=False):
+    def pollTaskUrls(self, provisionerId, workerType):
         '''
         Get Urls to Poll Pending Tasks
 
@@ -280,8 +274,6 @@ class Queue(baseclient.BaseClient):
             provisionerId=provisionerId,
             workerType=workerType,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def claimTask(self, taskId, runId, payload):
@@ -463,7 +455,7 @@ class Queue(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url, payload)
 
-    def getArtifact(self, taskId, runId, name, signUrl=False):
+    def getArtifact(self, taskId, runId, name):
         '''
         Get Artifact from Run
 
@@ -490,11 +482,9 @@ class Queue(baseclient.BaseClient):
             runId=runId,
             name=name,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def getLatestArtifact(self, taskId, name, signUrl=False):
+    def getLatestArtifact(self, taskId, name):
         '''
         Get Artifact from Latest Run
 
@@ -523,11 +513,9 @@ class Queue(baseclient.BaseClient):
             taskId=taskId,
             name=name,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def listArtifacts(self, taskId, runId, signUrl=False):
+    def listArtifacts(self, taskId, runId):
         '''
         Get Artifacts from Run
 
@@ -542,11 +530,9 @@ class Queue(baseclient.BaseClient):
             taskId=taskId,
             runId=runId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def listLatestArtifacts(self, taskId, signUrl=False):
+    def listLatestArtifacts(self, taskId):
         '''
         Get Artifacts from Latest Run
 
@@ -560,11 +546,9 @@ class Queue(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             taskId=taskId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def pendingTasks(self, provisionerId, workerType, signUrl=False):
+    def pendingTasks(self, provisionerId, workerType):
         '''
         Get Number of Pending Tasks
 
@@ -585,11 +569,9 @@ class Queue(baseclient.BaseClient):
             provisionerId=provisionerId,
             workerType=workerType,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -602,6 +584,4 @@ class Queue(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

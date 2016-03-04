@@ -53,7 +53,7 @@ class PurgeCache(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url, payload)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -66,6 +66,4 @@ class PurgeCache(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

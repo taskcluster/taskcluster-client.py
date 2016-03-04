@@ -77,8 +77,6 @@ def methodArgumentString(entry):
     """
     parts = ['self']
     parts.extend(argumentNames(entry))
-    if entry['method'] == 'get':
-        parts.append('signUrl=False')
     return ", ".join(parts)
 
 
@@ -93,7 +91,7 @@ def argumentNames(entry):
 
 
 def argumentString(entry):
-    """Returns a string of a list of argument names, sans self and signUrl
+    """Returns a string of a list of argument names, sans self
     """
     string = ''
     for name in argumentNames(entry):

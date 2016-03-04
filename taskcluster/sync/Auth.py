@@ -91,7 +91,7 @@ class Auth(baseclient.BaseClient):
         self.classOptions['baseUrl'] = 'https://auth.taskcluster.net/v1'
         super(Auth, self).__init__(*args, **kwargs)
 
-    def listClients(self, signUrl=False):
+    def listClients(self):
         '''
         List Clients
 
@@ -103,11 +103,9 @@ class Auth(baseclient.BaseClient):
         url = self.urls['listClients'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def client(self, clientId, signUrl=False):
+    def client(self, clientId):
         '''
         Get Client
 
@@ -120,8 +118,6 @@ class Auth(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             clientId=clientId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def createClient(self, clientId, payload):
@@ -242,7 +238,7 @@ class Auth(baseclient.BaseClient):
         )
         return self._makeHttpRequest('delete', url)
 
-    def listRoles(self, signUrl=False):
+    def listRoles(self):
         '''
         List Roles
 
@@ -254,11 +250,9 @@ class Auth(baseclient.BaseClient):
         url = self.urls['listRoles'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def role(self, roleId, signUrl=False):
+    def role(self, roleId):
         '''
         Get Role
 
@@ -272,8 +266,6 @@ class Auth(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             roleId=roleId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def createRole(self, roleId, payload):
@@ -330,7 +322,7 @@ class Auth(baseclient.BaseClient):
         )
         return self._makeHttpRequest('delete', url)
 
-    def expandScopes(self, payload, signUrl=False):
+    def expandScopes(self, payload):
         '''
         Expand Scopes
 
@@ -342,11 +334,9 @@ class Auth(baseclient.BaseClient):
         url = self.urls['expandScopes'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url, payload)
 
-    def currentScopes(self, signUrl=False):
+    def currentScopes(self):
         '''
         Get Current Scopes
 
@@ -359,11 +349,9 @@ class Auth(baseclient.BaseClient):
         url = self.urls['currentScopes'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def awsS3Credentials(self, level, bucket, prefix, signUrl=False):
+    def awsS3Credentials(self, level, bucket, prefix):
         '''
         Get Temporary Read/Write Credentials S3
 
@@ -398,11 +386,9 @@ class Auth(baseclient.BaseClient):
             bucket=bucket,
             prefix=prefix,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def azureTableSAS(self, account, table, signUrl=False):
+    def azureTableSAS(self, account, table):
         '''
         Get Shared-Access-Signature for Azure Table
 
@@ -419,8 +405,6 @@ class Auth(baseclient.BaseClient):
             account=account,
             table=table,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def authenticateHawk(self, payload):
@@ -464,7 +448,7 @@ class Auth(baseclient.BaseClient):
         )
         return self._makeHttpRequest('post', url, payload)
 
-    def testAuthenticateGet(self, signUrl=False):
+    def testAuthenticateGet(self):
         '''
         Test Authentication (GET)
 
@@ -489,11 +473,9 @@ class Auth(baseclient.BaseClient):
         url = self.urls['testAuthenticateGet'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -506,6 +488,4 @@ class Auth(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

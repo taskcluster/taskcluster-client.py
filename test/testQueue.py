@@ -26,312 +26,191 @@ class TestQueue(GeneratedTC):
         """
         self.routingKeys_check('Queue')
 
-    def test_task_unsigned(self):
+    def test_task(self):
         """TestQueue | Queue.task unsigned
         """
         self.try_function(
             'task',
             'get',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_task_signed(self):
-        """TestQueue | Queue.task signed
-        """
-        self.try_function(
-            'task',
-            'get',
-            argumentNames=['taskId', ],
-            signUrl=True
-        )
-
-    def test_status_unsigned(self):
+    def test_status(self):
         """TestQueue | Queue.status unsigned
         """
         self.try_function(
             'status',
             'get',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_status_signed(self):
-        """TestQueue | Queue.status signed
-        """
-        self.try_function(
-            'status',
-            'get',
-            argumentNames=['taskId', ],
-            signUrl=True
-        )
-
-    def test_listTaskGroup_unsigned(self):
+    def test_listTaskGroup(self):
         """TestQueue | Queue.listTaskGroup unsigned
         """
         self.try_function(
             'listTaskGroup',
             'get',
             argumentNames=['taskGroupId', ],
-            signUrl=False
         )
 
-    def test_listTaskGroup_signed(self):
-        """TestQueue | Queue.listTaskGroup signed
-        """
-        self.try_function(
-            'listTaskGroup',
-            'get',
-            argumentNames=['taskGroupId', ],
-            signUrl=True
-        )
-
-    def test_createTask_unsigned(self):
+    def test_createTask(self):
         """TestQueue | Queue.createTask unsigned
         """
         self.try_function(
             'createTask',
             'put',
             argumentNames=['taskId', 'payload', ],
-            signUrl=False
         )
 
-    def test_defineTask_unsigned(self):
+    def test_defineTask(self):
         """TestQueue | Queue.defineTask unsigned
         """
         self.try_function(
             'defineTask',
             'post',
             argumentNames=['taskId', 'payload', ],
-            signUrl=False
         )
 
-    def test_scheduleTask_unsigned(self):
+    def test_scheduleTask(self):
         """TestQueue | Queue.scheduleTask unsigned
         """
         self.try_function(
             'scheduleTask',
             'post',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_rerunTask_unsigned(self):
+    def test_rerunTask(self):
         """TestQueue | Queue.rerunTask unsigned
         """
         self.try_function(
             'rerunTask',
             'post',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_cancelTask_unsigned(self):
+    def test_cancelTask(self):
         """TestQueue | Queue.cancelTask unsigned
         """
         self.try_function(
             'cancelTask',
             'post',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_pollTaskUrls_unsigned(self):
+    def test_pollTaskUrls(self):
         """TestQueue | Queue.pollTaskUrls unsigned
         """
         self.try_function(
             'pollTaskUrls',
             'get',
             argumentNames=['provisionerId', 'workerType', ],
-            signUrl=False
         )
 
-    def test_pollTaskUrls_signed(self):
-        """TestQueue | Queue.pollTaskUrls signed
-        """
-        self.try_function(
-            'pollTaskUrls',
-            'get',
-            argumentNames=['provisionerId', 'workerType', ],
-            signUrl=True
-        )
-
-    def test_claimTask_unsigned(self):
+    def test_claimTask(self):
         """TestQueue | Queue.claimTask unsigned
         """
         self.try_function(
             'claimTask',
             'post',
             argumentNames=['taskId', 'runId', 'payload', ],
-            signUrl=False
         )
 
-    def test_reclaimTask_unsigned(self):
+    def test_reclaimTask(self):
         """TestQueue | Queue.reclaimTask unsigned
         """
         self.try_function(
             'reclaimTask',
             'post',
             argumentNames=['taskId', 'runId', ],
-            signUrl=False
         )
 
-    def test_reportCompleted_unsigned(self):
+    def test_reportCompleted(self):
         """TestQueue | Queue.reportCompleted unsigned
         """
         self.try_function(
             'reportCompleted',
             'post',
             argumentNames=['taskId', 'runId', ],
-            signUrl=False
         )
 
-    def test_reportFailed_unsigned(self):
+    def test_reportFailed(self):
         """TestQueue | Queue.reportFailed unsigned
         """
         self.try_function(
             'reportFailed',
             'post',
             argumentNames=['taskId', 'runId', ],
-            signUrl=False
         )
 
-    def test_reportException_unsigned(self):
+    def test_reportException(self):
         """TestQueue | Queue.reportException unsigned
         """
         self.try_function(
             'reportException',
             'post',
             argumentNames=['taskId', 'runId', 'payload', ],
-            signUrl=False
         )
 
-    def test_createArtifact_unsigned(self):
+    def test_createArtifact(self):
         """TestQueue | Queue.createArtifact unsigned
         """
         self.try_function(
             'createArtifact',
             'post',
             argumentNames=['taskId', 'runId', 'name', 'payload', ],
-            signUrl=False
         )
 
-    def test_getArtifact_unsigned(self):
+    def test_getArtifact(self):
         """TestQueue | Queue.getArtifact unsigned
         """
         self.try_function(
             'getArtifact',
             'get',
             argumentNames=['taskId', 'runId', 'name', ],
-            signUrl=False
         )
 
-    def test_getArtifact_signed(self):
-        """TestQueue | Queue.getArtifact signed
-        """
-        self.try_function(
-            'getArtifact',
-            'get',
-            argumentNames=['taskId', 'runId', 'name', ],
-            signUrl=True
-        )
-
-    def test_getLatestArtifact_unsigned(self):
+    def test_getLatestArtifact(self):
         """TestQueue | Queue.getLatestArtifact unsigned
         """
         self.try_function(
             'getLatestArtifact',
             'get',
             argumentNames=['taskId', 'name', ],
-            signUrl=False
         )
 
-    def test_getLatestArtifact_signed(self):
-        """TestQueue | Queue.getLatestArtifact signed
-        """
-        self.try_function(
-            'getLatestArtifact',
-            'get',
-            argumentNames=['taskId', 'name', ],
-            signUrl=True
-        )
-
-    def test_listArtifacts_unsigned(self):
+    def test_listArtifacts(self):
         """TestQueue | Queue.listArtifacts unsigned
         """
         self.try_function(
             'listArtifacts',
             'get',
             argumentNames=['taskId', 'runId', ],
-            signUrl=False
         )
 
-    def test_listArtifacts_signed(self):
-        """TestQueue | Queue.listArtifacts signed
-        """
-        self.try_function(
-            'listArtifacts',
-            'get',
-            argumentNames=['taskId', 'runId', ],
-            signUrl=True
-        )
-
-    def test_listLatestArtifacts_unsigned(self):
+    def test_listLatestArtifacts(self):
         """TestQueue | Queue.listLatestArtifacts unsigned
         """
         self.try_function(
             'listLatestArtifacts',
             'get',
             argumentNames=['taskId', ],
-            signUrl=False
         )
 
-    def test_listLatestArtifacts_signed(self):
-        """TestQueue | Queue.listLatestArtifacts signed
-        """
-        self.try_function(
-            'listLatestArtifacts',
-            'get',
-            argumentNames=['taskId', ],
-            signUrl=True
-        )
-
-    def test_pendingTasks_unsigned(self):
+    def test_pendingTasks(self):
         """TestQueue | Queue.pendingTasks unsigned
         """
         self.try_function(
             'pendingTasks',
             'get',
             argumentNames=['provisionerId', 'workerType', ],
-            signUrl=False
         )
 
-    def test_pendingTasks_signed(self):
-        """TestQueue | Queue.pendingTasks signed
-        """
-        self.try_function(
-            'pendingTasks',
-            'get',
-            argumentNames=['provisionerId', 'workerType', ],
-            signUrl=True
-        )
-
-    def test_ping_unsigned(self):
+    def test_ping(self):
         """TestQueue | Queue.ping unsigned
         """
         self.try_function(
             'ping',
             'get',
             argumentNames=[],
-            signUrl=False
-        )
-
-    def test_ping_signed(self):
-        """TestQueue | Queue.ping signed
-        """
-        self.try_function(
-            'ping',
-            'get',
-            argumentNames=[],
-            signUrl=True
         )

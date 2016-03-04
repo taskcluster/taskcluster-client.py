@@ -65,8 +65,6 @@ class {{serviceName}}(baseclient.BaseClient):
             {%- endif %}
         )
             {%- if entry.method == 'get' %}
-        if signUrl:
-            url = self.buildSignedUrl(url)
             {%- endif %}
         return self._makeHttpRequest('{{entry.method}}', url{% if entry.input %}, payload{% endif %})
         {%- elif entry['type'] == 'topic-exchange' %}

@@ -26,32 +26,20 @@ class TestPurgeCache(GeneratedTC):
         """
         self.routingKeys_check('PurgeCache')
 
-    def test_purgeCache_unsigned(self):
+    def test_purgeCache(self):
         """TestPurgeCache | PurgeCache.purgeCache unsigned
         """
         self.try_function(
             'purgeCache',
             'post',
             argumentNames=['provisionerId', 'workerType', 'payload', ],
-            signUrl=False
         )
 
-    def test_ping_unsigned(self):
+    def test_ping(self):
         """TestPurgeCache | PurgeCache.ping unsigned
         """
         self.try_function(
             'ping',
             'get',
             argumentNames=[],
-            signUrl=False
-        )
-
-    def test_ping_signed(self):
-        """TestPurgeCache | PurgeCache.ping signed
-        """
-        self.try_function(
-            'ping',
-            'get',
-            argumentNames=[],
-            signUrl=True
         )

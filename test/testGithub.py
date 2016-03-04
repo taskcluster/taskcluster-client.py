@@ -26,32 +26,20 @@ class TestGithub(GeneratedTC):
         """
         self.routingKeys_check('Github')
 
-    def test_githubWebHookConsumer_unsigned(self):
+    def test_githubWebHookConsumer(self):
         """TestGithub | Github.githubWebHookConsumer unsigned
         """
         self.try_function(
             'githubWebHookConsumer',
             'post',
             argumentNames=[],
-            signUrl=False
         )
 
-    def test_ping_unsigned(self):
+    def test_ping(self):
         """TestGithub | Github.ping unsigned
         """
         self.try_function(
             'ping',
             'get',
             argumentNames=[],
-            signUrl=False
-        )
-
-    def test_ping_signed(self):
-        """TestGithub | Github.ping signed
-        """
-        self.try_function(
-            'ping',
-            'get',
-            argumentNames=[],
-            signUrl=True
         )

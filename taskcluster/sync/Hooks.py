@@ -48,7 +48,7 @@ class Hooks(baseclient.BaseClient):
         self.classOptions['baseUrl'] = 'https://hooks.taskcluster.net/v1'
         super(Hooks, self).__init__(*args, **kwargs)
 
-    def listHookGroups(self, signUrl=False):
+    def listHookGroups(self):
         '''
         List hook groups
 
@@ -59,11 +59,9 @@ class Hooks(baseclient.BaseClient):
         url = self.urls['listHookGroups'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def listHooks(self, hookGroupId, signUrl=False):
+    def listHooks(self, hookGroupId):
         '''
         List hooks in a given group
 
@@ -77,11 +75,9 @@ class Hooks(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             hookGroupId=hookGroupId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def hook(self, hookGroupId, hookId, signUrl=False):
+    def hook(self, hookGroupId, hookId):
         '''
         Get hook definition
 
@@ -97,11 +93,9 @@ class Hooks(baseclient.BaseClient):
             hookGroupId=hookGroupId,
             hookId=hookId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def getHookStatus(self, hookGroupId, hookId, signUrl=False):
+    def getHookStatus(self, hookGroupId, hookId):
         '''
         Get hook status
 
@@ -117,11 +111,9 @@ class Hooks(baseclient.BaseClient):
             hookGroupId=hookGroupId,
             hookId=hookId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def getHookSchedule(self, hookGroupId, hookId, signUrl=False):
+    def getHookSchedule(self, hookGroupId, hookId):
         '''
         Get hook schedule
 
@@ -137,8 +129,6 @@ class Hooks(baseclient.BaseClient):
             hookGroupId=hookGroupId,
             hookId=hookId,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
     def createHook(self, hookGroupId, hookId, payload):

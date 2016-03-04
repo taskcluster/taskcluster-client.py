@@ -64,7 +64,7 @@ class Secrets(baseclient.BaseClient):
         )
         return self._makeHttpRequest('delete', url)
 
-    def get(self, name, signUrl=False):
+    def get(self, name):
         '''
         Read Secret
 
@@ -77,11 +77,9 @@ class Secrets(baseclient.BaseClient):
             baseUrl=self.options['baseUrl'],
             name=name,
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def list(self, signUrl=False):
+    def list(self):
         '''
         List Secrets
 
@@ -92,11 +90,9 @@ class Secrets(baseclient.BaseClient):
         url = self.urls['list'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)
 
-    def ping(self, signUrl=False):
+    def ping(self):
         '''
         Ping Server
 
@@ -109,6 +105,4 @@ class Secrets(baseclient.BaseClient):
         url = self.urls['ping'].format(
             baseUrl=self.options['baseUrl'],
         )
-        if signUrl:
-            url = self.buildSignedUrl(url)
         return self._makeHttpRequest('get', url)

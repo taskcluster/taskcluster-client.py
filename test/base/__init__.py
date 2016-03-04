@@ -25,7 +25,6 @@ SOURCE_DIR = os.path.join(
 APIS_JSON_FILE = os.path.join(SOURCE_DIR, 'apis.json')
 with open(APIS_JSON_FILE, "r") as fh:
     APIS_JSON = json.load(fh)
-SIGNED = "SIGNED"
 ROUTING_KEY_WHITELIST = ("name", "multipleWords", "constant")
 
 
@@ -129,9 +128,6 @@ class FakeGenerated(object):
         self._makeHttpRequest = mock.MagicMock()
         self._makeTopicExchange = mock.MagicMock()
 
-    def buildSignedUrl(self, url):
-        return url + SIGNED
-
 
 class GeneratedTC(TCTest):
     """Base class to test a generated class.
@@ -152,7 +148,7 @@ class GeneratedTC(TCTest):
             replDict[name] = name
         return replDict
 
-    def try_function(self, functionName, method, argumentNames=None, signUrl=False):
+    def try_function(self, functionName, method, argumentNames=None):
         """For entry functions, verify the _makeHttpRequest arguments are
         correct.
         """
@@ -161,9 +157,6 @@ class GeneratedTC(TCTest):
         kwargs = {}
         replDict = self._get_replDict(argumentNames)
         expectedUrl = a.urls[functionName].format(**replDict)
-        if signUrl:
-            expectedUrl += SIGNED
-            kwargs['signUrl'] = signUrl
         getattr(a, functionName)(*argumentNames, **kwargs)
         expectedArgs = [method, expectedUrl]
         if 'payload' in argumentNames:
