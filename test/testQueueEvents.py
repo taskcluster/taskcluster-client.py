@@ -16,10 +16,10 @@ class TestQueueEvents(GeneratedTC):
     """
     testClass = FakeQueueEvents
 
-    def test_urls(self):
+    def test_routes(self):
         """TestQueueEvents | all urls match the json baseUrls
         """
-        self.url_check('QueueEvents')
+        self.route_check('QueueEvents')
 
     def test_routingKeys(self):
         """TestQueueEvents | all routingKeys match the json routingKeys

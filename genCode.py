@@ -38,14 +38,14 @@ def createInitPy(pydir, modules):
         print("]", file=fh)
 
 
-def createUrls(api):
-    """Create a string to define self.urls.
+def createRoutes(api):
+    """Create a string to define self.routes.
     """
-    urls = ''
+    routes = ''
     for entry in api['entries']:
         if entry['type'] == 'function':
-            urls += "'%s': '{baseUrl}%s',\n" % (entry['name'], anglesToBraces(entry['route']))
-    return urls
+            routes += "'%s': '%s',\n" % (entry['name'], anglesToBraces(entry['route']))
+    return routes
 
 
 def createRoutingKeys(api):
@@ -77,6 +77,8 @@ def methodArgumentString(entry):
     """
     parts = ['self']
     parts.extend(argumentNames(entry))
+    if entry.get('query'):
+        parts.append('options=None')
     return ", ".join(parts)
 
 
@@ -116,7 +118,7 @@ def render(env, templateName, serviceName, defn):
         api=api,
         methodArgumentString=methodArgumentString,
         argumentString=argumentString,
-        createUrls=createUrls,
+        createRoutes=createRoutes,
         createRoutingKeys=createRoutingKeys,
         generatedString=GENERATED_STRING,
         referenceUrl=url,

@@ -16,10 +16,10 @@ class TestAwsProvisionerEvents(GeneratedTC):
     """
     testClass = FakeAwsProvisionerEvents
 
-    def test_urls(self):
+    def test_routes(self):
         """TestAwsProvisionerEvents | all urls match the json baseUrls
         """
-        self.url_check('AwsProvisionerEvents')
+        self.route_check('AwsProvisionerEvents')
 
     def test_routingKeys(self):
         """TestAwsProvisionerEvents | all routingKeys match the json routingKeys

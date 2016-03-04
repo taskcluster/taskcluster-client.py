@@ -27,28 +27,28 @@ class Queue(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/queue/v1/api.json'
-    urls = {
-        'task': '{baseUrl}/task/{taskId}',
-        'status': '{baseUrl}/task/{taskId}/status',
-        'listTaskGroup': '{baseUrl}/task-group/{taskGroupId}/list',
-        'createTask': '{baseUrl}/task/{taskId}',
-        'defineTask': '{baseUrl}/task/{taskId}/define',
-        'scheduleTask': '{baseUrl}/task/{taskId}/schedule',
-        'rerunTask': '{baseUrl}/task/{taskId}/rerun',
-        'cancelTask': '{baseUrl}/task/{taskId}/cancel',
-        'pollTaskUrls': '{baseUrl}/poll-task-url/{provisionerId}/{workerType}',
-        'claimTask': '{baseUrl}/task/{taskId}/runs/{runId}/claim',
-        'reclaimTask': '{baseUrl}/task/{taskId}/runs/{runId}/reclaim',
-        'reportCompleted': '{baseUrl}/task/{taskId}/runs/{runId}/completed',
-        'reportFailed': '{baseUrl}/task/{taskId}/runs/{runId}/failed',
-        'reportException': '{baseUrl}/task/{taskId}/runs/{runId}/exception',
-        'createArtifact': '{baseUrl}/task/{taskId}/runs/{runId}/artifacts/{name}',
-        'getArtifact': '{baseUrl}/task/{taskId}/runs/{runId}/artifacts/{name}',
-        'getLatestArtifact': '{baseUrl}/task/{taskId}/artifacts/{name}',
-        'listArtifacts': '{baseUrl}/task/{taskId}/runs/{runId}/artifacts',
-        'listLatestArtifacts': '{baseUrl}/task/{taskId}/artifacts',
-        'pendingTasks': '{baseUrl}/pending/{provisionerId}/{workerType}',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'task': '/task/{taskId}',
+        'status': '/task/{taskId}/status',
+        'listTaskGroup': '/task-group/{taskGroupId}/list',
+        'createTask': '/task/{taskId}',
+        'defineTask': '/task/{taskId}/define',
+        'scheduleTask': '/task/{taskId}/schedule',
+        'rerunTask': '/task/{taskId}/rerun',
+        'cancelTask': '/task/{taskId}/cancel',
+        'pollTaskUrls': '/poll-task-url/{provisionerId}/{workerType}',
+        'claimTask': '/task/{taskId}/runs/{runId}/claim',
+        'reclaimTask': '/task/{taskId}/runs/{runId}/reclaim',
+        'reportCompleted': '/task/{taskId}/runs/{runId}/completed',
+        'reportFailed': '/task/{taskId}/runs/{runId}/failed',
+        'reportException': '/task/{taskId}/runs/{runId}/exception',
+        'createArtifact': '/task/{taskId}/runs/{runId}/artifacts/{name}',
+        'getArtifact': '/task/{taskId}/runs/{runId}/artifacts/{name}',
+        'getLatestArtifact': '/task/{taskId}/artifacts/{name}',
+        'listArtifacts': '/task/{taskId}/runs/{runId}/artifacts',
+        'listLatestArtifacts': '/task/{taskId}/artifacts',
+        'pendingTasks': '/pending/{provisionerId}/{workerType}',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -67,11 +67,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['task'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('task', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def status(self, taskId):
         '''
@@ -82,13 +81,12 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['status'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('status', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('get', route)
 
-    def listTaskGroup(self, taskGroupId):
+    def listTaskGroup(self, taskGroupId, options=None):
         '''
         List Task Group
 
@@ -112,11 +110,11 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskGroupId``
         '''
-        url = self.urls['listTaskGroup'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGroupId=taskGroupId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listTaskGroup', replDict={
+            'taskGroupId': taskGroupId,
+        })
+        validOptions = ['continuationToken', 'limit']
+        return self._makeHttpRequest('get', route, options=options, validOptions=validOptions)
 
     def createTask(self, taskId, payload):
         '''
@@ -146,11 +144,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['createTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createTask', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def defineTask(self, taskId, payload):
         '''
@@ -177,11 +174,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['defineTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('defineTask', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def scheduleTask(self, taskId):
         '''
@@ -199,11 +195,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['scheduleTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('scheduleTask', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def rerunTask(self, taskId):
         '''
@@ -225,11 +220,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['rerunTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('rerunTask', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def cancelTask(self, taskId):
         '''
@@ -251,11 +245,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['cancelTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('cancelTask', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def pollTaskUrls(self, provisionerId, workerType):
         '''
@@ -269,12 +262,11 @@ class Queue(baseclient.BaseClient):
         - ``provisionerId``
         - ``workerType``
         '''
-        url = self.urls['pollTaskUrls'].format(
-            baseUrl=self.options['baseUrl'],
-            provisionerId=provisionerId,
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('pollTaskUrls', replDict={
+            'provisionerId': provisionerId,
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('get', route)
 
     def claimTask(self, taskId, runId, payload):
         '''
@@ -286,12 +278,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['claimTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('claimTask', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def reclaimTask(self, taskId, runId):
         '''
@@ -303,12 +294,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['reclaimTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('reclaimTask', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def reportCompleted(self, taskId, runId):
         '''
@@ -320,12 +310,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['reportCompleted'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('reportCompleted', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def reportFailed(self, taskId, runId):
         '''
@@ -343,12 +332,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['reportFailed'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('reportFailed', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def reportException(self, taskId, runId, payload):
         '''
@@ -371,12 +359,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['reportException'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('reportException', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def createArtifact(self, taskId, runId, name, payload):
         '''
@@ -447,13 +434,12 @@ class Queue(baseclient.BaseClient):
         - ``runId``
         - ``name``
         '''
-        url = self.urls['createArtifact'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-            name=name,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('createArtifact', replDict={
+            'taskId': taskId,
+            'runId': runId,
+            'name': name,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def getArtifact(self, taskId, runId, name):
         '''
@@ -476,13 +462,12 @@ class Queue(baseclient.BaseClient):
         - ``runId``
         - ``name``
         '''
-        url = self.urls['getArtifact'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-            name=name,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getArtifact', replDict={
+            'taskId': taskId,
+            'runId': runId,
+            'name': name,
+        })
+        return self._makeHttpRequest('get', route)
 
     def getLatestArtifact(self, taskId, name):
         '''
@@ -508,12 +493,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``name``
         '''
-        url = self.urls['getLatestArtifact'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            name=name,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getLatestArtifact', replDict={
+            'taskId': taskId,
+            'name': name,
+        })
+        return self._makeHttpRequest('get', route)
 
     def listArtifacts(self, taskId, runId):
         '''
@@ -525,12 +509,11 @@ class Queue(baseclient.BaseClient):
         - ``taskId``
         - ``runId``
         '''
-        url = self.urls['listArtifacts'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-            runId=runId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listArtifacts', replDict={
+            'taskId': taskId,
+            'runId': runId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def listLatestArtifacts(self, taskId):
         '''
@@ -542,11 +525,10 @@ class Queue(baseclient.BaseClient):
         This method takes:
         - ``taskId``
         '''
-        url = self.urls['listLatestArtifacts'].format(
-            baseUrl=self.options['baseUrl'],
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listLatestArtifacts', replDict={
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def pendingTasks(self, provisionerId, workerType):
         '''
@@ -564,12 +546,11 @@ class Queue(baseclient.BaseClient):
         - ``provisionerId``
         - ``workerType``
         '''
-        url = self.urls['pendingTasks'].format(
-            baseUrl=self.options['baseUrl'],
-            provisionerId=provisionerId,
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('pendingTasks', replDict={
+            'provisionerId': provisionerId,
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -581,7 +562,5 @@ class Queue(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

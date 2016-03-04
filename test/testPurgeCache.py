@@ -16,10 +16,10 @@ class TestPurgeCache(GeneratedTC):
     """
     testClass = FakePurgeCache
 
-    def test_urls(self):
+    def test_routes(self):
         """TestPurgeCache | all urls match the json baseUrls
         """
-        self.url_check('PurgeCache')
+        self.route_check('PurgeCache')
 
     def test_routingKeys(self):
         """TestPurgeCache | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestPurgeCache(GeneratedTC):
         self.routingKeys_check('PurgeCache')
 
     def test_purgeCache(self):
-        """TestPurgeCache | PurgeCache.purgeCache unsigned
+        """TestPurgeCache | PurgeCache.purgeCache
         """
         self.try_function(
             'purgeCache',
@@ -36,7 +36,7 @@ class TestPurgeCache(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestPurgeCache | PurgeCache.ping unsigned
+        """TestPurgeCache | PurgeCache.ping
         """
         self.try_function(
             'ping',

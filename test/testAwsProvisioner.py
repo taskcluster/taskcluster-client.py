@@ -16,10 +16,10 @@ class TestAwsProvisioner(GeneratedTC):
     """
     testClass = FakeAwsProvisioner
 
-    def test_urls(self):
+    def test_routes(self):
         """TestAwsProvisioner | all urls match the json baseUrls
         """
-        self.url_check('AwsProvisioner')
+        self.route_check('AwsProvisioner')
 
     def test_routingKeys(self):
         """TestAwsProvisioner | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestAwsProvisioner(GeneratedTC):
         self.routingKeys_check('AwsProvisioner')
 
     def test_createWorkerType(self):
-        """TestAwsProvisioner | AwsProvisioner.createWorkerType unsigned
+        """TestAwsProvisioner | AwsProvisioner.createWorkerType
         """
         self.try_function(
             'createWorkerType',
@@ -36,7 +36,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_updateWorkerType(self):
-        """TestAwsProvisioner | AwsProvisioner.updateWorkerType unsigned
+        """TestAwsProvisioner | AwsProvisioner.updateWorkerType
         """
         self.try_function(
             'updateWorkerType',
@@ -45,7 +45,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_workerType(self):
-        """TestAwsProvisioner | AwsProvisioner.workerType unsigned
+        """TestAwsProvisioner | AwsProvisioner.workerType
         """
         self.try_function(
             'workerType',
@@ -54,7 +54,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_removeWorkerType(self):
-        """TestAwsProvisioner | AwsProvisioner.removeWorkerType unsigned
+        """TestAwsProvisioner | AwsProvisioner.removeWorkerType
         """
         self.try_function(
             'removeWorkerType',
@@ -63,7 +63,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_listWorkerTypes(self):
-        """TestAwsProvisioner | AwsProvisioner.listWorkerTypes unsigned
+        """TestAwsProvisioner | AwsProvisioner.listWorkerTypes
         """
         self.try_function(
             'listWorkerTypes',
@@ -72,7 +72,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_createSecret(self):
-        """TestAwsProvisioner | AwsProvisioner.createSecret unsigned
+        """TestAwsProvisioner | AwsProvisioner.createSecret
         """
         self.try_function(
             'createSecret',
@@ -81,7 +81,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_getSecret(self):
-        """TestAwsProvisioner | AwsProvisioner.getSecret unsigned
+        """TestAwsProvisioner | AwsProvisioner.getSecret
         """
         self.try_function(
             'getSecret',
@@ -90,7 +90,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_instanceStarted(self):
-        """TestAwsProvisioner | AwsProvisioner.instanceStarted unsigned
+        """TestAwsProvisioner | AwsProvisioner.instanceStarted
         """
         self.try_function(
             'instanceStarted',
@@ -99,7 +99,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_removeSecret(self):
-        """TestAwsProvisioner | AwsProvisioner.removeSecret unsigned
+        """TestAwsProvisioner | AwsProvisioner.removeSecret
         """
         self.try_function(
             'removeSecret',
@@ -108,7 +108,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_getLaunchSpecs(self):
-        """TestAwsProvisioner | AwsProvisioner.getLaunchSpecs unsigned
+        """TestAwsProvisioner | AwsProvisioner.getLaunchSpecs
         """
         self.try_function(
             'getLaunchSpecs',
@@ -117,7 +117,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_awsState(self):
-        """TestAwsProvisioner | AwsProvisioner.awsState unsigned
+        """TestAwsProvisioner | AwsProvisioner.awsState
         """
         self.try_function(
             'awsState',
@@ -126,7 +126,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_state(self):
-        """TestAwsProvisioner | AwsProvisioner.state unsigned
+        """TestAwsProvisioner | AwsProvisioner.state
         """
         self.try_function(
             'state',
@@ -135,7 +135,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestAwsProvisioner | AwsProvisioner.ping unsigned
+        """TestAwsProvisioner | AwsProvisioner.ping
         """
         self.try_function(
             'ping',
@@ -144,7 +144,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_backendStatus(self):
-        """TestAwsProvisioner | AwsProvisioner.backendStatus unsigned
+        """TestAwsProvisioner | AwsProvisioner.backendStatus
         """
         self.try_function(
             'backendStatus',
@@ -153,7 +153,7 @@ class TestAwsProvisioner(GeneratedTC):
         )
 
     def test_apiReference(self):
-        """TestAwsProvisioner | AwsProvisioner.apiReference unsigned
+        """TestAwsProvisioner | AwsProvisioner.apiReference
         """
         self.try_function(
             'apiReference',

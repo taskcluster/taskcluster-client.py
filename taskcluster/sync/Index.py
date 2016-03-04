@@ -107,13 +107,13 @@ class Index(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/index/v1/api.json'
-    urls = {
-        'findTask': '{baseUrl}/task/{namespace}',
-        'listNamespaces': '{baseUrl}/namespaces/{namespace}',
-        'listTasks': '{baseUrl}/tasks/{namespace}',
-        'insertTask': '{baseUrl}/task/{namespace}',
-        'findArtifactFromTask': '{baseUrl}/task/{namespace}/artifacts/{name}',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'findTask': '/task/{namespace}',
+        'listNamespaces': '/namespaces/{namespace}',
+        'listTasks': '/tasks/{namespace}',
+        'insertTask': '/task/{namespace}',
+        'findArtifactFromTask': '/task/{namespace}/artifacts/{name}',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -131,11 +131,10 @@ class Index(baseclient.BaseClient):
         This method takes:
         - ``namespace``
         '''
-        url = self.urls['findTask'].format(
-            baseUrl=self.options['baseUrl'],
-            namespace=namespace,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('findTask', replDict={
+            'namespace': namespace,
+        })
+        return self._makeHttpRequest('get', route)
 
     def listNamespaces(self, namespace, payload):
         '''
@@ -153,11 +152,10 @@ class Index(baseclient.BaseClient):
         This method takes:
         - ``namespace``
         '''
-        url = self.urls['listNamespaces'].format(
-            baseUrl=self.options['baseUrl'],
-            namespace=namespace,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('listNamespaces', replDict={
+            'namespace': namespace,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def listTasks(self, namespace, payload):
         '''
@@ -175,11 +173,10 @@ class Index(baseclient.BaseClient):
         This method takes:
         - ``namespace``
         '''
-        url = self.urls['listTasks'].format(
-            baseUrl=self.options['baseUrl'],
-            namespace=namespace,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('listTasks', replDict={
+            'namespace': namespace,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def insertTask(self, namespace, payload):
         '''
@@ -191,11 +188,10 @@ class Index(baseclient.BaseClient):
         This method takes:
         - ``namespace``
         '''
-        url = self.urls['insertTask'].format(
-            baseUrl=self.options['baseUrl'],
-            namespace=namespace,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('insertTask', replDict={
+            'namespace': namespace,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def findArtifactFromTask(self, namespace, name):
         '''
@@ -209,12 +205,11 @@ class Index(baseclient.BaseClient):
         - ``namespace``
         - ``name``
         '''
-        url = self.urls['findArtifactFromTask'].format(
-            baseUrl=self.options['baseUrl'],
-            namespace=namespace,
-            name=name,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('findArtifactFromTask', replDict={
+            'namespace': namespace,
+            'name': name,
+        })
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -226,7 +221,5 @@ class Index(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

@@ -16,10 +16,10 @@ class TestSecrets(GeneratedTC):
     """
     testClass = FakeSecrets
 
-    def test_urls(self):
+    def test_routes(self):
         """TestSecrets | all urls match the json baseUrls
         """
-        self.url_check('Secrets')
+        self.route_check('Secrets')
 
     def test_routingKeys(self):
         """TestSecrets | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestSecrets(GeneratedTC):
         self.routingKeys_check('Secrets')
 
     def test_set(self):
-        """TestSecrets | Secrets.set unsigned
+        """TestSecrets | Secrets.set
         """
         self.try_function(
             'set',
@@ -36,7 +36,7 @@ class TestSecrets(GeneratedTC):
         )
 
     def test_remove(self):
-        """TestSecrets | Secrets.remove unsigned
+        """TestSecrets | Secrets.remove
         """
         self.try_function(
             'remove',
@@ -45,7 +45,7 @@ class TestSecrets(GeneratedTC):
         )
 
     def test_get(self):
-        """TestSecrets | Secrets.get unsigned
+        """TestSecrets | Secrets.get
         """
         self.try_function(
             'get',
@@ -54,7 +54,7 @@ class TestSecrets(GeneratedTC):
         )
 
     def test_list(self):
-        """TestSecrets | Secrets.list unsigned
+        """TestSecrets | Secrets.list
         """
         self.try_function(
             'list',
@@ -63,7 +63,7 @@ class TestSecrets(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestSecrets | Secrets.ping unsigned
+        """TestSecrets | Secrets.ping
         """
         self.try_function(
             'ping',

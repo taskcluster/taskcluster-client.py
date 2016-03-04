@@ -16,10 +16,10 @@ class TestHooks(GeneratedTC):
     """
     testClass = FakeHooks
 
-    def test_urls(self):
+    def test_routes(self):
         """TestHooks | all urls match the json baseUrls
         """
-        self.url_check('Hooks')
+        self.route_check('Hooks')
 
     def test_routingKeys(self):
         """TestHooks | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestHooks(GeneratedTC):
         self.routingKeys_check('Hooks')
 
     def test_listHookGroups(self):
-        """TestHooks | Hooks.listHookGroups unsigned
+        """TestHooks | Hooks.listHookGroups
         """
         self.try_function(
             'listHookGroups',
@@ -36,7 +36,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_listHooks(self):
-        """TestHooks | Hooks.listHooks unsigned
+        """TestHooks | Hooks.listHooks
         """
         self.try_function(
             'listHooks',
@@ -45,7 +45,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_hook(self):
-        """TestHooks | Hooks.hook unsigned
+        """TestHooks | Hooks.hook
         """
         self.try_function(
             'hook',
@@ -54,7 +54,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_getHookStatus(self):
-        """TestHooks | Hooks.getHookStatus unsigned
+        """TestHooks | Hooks.getHookStatus
         """
         self.try_function(
             'getHookStatus',
@@ -63,7 +63,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_getHookSchedule(self):
-        """TestHooks | Hooks.getHookSchedule unsigned
+        """TestHooks | Hooks.getHookSchedule
         """
         self.try_function(
             'getHookSchedule',
@@ -72,7 +72,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_createHook(self):
-        """TestHooks | Hooks.createHook unsigned
+        """TestHooks | Hooks.createHook
         """
         self.try_function(
             'createHook',
@@ -81,7 +81,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_updateHook(self):
-        """TestHooks | Hooks.updateHook unsigned
+        """TestHooks | Hooks.updateHook
         """
         self.try_function(
             'updateHook',
@@ -90,7 +90,7 @@ class TestHooks(GeneratedTC):
         )
 
     def test_removeHook(self):
-        """TestHooks | Hooks.removeHook unsigned
+        """TestHooks | Hooks.removeHook
         """
         self.try_function(
             'removeHook',

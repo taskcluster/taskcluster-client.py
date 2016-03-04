@@ -9,7 +9,6 @@ import hmac
 import datetime
 import calendar
 import six
-from six.moves import urllib
 
 from taskcluster.baseclient import API_CONFIG, BaseClient, config
 import taskcluster.exceptions as exceptions
@@ -134,31 +133,23 @@ class RuntimeClient(BaseClient):
                 'Requested method "%s" not found in API Reference' % methodName)
         apiArgs = self._processArgs(entry, *args, **kwargs)
         route = self._subArgsInRoute(entry, apiArgs)
-        return self.options['baseUrl'] + '/' + route
+        return self.makeFullUrl(route)
 
     def buildSignedUrl(self, methodName, *args, **kwargs):
         expiration = kwargs.get('expiration')
         if 'expiration' in kwargs:
             del kwargs['expiration']
-        requestUrl = self.buildUrl(methodName, *args, **kwargs)
-        return super(RuntimeClient, self).buildSignedUrl(requestUrl, expiration=expiration)
+        return super(RuntimeClient, self).buildSignedUrl(
+            requestUrl=self.buildUrl(methodName, *args, **kwargs),
+            expiration=expiration
+        )
 
-    def _subArgsInRoute(self, entry, args):
-        """ Given a route like "/task/<taskId>/artifacts" and a mapping like
-        {"taskId": "12345"}, return a string like "/task/12345/artifacts"
+    def _subArgsInRoute(self, entry, replDict):
+        """ Here for backwards compatibility only.
+
+        Use self.makeRoute.
         """
-
-        route = entry['route']
-
-        for arg, val in six.iteritems(args):
-            toReplace = "<%s>" % arg
-            if toReplace not in route:
-                raise exceptions.TaskclusterFailure(
-                    'Arg %s not found in route for %s' % (arg, entry['name']))
-            val = urllib.parse.quote(str(val).encode("utf-8"), '')
-            route = route.replace("<%s>" % arg, val)
-
-        return route.lstrip('/')
+        return self.makeRoute(entry['name'], entry['route'], replDict)
 
 
 def createApiClient(name, api):

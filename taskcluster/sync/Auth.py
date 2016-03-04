@@ -62,28 +62,28 @@ class Auth(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/auth/v1/api.json'
-    urls = {
-        'listClients': '{baseUrl}/clients/',
-        'client': '{baseUrl}/clients/{clientId}',
-        'createClient': '{baseUrl}/clients/{clientId}',
-        'resetAccessToken': '{baseUrl}/clients/{clientId}/reset',
-        'updateClient': '{baseUrl}/clients/{clientId}',
-        'enableClient': '{baseUrl}/clients/{clientId}/enable',
-        'disableClient': '{baseUrl}/clients/{clientId}/disable',
-        'deleteClient': '{baseUrl}/clients/{clientId}',
-        'listRoles': '{baseUrl}/roles/',
-        'role': '{baseUrl}/roles/{roleId}',
-        'createRole': '{baseUrl}/roles/{roleId}',
-        'updateRole': '{baseUrl}/roles/{roleId}',
-        'deleteRole': '{baseUrl}/roles/{roleId}',
-        'expandScopes': '{baseUrl}/scopes/expand',
-        'currentScopes': '{baseUrl}/scopes/current',
-        'awsS3Credentials': '{baseUrl}/aws/s3/{level}/{bucket}/{prefix}',
-        'azureTableSAS': '{baseUrl}/azure/{account}/table/{table}/read-write',
-        'authenticateHawk': '{baseUrl}/authenticate-hawk',
-        'testAuthenticate': '{baseUrl}/test-authenticate',
-        'testAuthenticateGet': '{baseUrl}/test-authenticate-get/',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'listClients': '/clients/',
+        'client': '/clients/{clientId}',
+        'createClient': '/clients/{clientId}',
+        'resetAccessToken': '/clients/{clientId}/reset',
+        'updateClient': '/clients/{clientId}',
+        'enableClient': '/clients/{clientId}/enable',
+        'disableClient': '/clients/{clientId}/disable',
+        'deleteClient': '/clients/{clientId}',
+        'listRoles': '/roles/',
+        'role': '/roles/{roleId}',
+        'createRole': '/roles/{roleId}',
+        'updateRole': '/roles/{roleId}',
+        'deleteRole': '/roles/{roleId}',
+        'expandScopes': '/scopes/expand',
+        'currentScopes': '/scopes/current',
+        'awsS3Credentials': '/aws/s3/{level}/{bucket}/{prefix}',
+        'azureTableSAS': '/azure/{account}/table/{table}/read-write',
+        'authenticateHawk': '/authenticate-hawk',
+        'testAuthenticate': '/test-authenticate',
+        'testAuthenticateGet': '/test-authenticate-get/',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -91,7 +91,7 @@ class Auth(baseclient.BaseClient):
         self.classOptions['baseUrl'] = 'https://auth.taskcluster.net/v1'
         super(Auth, self).__init__(*args, **kwargs)
 
-    def listClients(self):
+    def listClients(self, options=None):
         '''
         List Clients
 
@@ -100,10 +100,9 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['listClients'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listClients')
+        validOptions = ['prefix']
+        return self._makeHttpRequest('get', route, options=options, validOptions=validOptions)
 
     def client(self, clientId):
         '''
@@ -114,11 +113,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['client'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('client', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def createClient(self, clientId, payload):
         '''
@@ -140,11 +138,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['createClient'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createClient', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def resetAccessToken(self, clientId):
         '''
@@ -160,11 +157,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['resetAccessToken'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('resetAccessToken', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def updateClient(self, clientId, payload):
         '''
@@ -179,11 +175,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['updateClient'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('updateClient', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def enableClient(self, clientId):
         '''
@@ -198,11 +193,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['enableClient'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('enableClient', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def disableClient(self, clientId):
         '''
@@ -216,11 +210,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['disableClient'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('disableClient', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('post', route)
 
     def deleteClient(self, clientId):
         '''
@@ -232,11 +225,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``clientId``
         '''
-        url = self.urls['deleteClient'].format(
-            baseUrl=self.options['baseUrl'],
-            clientId=clientId,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('deleteClient', replDict={
+            'clientId': clientId,
+        })
+        return self._makeHttpRequest('delete', route)
 
     def listRoles(self):
         '''
@@ -247,10 +239,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['listRoles'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listRoles')
+        return self._makeHttpRequest('get', route)
 
     def role(self, roleId):
         '''
@@ -262,11 +252,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``roleId``
         '''
-        url = self.urls['role'].format(
-            baseUrl=self.options['baseUrl'],
-            roleId=roleId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('role', replDict={
+            'roleId': roleId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def createRole(self, roleId, payload):
         '''
@@ -282,11 +271,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``roleId``
         '''
-        url = self.urls['createRole'].format(
-            baseUrl=self.options['baseUrl'],
-            roleId=roleId,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createRole', replDict={
+            'roleId': roleId,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def updateRole(self, roleId, payload):
         '''
@@ -300,11 +288,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``roleId``
         '''
-        url = self.urls['updateRole'].format(
-            baseUrl=self.options['baseUrl'],
-            roleId=roleId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('updateRole', replDict={
+            'roleId': roleId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def deleteRole(self, roleId):
         '''
@@ -316,11 +303,10 @@ class Auth(baseclient.BaseClient):
         This method takes:
         - ``roleId``
         '''
-        url = self.urls['deleteRole'].format(
-            baseUrl=self.options['baseUrl'],
-            roleId=roleId,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('deleteRole', replDict={
+            'roleId': roleId,
+        })
+        return self._makeHttpRequest('delete', route)
 
     def expandScopes(self, payload):
         '''
@@ -331,10 +317,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['expandScopes'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url, payload)
+        route = self.makeRoute('expandScopes')
+        return self._makeHttpRequest('get', route, payload)
 
     def currentScopes(self):
         '''
@@ -346,10 +330,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['currentScopes'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('currentScopes')
+        return self._makeHttpRequest('get', route)
 
     def awsS3Credentials(self, level, bucket, prefix):
         '''
@@ -380,13 +362,12 @@ class Auth(baseclient.BaseClient):
         - ``bucket``
         - ``prefix``
         '''
-        url = self.urls['awsS3Credentials'].format(
-            baseUrl=self.options['baseUrl'],
-            level=level,
-            bucket=bucket,
-            prefix=prefix,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('awsS3Credentials', replDict={
+            'level': level,
+            'bucket': bucket,
+            'prefix': prefix,
+        })
+        return self._makeHttpRequest('get', route)
 
     def azureTableSAS(self, account, table):
         '''
@@ -400,12 +381,11 @@ class Auth(baseclient.BaseClient):
         - ``account``
         - ``table``
         '''
-        url = self.urls['azureTableSAS'].format(
-            baseUrl=self.options['baseUrl'],
-            account=account,
-            table=table,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('azureTableSAS', replDict={
+            'account': account,
+            'table': table,
+        })
+        return self._makeHttpRequest('get', route)
 
     def authenticateHawk(self, payload):
         '''
@@ -420,10 +400,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['authenticateHawk'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('authenticateHawk')
+        return self._makeHttpRequest('post', route, payload)
 
     def testAuthenticate(self, payload):
         '''
@@ -443,10 +421,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['testAuthenticate'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('testAuthenticate')
+        return self._makeHttpRequest('post', route, payload)
 
     def testAuthenticateGet(self):
         '''
@@ -470,10 +446,8 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['testAuthenticateGet'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('testAuthenticateGet')
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -485,7 +459,5 @@ class Auth(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

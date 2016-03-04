@@ -712,9 +712,7 @@ class TestAuthentication(base.TCTest):
                 'accessToken': 'no-secret',
             }
         })
-        signedUrl = client.buildSignedUrl(
-            client.urls['testAuthenticateGet'].format(baseUrl=client.options['baseUrl'])
-        )
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
         response = requests.get(signedUrl)
         response.raise_for_status()
         response = response.json()
@@ -731,9 +729,7 @@ class TestAuthentication(base.TCTest):
                 'accessToken': 'wrong-secret',
             }
         })
-        signedUrl = client.buildSignedUrl(
-            client.urls['testAuthenticateGet'].format(baseUrl=client.options['baseUrl'])
-        )
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
         response = requests.get(signedUrl)
         with self.assertRaises(requests.exceptions.RequestException):
             response.raise_for_status()
@@ -750,9 +746,7 @@ class TestAuthentication(base.TCTest):
         client = subject.Auth({
             'credentials': tempCred,
         })
-        signedUrl = client.buildSignedUrl(
-            client.urls['testAuthenticateGet'].format(baseUrl=client.options['baseUrl'])
-        )
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
         response = requests.get(signedUrl)
         response.raise_for_status()
         response = response.json()
@@ -769,9 +763,7 @@ class TestAuthentication(base.TCTest):
             },
             'authorizedScopes': ['test:authenticate-get'],
         })
-        signedUrl = client.buildSignedUrl(
-            client.urls['testAuthenticateGet'].format(baseUrl=client.options['baseUrl'])
-        )
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
         response = requests.get(signedUrl)
         response.raise_for_status()
         response = response.json()
@@ -792,9 +784,7 @@ class TestAuthentication(base.TCTest):
             'credentials': tempCred,
             'authorizedScopes': ['test:authenticate-get'],
         })
-        signedUrl = client.buildSignedUrl(
-            client.urls['testAuthenticateGet'].format(baseUrl=client.options['baseUrl'])
-        )
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
         response = requests.get(signedUrl)
         response.raise_for_status()
         response = response.json()

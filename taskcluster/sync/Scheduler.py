@@ -28,14 +28,14 @@ class Scheduler(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/scheduler/v1/api.json'
-    urls = {
-        'createTaskGraph': '{baseUrl}/task-graph/{taskGraphId}',
-        'extendTaskGraph': '{baseUrl}/task-graph/{taskGraphId}/extend',
-        'status': '{baseUrl}/task-graph/{taskGraphId}/status',
-        'info': '{baseUrl}/task-graph/{taskGraphId}/info',
-        'inspect': '{baseUrl}/task-graph/{taskGraphId}/inspect',
-        'inspectTask': '{baseUrl}/task-graph/{taskGraphId}/inspect/{taskId}',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'createTaskGraph': '/task-graph/{taskGraphId}',
+        'extendTaskGraph': '/task-graph/{taskGraphId}/extend',
+        'status': '/task-graph/{taskGraphId}/status',
+        'info': '/task-graph/{taskGraphId}/info',
+        'inspect': '/task-graph/{taskGraphId}/inspect',
+        'inspectTask': '/task-graph/{taskGraphId}/inspect/{taskId}',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -114,11 +114,10 @@ class Scheduler(baseclient.BaseClient):
         This method takes:
         - ``taskGraphId``
         '''
-        url = self.urls['createTaskGraph'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createTaskGraph', replDict={
+            'taskGraphId': taskGraphId,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def extendTaskGraph(self, taskGraphId, payload):
         '''
@@ -141,11 +140,10 @@ class Scheduler(baseclient.BaseClient):
         This method takes:
         - ``taskGraphId``
         '''
-        url = self.urls['extendTaskGraph'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('extendTaskGraph', replDict={
+            'taskGraphId': taskGraphId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def status(self, taskGraphId):
         '''
@@ -160,11 +158,10 @@ class Scheduler(baseclient.BaseClient):
         This method takes:
         - ``taskGraphId``
         '''
-        url = self.urls['status'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('status', replDict={
+            'taskGraphId': taskGraphId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def info(self, taskGraphId):
         '''
@@ -180,11 +177,10 @@ class Scheduler(baseclient.BaseClient):
         This method takes:
         - ``taskGraphId``
         '''
-        url = self.urls['info'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('info', replDict={
+            'taskGraphId': taskGraphId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def inspect(self, taskGraphId):
         '''
@@ -206,11 +202,10 @@ class Scheduler(baseclient.BaseClient):
         This method takes:
         - ``taskGraphId``
         '''
-        url = self.urls['inspect'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('inspect', replDict={
+            'taskGraphId': taskGraphId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def inspectTask(self, taskGraphId, taskId):
         '''
@@ -233,12 +228,11 @@ class Scheduler(baseclient.BaseClient):
         - ``taskGraphId``
         - ``taskId``
         '''
-        url = self.urls['inspectTask'].format(
-            baseUrl=self.options['baseUrl'],
-            taskGraphId=taskGraphId,
-            taskId=taskId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('inspectTask', replDict={
+            'taskGraphId': taskGraphId,
+            'taskId': taskId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -250,7 +244,5 @@ class Scheduler(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

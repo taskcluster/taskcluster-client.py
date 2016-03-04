@@ -16,10 +16,10 @@ class TestIndex(GeneratedTC):
     """
     testClass = FakeIndex
 
-    def test_urls(self):
+    def test_routes(self):
         """TestIndex | all urls match the json baseUrls
         """
-        self.url_check('Index')
+        self.route_check('Index')
 
     def test_routingKeys(self):
         """TestIndex | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestIndex(GeneratedTC):
         self.routingKeys_check('Index')
 
     def test_findTask(self):
-        """TestIndex | Index.findTask unsigned
+        """TestIndex | Index.findTask
         """
         self.try_function(
             'findTask',
@@ -36,7 +36,7 @@ class TestIndex(GeneratedTC):
         )
 
     def test_listNamespaces(self):
-        """TestIndex | Index.listNamespaces unsigned
+        """TestIndex | Index.listNamespaces
         """
         self.try_function(
             'listNamespaces',
@@ -45,7 +45,7 @@ class TestIndex(GeneratedTC):
         )
 
     def test_listTasks(self):
-        """TestIndex | Index.listTasks unsigned
+        """TestIndex | Index.listTasks
         """
         self.try_function(
             'listTasks',
@@ -54,7 +54,7 @@ class TestIndex(GeneratedTC):
         )
 
     def test_insertTask(self):
-        """TestIndex | Index.insertTask unsigned
+        """TestIndex | Index.insertTask
         """
         self.try_function(
             'insertTask',
@@ -63,7 +63,7 @@ class TestIndex(GeneratedTC):
         )
 
     def test_findArtifactFromTask(self):
-        """TestIndex | Index.findArtifactFromTask unsigned
+        """TestIndex | Index.findArtifactFromTask
         """
         self.try_function(
             'findArtifactFromTask',
@@ -72,7 +72,7 @@ class TestIndex(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestIndex | Index.ping unsigned
+        """TestIndex | Index.ping
         """
         self.try_function(
             'ping',

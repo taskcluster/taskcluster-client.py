@@ -16,10 +16,10 @@ class TestGithub(GeneratedTC):
     """
     testClass = FakeGithub
 
-    def test_urls(self):
+    def test_routes(self):
         """TestGithub | all urls match the json baseUrls
         """
-        self.url_check('Github')
+        self.route_check('Github')
 
     def test_routingKeys(self):
         """TestGithub | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestGithub(GeneratedTC):
         self.routingKeys_check('Github')
 
     def test_githubWebHookConsumer(self):
-        """TestGithub | Github.githubWebHookConsumer unsigned
+        """TestGithub | Github.githubWebHookConsumer
         """
         self.try_function(
             'githubWebHookConsumer',
@@ -36,7 +36,7 @@ class TestGithub(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestGithub | Github.ping unsigned
+        """TestGithub | Github.ping
         """
         self.try_function(
             'ping',

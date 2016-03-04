@@ -16,10 +16,10 @@ class TestAuth(GeneratedTC):
     """
     testClass = FakeAuth
 
-    def test_urls(self):
+    def test_routes(self):
         """TestAuth | all urls match the json baseUrls
         """
-        self.url_check('Auth')
+        self.route_check('Auth')
 
     def test_routingKeys(self):
         """TestAuth | all routingKeys match the json routingKeys
@@ -27,16 +27,17 @@ class TestAuth(GeneratedTC):
         self.routingKeys_check('Auth')
 
     def test_listClients(self):
-        """TestAuth | Auth.listClients unsigned
+        """TestAuth | Auth.listClients
         """
         self.try_function(
             'listClients',
             'get',
             argumentNames=[],
+            validOptions=['prefix'],
         )
 
     def test_client(self):
-        """TestAuth | Auth.client unsigned
+        """TestAuth | Auth.client
         """
         self.try_function(
             'client',
@@ -45,7 +46,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_createClient(self):
-        """TestAuth | Auth.createClient unsigned
+        """TestAuth | Auth.createClient
         """
         self.try_function(
             'createClient',
@@ -54,7 +55,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_resetAccessToken(self):
-        """TestAuth | Auth.resetAccessToken unsigned
+        """TestAuth | Auth.resetAccessToken
         """
         self.try_function(
             'resetAccessToken',
@@ -63,7 +64,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_updateClient(self):
-        """TestAuth | Auth.updateClient unsigned
+        """TestAuth | Auth.updateClient
         """
         self.try_function(
             'updateClient',
@@ -72,7 +73,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_enableClient(self):
-        """TestAuth | Auth.enableClient unsigned
+        """TestAuth | Auth.enableClient
         """
         self.try_function(
             'enableClient',
@@ -81,7 +82,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_disableClient(self):
-        """TestAuth | Auth.disableClient unsigned
+        """TestAuth | Auth.disableClient
         """
         self.try_function(
             'disableClient',
@@ -90,7 +91,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_deleteClient(self):
-        """TestAuth | Auth.deleteClient unsigned
+        """TestAuth | Auth.deleteClient
         """
         self.try_function(
             'deleteClient',
@@ -99,7 +100,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_listRoles(self):
-        """TestAuth | Auth.listRoles unsigned
+        """TestAuth | Auth.listRoles
         """
         self.try_function(
             'listRoles',
@@ -108,7 +109,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_role(self):
-        """TestAuth | Auth.role unsigned
+        """TestAuth | Auth.role
         """
         self.try_function(
             'role',
@@ -117,7 +118,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_createRole(self):
-        """TestAuth | Auth.createRole unsigned
+        """TestAuth | Auth.createRole
         """
         self.try_function(
             'createRole',
@@ -126,7 +127,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_updateRole(self):
-        """TestAuth | Auth.updateRole unsigned
+        """TestAuth | Auth.updateRole
         """
         self.try_function(
             'updateRole',
@@ -135,7 +136,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_deleteRole(self):
-        """TestAuth | Auth.deleteRole unsigned
+        """TestAuth | Auth.deleteRole
         """
         self.try_function(
             'deleteRole',
@@ -144,7 +145,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_expandScopes(self):
-        """TestAuth | Auth.expandScopes unsigned
+        """TestAuth | Auth.expandScopes
         """
         self.try_function(
             'expandScopes',
@@ -153,7 +154,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_currentScopes(self):
-        """TestAuth | Auth.currentScopes unsigned
+        """TestAuth | Auth.currentScopes
         """
         self.try_function(
             'currentScopes',
@@ -162,7 +163,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_awsS3Credentials(self):
-        """TestAuth | Auth.awsS3Credentials unsigned
+        """TestAuth | Auth.awsS3Credentials
         """
         self.try_function(
             'awsS3Credentials',
@@ -171,7 +172,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_azureTableSAS(self):
-        """TestAuth | Auth.azureTableSAS unsigned
+        """TestAuth | Auth.azureTableSAS
         """
         self.try_function(
             'azureTableSAS',
@@ -180,7 +181,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_authenticateHawk(self):
-        """TestAuth | Auth.authenticateHawk unsigned
+        """TestAuth | Auth.authenticateHawk
         """
         self.try_function(
             'authenticateHawk',
@@ -189,7 +190,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_testAuthenticate(self):
-        """TestAuth | Auth.testAuthenticate unsigned
+        """TestAuth | Auth.testAuthenticate
         """
         self.try_function(
             'testAuthenticate',
@@ -198,7 +199,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_testAuthenticateGet(self):
-        """TestAuth | Auth.testAuthenticateGet unsigned
+        """TestAuth | Auth.testAuthenticateGet
         """
         self.try_function(
             'testAuthenticateGet',
@@ -207,7 +208,7 @@ class TestAuth(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestAuth | Auth.ping unsigned
+        """TestAuth | Auth.ping
         """
         self.try_function(
             'ping',

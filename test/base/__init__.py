@@ -148,7 +148,7 @@ class GeneratedTC(TCTest):
             replDict[name] = name
         return replDict
 
-    def try_function(self, functionName, method, argumentNames=None):
+    def try_function(self, functionName, method, argumentNames=None, validOptions=None):
         """For entry functions, verify the _makeHttpRequest arguments are
         correct.
         """
@@ -156,12 +156,15 @@ class GeneratedTC(TCTest):
         argumentNames = argumentNames or []
         kwargs = {}
         replDict = self._get_replDict(argumentNames)
-        expectedUrl = a.urls[functionName].format(**replDict)
+        expectedRoute = a.routes[functionName].format(**replDict).lstrip('/')
         getattr(a, functionName)(*argumentNames, **kwargs)
-        expectedArgs = [method, expectedUrl]
+        if validOptions:
+            kwargs['validOptions'] = validOptions
+            kwargs['options'] = None
+        expectedArgs = [method, expectedRoute]
         if 'payload' in argumentNames:
             expectedArgs.append('payload')
-        a._makeHttpRequest.assert_called_once_with(*expectedArgs)
+        a._makeHttpRequest.assert_called_once_with(*expectedArgs, **kwargs)
 
     def try_topic(self, functionName, exchangeName):
         """For entry topic exchanges, verify the _makeTopicExchange arguments
@@ -177,18 +180,18 @@ class GeneratedTC(TCTest):
             "routingKeyPattern"
         )
 
-    def url_check(self, className):
-        """Make sure self.urls reflects the api.
+    def route_check(self, className):
+        """Make sure self.routes reflects the api.
         """
-        urls = {}
+        routes = {}
         for entry in APIS_JSON[className]['reference']['entries']:
             if entry['type'] == 'function':
-                urls[entry['name']] = '{baseUrl}' + re.sub('<(.*?)>', '{\\1}', (entry['route']))
+                routes[entry['name']] = re.sub('<(.*?)>', '{\\1}', (entry['route']))
         a = self.testClass()
-        if urls:
-            self.assertEqual(urls, a.urls)
+        if routes:
+            self.assertEqual(routes, a.routes)
         else:
-            self.assertFalse(hasattr(a, 'urls'))
+            self.assertFalse(hasattr(a, 'routes'))
 
     def routingKeys_check(self, className):
         """Make sure self.routingKeys reflects the api.

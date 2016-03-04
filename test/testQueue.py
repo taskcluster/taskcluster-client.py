@@ -16,10 +16,10 @@ class TestQueue(GeneratedTC):
     """
     testClass = FakeQueue
 
-    def test_urls(self):
+    def test_routes(self):
         """TestQueue | all urls match the json baseUrls
         """
-        self.url_check('Queue')
+        self.route_check('Queue')
 
     def test_routingKeys(self):
         """TestQueue | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestQueue(GeneratedTC):
         self.routingKeys_check('Queue')
 
     def test_task(self):
-        """TestQueue | Queue.task unsigned
+        """TestQueue | Queue.task
         """
         self.try_function(
             'task',
@@ -36,7 +36,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_status(self):
-        """TestQueue | Queue.status unsigned
+        """TestQueue | Queue.status
         """
         self.try_function(
             'status',
@@ -45,16 +45,17 @@ class TestQueue(GeneratedTC):
         )
 
     def test_listTaskGroup(self):
-        """TestQueue | Queue.listTaskGroup unsigned
+        """TestQueue | Queue.listTaskGroup
         """
         self.try_function(
             'listTaskGroup',
             'get',
             argumentNames=['taskGroupId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_createTask(self):
-        """TestQueue | Queue.createTask unsigned
+        """TestQueue | Queue.createTask
         """
         self.try_function(
             'createTask',
@@ -63,7 +64,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_defineTask(self):
-        """TestQueue | Queue.defineTask unsigned
+        """TestQueue | Queue.defineTask
         """
         self.try_function(
             'defineTask',
@@ -72,7 +73,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_scheduleTask(self):
-        """TestQueue | Queue.scheduleTask unsigned
+        """TestQueue | Queue.scheduleTask
         """
         self.try_function(
             'scheduleTask',
@@ -81,7 +82,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_rerunTask(self):
-        """TestQueue | Queue.rerunTask unsigned
+        """TestQueue | Queue.rerunTask
         """
         self.try_function(
             'rerunTask',
@@ -90,7 +91,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_cancelTask(self):
-        """TestQueue | Queue.cancelTask unsigned
+        """TestQueue | Queue.cancelTask
         """
         self.try_function(
             'cancelTask',
@@ -99,7 +100,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_pollTaskUrls(self):
-        """TestQueue | Queue.pollTaskUrls unsigned
+        """TestQueue | Queue.pollTaskUrls
         """
         self.try_function(
             'pollTaskUrls',
@@ -108,7 +109,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_claimTask(self):
-        """TestQueue | Queue.claimTask unsigned
+        """TestQueue | Queue.claimTask
         """
         self.try_function(
             'claimTask',
@@ -117,7 +118,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_reclaimTask(self):
-        """TestQueue | Queue.reclaimTask unsigned
+        """TestQueue | Queue.reclaimTask
         """
         self.try_function(
             'reclaimTask',
@@ -126,7 +127,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_reportCompleted(self):
-        """TestQueue | Queue.reportCompleted unsigned
+        """TestQueue | Queue.reportCompleted
         """
         self.try_function(
             'reportCompleted',
@@ -135,7 +136,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_reportFailed(self):
-        """TestQueue | Queue.reportFailed unsigned
+        """TestQueue | Queue.reportFailed
         """
         self.try_function(
             'reportFailed',
@@ -144,7 +145,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_reportException(self):
-        """TestQueue | Queue.reportException unsigned
+        """TestQueue | Queue.reportException
         """
         self.try_function(
             'reportException',
@@ -153,7 +154,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_createArtifact(self):
-        """TestQueue | Queue.createArtifact unsigned
+        """TestQueue | Queue.createArtifact
         """
         self.try_function(
             'createArtifact',
@@ -162,7 +163,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_getArtifact(self):
-        """TestQueue | Queue.getArtifact unsigned
+        """TestQueue | Queue.getArtifact
         """
         self.try_function(
             'getArtifact',
@@ -171,7 +172,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_getLatestArtifact(self):
-        """TestQueue | Queue.getLatestArtifact unsigned
+        """TestQueue | Queue.getLatestArtifact
         """
         self.try_function(
             'getLatestArtifact',
@@ -180,7 +181,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_listArtifacts(self):
-        """TestQueue | Queue.listArtifacts unsigned
+        """TestQueue | Queue.listArtifacts
         """
         self.try_function(
             'listArtifacts',
@@ -189,7 +190,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_listLatestArtifacts(self):
-        """TestQueue | Queue.listLatestArtifacts unsigned
+        """TestQueue | Queue.listLatestArtifacts
         """
         self.try_function(
             'listLatestArtifacts',
@@ -198,7 +199,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_pendingTasks(self):
-        """TestQueue | Queue.pendingTasks unsigned
+        """TestQueue | Queue.pendingTasks
         """
         self.try_function(
             'pendingTasks',
@@ -207,7 +208,7 @@ class TestQueue(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestQueue | Queue.ping unsigned
+        """TestQueue | Queue.ping
         """
         self.try_function(
             'ping',

@@ -16,10 +16,10 @@ class TestPurgeCacheEvents(GeneratedTC):
     """
     testClass = FakePurgeCacheEvents
 
-    def test_urls(self):
+    def test_routes(self):
         """TestPurgeCacheEvents | all urls match the json baseUrls
         """
-        self.url_check('PurgeCacheEvents')
+        self.route_check('PurgeCacheEvents')
 
     def test_routingKeys(self):
         """TestPurgeCacheEvents | all routingKeys match the json routingKeys

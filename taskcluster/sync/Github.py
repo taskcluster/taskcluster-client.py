@@ -24,9 +24,9 @@ class Github(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/github/v1/api.json'
-    urls = {
-        'githubWebHookConsumer': '{baseUrl}/github',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'githubWebHookConsumer': '/github',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -43,10 +43,8 @@ class Github(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['githubWebHookConsumer'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('post', url)
+        route = self.makeRoute('githubWebHookConsumer')
+        return self._makeHttpRequest('post', route)
 
     def ping(self):
         '''
@@ -58,7 +56,5 @@ class Github(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

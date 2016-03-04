@@ -16,10 +16,10 @@ class TestScheduler(GeneratedTC):
     """
     testClass = FakeScheduler
 
-    def test_urls(self):
+    def test_routes(self):
         """TestScheduler | all urls match the json baseUrls
         """
-        self.url_check('Scheduler')
+        self.route_check('Scheduler')
 
     def test_routingKeys(self):
         """TestScheduler | all routingKeys match the json routingKeys
@@ -27,7 +27,7 @@ class TestScheduler(GeneratedTC):
         self.routingKeys_check('Scheduler')
 
     def test_createTaskGraph(self):
-        """TestScheduler | Scheduler.createTaskGraph unsigned
+        """TestScheduler | Scheduler.createTaskGraph
         """
         self.try_function(
             'createTaskGraph',
@@ -36,7 +36,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_extendTaskGraph(self):
-        """TestScheduler | Scheduler.extendTaskGraph unsigned
+        """TestScheduler | Scheduler.extendTaskGraph
         """
         self.try_function(
             'extendTaskGraph',
@@ -45,7 +45,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_status(self):
-        """TestScheduler | Scheduler.status unsigned
+        """TestScheduler | Scheduler.status
         """
         self.try_function(
             'status',
@@ -54,7 +54,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_info(self):
-        """TestScheduler | Scheduler.info unsigned
+        """TestScheduler | Scheduler.info
         """
         self.try_function(
             'info',
@@ -63,7 +63,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_inspect(self):
-        """TestScheduler | Scheduler.inspect unsigned
+        """TestScheduler | Scheduler.inspect
         """
         self.try_function(
             'inspect',
@@ -72,7 +72,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_inspectTask(self):
-        """TestScheduler | Scheduler.inspectTask unsigned
+        """TestScheduler | Scheduler.inspectTask
         """
         self.try_function(
             'inspectTask',
@@ -81,7 +81,7 @@ class TestScheduler(GeneratedTC):
         )
 
     def test_ping(self):
-        """TestScheduler | Scheduler.ping unsigned
+        """TestScheduler | Scheduler.ping
         """
         self.try_function(
             'ping',

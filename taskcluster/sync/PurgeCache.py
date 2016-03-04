@@ -24,9 +24,9 @@ class PurgeCache(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/purge-cache/v1/api.json'
-    urls = {
-        'purgeCache': '{baseUrl}/purge-cache/{provisionerId}/{workerType}',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'purgeCache': '/purge-cache/{provisionerId}/{workerType}',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -46,12 +46,11 @@ class PurgeCache(baseclient.BaseClient):
         - ``provisionerId``
         - ``workerType``
         '''
-        url = self.urls['purgeCache'].format(
-            baseUrl=self.options['baseUrl'],
-            provisionerId=provisionerId,
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('purgeCache', replDict={
+            'provisionerId': provisionerId,
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def ping(self):
         '''
@@ -63,7 +62,5 @@ class PurgeCache(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

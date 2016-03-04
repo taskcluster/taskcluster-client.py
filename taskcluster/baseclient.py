@@ -7,6 +7,7 @@ import json
 import logging
 import copy
 import requests
+import re
 import time
 import six
 from six.moves import urllib
@@ -140,9 +141,66 @@ class BaseClient(object):
         data['routingKeyPattern'] = '.'.join([utils.toStr(x) for x in routingKeyParts])
         return data
 
-    def buildSignedUrl(self, requestUrl, expiration=None):
+    def makeRoute(self, methodName, route=None, replDict=None):
+        """ Given a route like "/task/<taskId>/artifacts" and a mapping like
+        {"taskId": "12345"}, return a string like "/task/12345/artifacts"
+        """
+        if route is None:
+            route = self.routes[methodName]
+        if replDict is None:
+            replDict = {}
+        route = re.sub('<(.*?)>', '{\\1}', route)
+        for key, value in six.iteritems(replDict):
+            replDict[key] = urllib.parse.quote(str(value).encode("utf-8"), '')
+            s = '{%s}' % key
+            if s not in route:
+                raise exceptions.TaskclusterFailure(
+                    '%s not found in route for %s (%s)' % (s, methodName, route))
+        try:
+            route = route.format(**replDict)
+        except KeyError:
+            raise exceptions.TaskclusterFailure(
+                "Error in string formatting %s route %s with %s!" %
+                (methodName, route, str(replDict))
+            )
+
+        return route.lstrip('/')
+
+    def buildUrl(self, methodName=None, requestUrl=None, replDict=None, **kwargs):
+        """Build a tc url.
+        We either need a methodName (used to find the route in self.routes) or
+        the requestUrl string to use.  If the url needs string formatting, the
+        replDict will have the appropriate key/value pairs to format the string
+        (e.g. {'clientId': '...'}.
+        """
+        if not (requestUrl or methodName):
+            raise exceptions.TaskclusterFailure(
+                "Missing methodName or requestUrl in buildUrl call"
+            )
+        if requestUrl is None:
+            requestUrl = self.makeFullUrl(self.routes[methodName], **kwargs)
+        if replDict is None:
+            replDict = {}
+        for key, value in six.iteritems(replDict):
+            replDict[key] = urllib.parse.quote(str(value).encode("utf-8"), '')
+        try:
+            requestUrl = requestUrl.format(**replDict)
+        except KeyError:
+            raise exceptions.TaskclusterFailure(
+                "Missing string formatting items for url %s: %s" %
+                (requestUrl, str(replDict))
+            )
+        return requestUrl
+
+    def buildSignedUrl(self, requestUrl=None, expiration=None, **kwargs):
         """ Build a signed URL.  This URL contains the credentials needed to access
-        a resource."""
+        a resource.
+
+        **kwargs are passed to buildUrl() if requestUrl isn't set.
+        """
+
+        requestUrl = requestUrl or self.buildUrl(**kwargs)
+        print(requestUrl)
 
         expiration = expiration or self.options['signedUrlExpiration']
         expiration = int(time.time() + expiration)  # Mainly so that we throw if it's not a number
@@ -205,18 +263,36 @@ class BaseClient(object):
             cred['accessToken']
         )
 
-    def _makeHttpRequest(self, method, route, payload=None):
-        """ Make an HTTP Request for the API endpoint.  This method wraps
-        the logic about doing failure retry and passes off the actual work
-        of doing an HTTP request to another method."""
+    def makeQueryString(self, options, validOptions=None):
+        if not options:
+            return ''
+        if validOptions:
+            validOptionsSet = set(validOptions)
+            if not validOptionsSet.issuperset(set(options.keys())):
+                raise exceptions.TaskclusterRestFailure(
+                    "Invalid options not in validOptions!",
+                    str(options), str(validOptions)
+                )
+        return urllib.parse.urlencode(options)
 
+    def makeFullUrl(self, route, validOptions=None, options=None):
         baseUrl = self.options['baseUrl']
+        queryString = ''
+        if options:
+            queryString = '?' + self.makeQueryString(options, validOptions=validOptions)
         # urljoin ignores the last param of the baseUrl if the base url doesn't end
         # in /.  I wonder if it's better to just do something basic like baseUrl +
         # route instead
         if not baseUrl.endswith('/'):
             baseUrl += '/'
-        url = urllib.parse.urljoin(baseUrl, route.lstrip('/'))
+        return urllib.parse.urljoin(baseUrl, route.lstrip('/') + queryString)
+
+    def _makeHttpRequest(self, method, route, payload=None, **kwargs):
+        """ Make an HTTP Request for the API endpoint.  This method wraps
+        the logic about doing failure retry and passes off the actual work
+        of doing an HTTP request to another method."""
+
+        url = self.makeFullUrl(route, **kwargs)
         log.debug('Full URL used is: %s', url)
 
         hawkExt = self.makeHawkExt()

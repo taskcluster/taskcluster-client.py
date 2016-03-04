@@ -16,10 +16,10 @@ class TestSchedulerEvents(GeneratedTC):
     """
     testClass = FakeSchedulerEvents
 
-    def test_urls(self):
+    def test_routes(self):
         """TestSchedulerEvents | all urls match the json baseUrls
         """
-        self.url_check('SchedulerEvents')
+        self.route_check('SchedulerEvents')
 
     def test_routingKeys(self):
         """TestSchedulerEvents | all routingKeys match the json routingKeys

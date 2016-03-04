@@ -45,22 +45,22 @@ class AwsProvisioner(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/aws-provisioner/v1/api.json'
-    urls = {
-        'createWorkerType': '{baseUrl}/worker-type/{workerType}',
-        'updateWorkerType': '{baseUrl}/worker-type/{workerType}/update',
-        'workerType': '{baseUrl}/worker-type/{workerType}',
-        'removeWorkerType': '{baseUrl}/worker-type/{workerType}',
-        'listWorkerTypes': '{baseUrl}/list-worker-types',
-        'createSecret': '{baseUrl}/secret/{token}',
-        'getSecret': '{baseUrl}/secret/{token}',
-        'instanceStarted': '{baseUrl}/instance-started/{instanceId}/{token}',
-        'removeSecret': '{baseUrl}/secret/{token}',
-        'getLaunchSpecs': '{baseUrl}/worker-type/{workerType}/launch-specifications',
-        'awsState': '{baseUrl}/aws-state',
-        'state': '{baseUrl}/state/{workerType}',
-        'ping': '{baseUrl}/ping',
-        'backendStatus': '{baseUrl}/backend-status',
-        'apiReference': '{baseUrl}/api-reference',
+    routes = {
+        'createWorkerType': '/worker-type/{workerType}',
+        'updateWorkerType': '/worker-type/{workerType}/update',
+        'workerType': '/worker-type/{workerType}',
+        'removeWorkerType': '/worker-type/{workerType}',
+        'listWorkerTypes': '/list-worker-types',
+        'createSecret': '/secret/{token}',
+        'getSecret': '/secret/{token}',
+        'instanceStarted': '/instance-started/{instanceId}/{token}',
+        'removeSecret': '/secret/{token}',
+        'getLaunchSpecs': '/worker-type/{workerType}/launch-specifications',
+        'awsState': '/aws-state',
+        'state': '/state/{workerType}',
+        'ping': '/ping',
+        'backendStatus': '/backend-status',
+        'apiReference': '/api-reference',
     }
 
     def __init__(self, *args, **kwargs):
@@ -99,11 +99,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['createWorkerType'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createWorkerType', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def updateWorkerType(self, workerType, payload):
         '''
@@ -124,11 +123,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['updateWorkerType'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('updateWorkerType', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def workerType(self, workerType):
         '''
@@ -143,11 +141,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['workerType'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('workerType', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('get', route)
 
     def removeWorkerType(self, workerType):
         '''
@@ -167,11 +164,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['removeWorkerType'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('removeWorkerType', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('delete', route)
 
     def listWorkerTypes(self):
         '''
@@ -184,10 +180,8 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['listWorkerTypes'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listWorkerTypes')
+        return self._makeHttpRequest('get', route)
 
     def createSecret(self, token, payload):
         '''
@@ -203,11 +197,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``token``
         '''
-        url = self.urls['createSecret'].format(
-            baseUrl=self.options['baseUrl'],
-            token=token,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createSecret', replDict={
+            'token': token,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def getSecret(self, token):
         '''
@@ -224,11 +217,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``token``
         '''
-        url = self.urls['getSecret'].format(
-            baseUrl=self.options['baseUrl'],
-            token=token,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getSecret', replDict={
+            'token': token,
+        })
+        return self._makeHttpRequest('get', route)
 
     def instanceStarted(self, instanceId, token):
         '''
@@ -244,12 +236,11 @@ class AwsProvisioner(baseclient.BaseClient):
         - ``instanceId``
         - ``token``
         '''
-        url = self.urls['instanceStarted'].format(
-            baseUrl=self.options['baseUrl'],
-            instanceId=instanceId,
-            token=token,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('instanceStarted', replDict={
+            'instanceId': instanceId,
+            'token': token,
+        })
+        return self._makeHttpRequest('get', route)
 
     def removeSecret(self, token):
         '''
@@ -265,11 +256,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``token``
         '''
-        url = self.urls['removeSecret'].format(
-            baseUrl=self.options['baseUrl'],
-            token=token,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('removeSecret', replDict={
+            'token': token,
+        })
+        return self._makeHttpRequest('delete', route)
 
     def getLaunchSpecs(self, workerType):
         '''
@@ -284,11 +274,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['getLaunchSpecs'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getLaunchSpecs', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('get', route)
 
     def awsState(self):
         '''
@@ -301,10 +290,8 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['awsState'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('awsState')
+        return self._makeHttpRequest('get', route)
 
     def state(self, workerType):
         '''
@@ -318,11 +305,10 @@ class AwsProvisioner(baseclient.BaseClient):
         This method takes:
         - ``workerType``
         '''
-        url = self.urls['state'].format(
-            baseUrl=self.options['baseUrl'],
-            workerType=workerType,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('state', replDict={
+            'workerType': workerType,
+        })
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -334,10 +320,8 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)
 
     def backendStatus(self):
         '''
@@ -347,10 +331,8 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['backendStatus'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('backendStatus')
+        return self._makeHttpRequest('get', route)
 
     def apiReference(self):
         '''
@@ -362,7 +344,5 @@ class AwsProvisioner(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['apiReference'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('apiReference')
+        return self._makeHttpRequest('get', route)

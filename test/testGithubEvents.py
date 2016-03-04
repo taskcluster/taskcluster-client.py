@@ -16,10 +16,10 @@ class TestGithubEvents(GeneratedTC):
     """
     testClass = FakeGithubEvents
 
-    def test_urls(self):
+    def test_routes(self):
         """TestGithubEvents | all urls match the json baseUrls
         """
-        self.url_check('GithubEvents')
+        self.route_check('GithubEvents')
 
     def test_routingKeys(self):
         """TestGithubEvents | all routingKeys match the json routingKeys

@@ -21,12 +21,12 @@ class Secrets(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/secrets/v1/api.json'
-    urls = {
-        'set': '{baseUrl}/secret/{name}',
-        'remove': '{baseUrl}/secret/{name}',
-        'get': '{baseUrl}/secret/{name}',
-        'list': '{baseUrl}/secrets',
-        'ping': '{baseUrl}/ping',
+    routes = {
+        'set': '/secret/{name}',
+        'remove': '/secret/{name}',
+        'get': '/secret/{name}',
+        'list': '/secrets',
+        'ping': '/ping',
     }
 
     def __init__(self, *args, **kwargs):
@@ -43,11 +43,10 @@ class Secrets(baseclient.BaseClient):
         This method takes:
         - ``name``
         '''
-        url = self.urls['set'].format(
-            baseUrl=self.options['baseUrl'],
-            name=name,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('set', replDict={
+            'name': name,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def remove(self, name):
         '''
@@ -58,11 +57,10 @@ class Secrets(baseclient.BaseClient):
         This method takes:
         - ``name``
         '''
-        url = self.urls['remove'].format(
-            baseUrl=self.options['baseUrl'],
-            name=name,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('remove', replDict={
+            'name': name,
+        })
+        return self._makeHttpRequest('delete', route)
 
     def get(self, name):
         '''
@@ -73,11 +71,10 @@ class Secrets(baseclient.BaseClient):
         This method takes:
         - ``name``
         '''
-        url = self.urls['get'].format(
-            baseUrl=self.options['baseUrl'],
-            name=name,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('get', replDict={
+            'name': name,
+        })
+        return self._makeHttpRequest('get', route)
 
     def list(self):
         '''
@@ -87,10 +84,8 @@ class Secrets(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['list'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('list')
+        return self._makeHttpRequest('get', route)
 
     def ping(self):
         '''
@@ -102,7 +97,5 @@ class Secrets(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['ping'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('ping')
+        return self._makeHttpRequest('get', route)

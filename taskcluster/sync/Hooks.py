@@ -32,15 +32,15 @@ class Hooks(baseclient.BaseClient):
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/hooks/v1/api.json'
-    urls = {
-        'listHookGroups': '{baseUrl}/hooks',
-        'listHooks': '{baseUrl}/hooks/{hookGroupId}',
-        'hook': '{baseUrl}/hooks/{hookGroupId}/{hookId}',
-        'getHookStatus': '{baseUrl}/hooks/{hookGroupId}/{hookId}/status',
-        'getHookSchedule': '{baseUrl}/hooks/{hookGroupId}/{hookId}/schedule',
-        'createHook': '{baseUrl}/hooks/{hookGroupId}/{hookId}',
-        'updateHook': '{baseUrl}/hooks/{hookGroupId}/{hookId}',
-        'removeHook': '{baseUrl}/hooks/{hookGroupId}/{hookId}',
+    routes = {
+        'listHookGroups': '/hooks',
+        'listHooks': '/hooks/{hookGroupId}',
+        'hook': '/hooks/{hookGroupId}/{hookId}',
+        'getHookStatus': '/hooks/{hookGroupId}/{hookId}/status',
+        'getHookSchedule': '/hooks/{hookGroupId}/{hookId}/schedule',
+        'createHook': '/hooks/{hookGroupId}/{hookId}',
+        'updateHook': '/hooks/{hookGroupId}/{hookId}',
+        'removeHook': '/hooks/{hookGroupId}/{hookId}',
     }
 
     def __init__(self, *args, **kwargs):
@@ -56,10 +56,8 @@ class Hooks(baseclient.BaseClient):
 
         This method takes no arguments.
         '''
-        url = self.urls['listHookGroups'].format(
-            baseUrl=self.options['baseUrl'],
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listHookGroups')
+        return self._makeHttpRequest('get', route)
 
     def listHooks(self, hookGroupId):
         '''
@@ -71,11 +69,10 @@ class Hooks(baseclient.BaseClient):
         This method takes:
         - ``hookGroupId``
         '''
-        url = self.urls['listHooks'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('listHooks', replDict={
+            'hookGroupId': hookGroupId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def hook(self, hookGroupId, hookId):
         '''
@@ -88,12 +85,11 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['hook'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('hook', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def getHookStatus(self, hookGroupId, hookId):
         '''
@@ -106,12 +102,11 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['getHookStatus'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getHookStatus', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def getHookSchedule(self, hookGroupId, hookId):
         '''
@@ -124,12 +119,11 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['getHookSchedule'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('get', url)
+        route = self.makeRoute('getHookSchedule', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('get', route)
 
     def createHook(self, hookGroupId, hookId, payload):
         '''
@@ -145,12 +139,11 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['createHook'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('put', url, payload)
+        route = self.makeRoute('createHook', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('put', route, payload)
 
     def updateHook(self, hookGroupId, hookId, payload):
         '''
@@ -163,12 +156,11 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['updateHook'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('post', url, payload)
+        route = self.makeRoute('updateHook', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('post', route, payload)
 
     def removeHook(self, hookGroupId, hookId):
         '''
@@ -180,9 +172,8 @@ class Hooks(baseclient.BaseClient):
         - ``hookGroupId``
         - ``hookId``
         '''
-        url = self.urls['removeHook'].format(
-            baseUrl=self.options['baseUrl'],
-            hookGroupId=hookGroupId,
-            hookId=hookId,
-        )
-        return self._makeHttpRequest('delete', url)
+        route = self.makeRoute('removeHook', replDict={
+            'hookGroupId': hookGroupId,
+            'hookId': hookId,
+        })
+        return self._makeHttpRequest('delete', route)

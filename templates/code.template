@@ -19,9 +19,9 @@ class {{serviceName}}(baseclient.BaseClient):
     '''
     version = {{api['version']}}
     referenceUrl = '{{referenceUrl}}'
-{%- if createUrls(api) %}
-    urls = {
-        {{createUrls(api) | indent(8)}}
+{%- if createRoutes(api) %}
+    routes = {
+        {{createRoutes(api) | indent(8)}}
     }
 {% endif %}
 {%- if createRoutingKeys(api) %}
@@ -46,7 +46,7 @@ class {{serviceName}}(baseclient.BaseClient):
         {{entry['title']}}
 
         {{entry['description'] | docstring(8)}}
-            {%- if entry.args %}{# TODO proper docstring format #}
+            {%- if entry.args %}
 
         This method takes:
                 {%- for arg in entry.args %}
@@ -58,15 +58,16 @@ class {{serviceName}}(baseclient.BaseClient):
         This method takes no arguments.
             {%- endif %}
         '''
-        url = self.urls['{{ entry.name }}'].format(
-            baseUrl=self.options['baseUrl'],
-            {%- if entry.args %}{% for a in entry['args'] %}
-            {{a}}={{a}},{% endfor %}
+        route = self.makeRoute('{{ entry.name }}'
+            {%- if entry.args %}, replDict={
+                {%- for a in entry['args'] %}
+            '{{a}}': {{a}},{% endfor %}
+        }
+            {%- endif -%})
+            {%- if entry.query %}
+        validOptions = {{entry.query}}
             {%- endif %}
-        )
-            {%- if entry.method == 'get' %}
-            {%- endif %}
-        return self._makeHttpRequest('{{entry.method}}', url{% if entry.input %}, payload{% endif %})
+        return self._makeHttpRequest('{{entry.method}}', route{% if entry.input %}, payload{% endif %}{% if entry.query %}, options=options, validOptions=validOptions{% endif %})
         {%- elif entry['type'] == 'topic-exchange' %}
 
     def {{entry['name']}}(self, routingKeyPattern=None):
