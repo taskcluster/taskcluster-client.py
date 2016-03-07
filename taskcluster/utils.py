@@ -4,7 +4,9 @@ import json
 import datetime
 import base64
 import logging
+import math
 import os
+import random
 import requests
 import slugid
 import time
@@ -12,6 +14,9 @@ import six
 import sys
 
 MAX_RETRIES = 5
+DELAY_FACTOR = 0.1
+RANDOMIZATION_FACTOR = 0.25
+MAX_DELAY = 30
 
 log = logging.getLogger(__name__)
 
@@ -156,6 +161,21 @@ def scope_match(assumed_scopes, required_scope_sets):
     return False           # none of the required_scope_sets were satisfied
 
 
+def calculateSleepTime(attempts):
+    """ From the go client
+    https://github.com/taskcluster/go-got/blob/031f55c/backoff.go#L24-L29
+    """
+    if attempts <= 0:
+        return 0
+
+    # We subtract one to get exponents: 1, 2, 3, 4, 5, ..
+    delay = math.pow(float(2), float(attempts - 1)) * float(DELAY_FACTOR)
+    # Apply randomization factor
+    delay = delay * (RANDOMIZATION_FACTOR * (random.random() * 2 - 1) + 1)
+    # Always limit with a maximum delay
+    return min(delay, MAX_DELAY)
+
+
 def makeHttpRequest(method, url, payload, headers, retries=MAX_RETRIES, session=None):
     """ Make an HTTP request and retry it until success, return request """
     retry = -1
@@ -163,10 +183,7 @@ def makeHttpRequest(method, url, payload, headers, retries=MAX_RETRIES, session=
     while retry < retries:
         retry += 1
         # if this isn't the first retry then we sleep
-        if retry > 0:
-            snooze = float(retry * retry) / 10.0
-            log.info('Sleeping %0.2f seconds for exponential backoff', snooze)
-            time.sleep(snooze)
+        time.sleep(calculateSleepTime(retry))
 
         # Seek payload to start, if it is a file
         if hasattr(payload, 'seek'):
