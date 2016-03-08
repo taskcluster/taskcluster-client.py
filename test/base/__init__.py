@@ -9,6 +9,7 @@ import json
 import mock
 import re
 from operator import itemgetter
+from taskcluster.runtimeclient import ROUTING_KEY_WHITELIST
 
 # Mocks really ought not to overwrite this
 _sleep = time.sleep
@@ -25,7 +26,6 @@ SOURCE_DIR = os.path.join(
 APIS_JSON_FILE = os.path.join(SOURCE_DIR, 'apis.json')
 with open(APIS_JSON_FILE, "r") as fh:
     APIS_JSON = json.load(fh)
-ROUTING_KEY_WHITELIST = ("name", "multipleWords", "constant")
 
 
 class TCTest(unittest.TestCase):

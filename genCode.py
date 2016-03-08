@@ -13,10 +13,7 @@ import textwrap
 
 from jinja2 import Environment, FileSystemLoader
 
-# Avoid defining ROUTING_KEY_WHITELIST twice.
-# This is defined in test/base/__init__.py
-sys.path.insert(1, os.path.join(os.getcwd(), 'test'))
-from base import ROUTING_KEY_WHITELIST
+from taskcluster.runtimeclient import ROUTING_KEY_WHITELIST
 
 GENERATED_STRING = "# This file is generated!  Do not edit!"
 
