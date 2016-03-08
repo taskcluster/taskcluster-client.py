@@ -123,7 +123,7 @@ def render(env, templateName, serviceName, defn):
     )
 
 
-def docstringify(s, level=4):
+def typesetDocstring(s, level=4):
     lines = []
     wrapper = textwrap.TextWrapper(subsequent_indent=' ' * level,
                                    expand_tabs=True, width=100)
@@ -138,7 +138,7 @@ def docstringify(s, level=4):
 
 def renderCode(name, defn, codeDir, testDir):
     env = Environment(loader=FileSystemLoader('templates'))
-    env.filters['docstring'] = docstringify
+    env.filters['docstring'] = typesetDocstring
     env.filters['anglesToBraces'] = anglesToBraces
     code = render(env, 'code.template', name, defn)
     with open(os.path.join(codeDir, '{}.py'.format(name)),
