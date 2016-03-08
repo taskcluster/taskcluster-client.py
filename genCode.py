@@ -8,14 +8,17 @@ import json
 import os
 import re
 import six
+import sys
 import textwrap
 
 from jinja2 import Environment, FileSystemLoader
 
+# Avoid defining ROUTING_KEY_WHITELIST twice.
+# This is defined in test/base/__init__.py
+sys.path.insert(1, os.path.join(os.getcwd(), 'test'))
+from base import ROUTING_KEY_WHITELIST
+
 GENERATED_STRING = "# This file is generated!  Do not edit!"
-# ROUTING_KEY_WHITELIST is also defined in test/base/__init__.py
-# if you change it, please update it there as well.
-ROUTING_KEY_WHITELIST = ("name", "multipleWords", "constant")
 
 
 def loadJson(filename):
