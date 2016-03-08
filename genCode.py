@@ -72,33 +72,32 @@ def createRoutingKeys(api):
     return '\n'.join(parts)
 
 
-def methodArgumentString(entry):
-    """Returns an argument string for the given function
+def argumentString(entry, methodArgs=False):
+    """Returns a comma-delimited argument string for the given function.
+
+    When methodArgs is True, add 'self' and other args/kwargs for a method
+    definition (for code.template).
+
+    When it's False, just return the arguments + payload as defined in the
+    api, but single quoted (for test.template).
     """
-    parts = ['self']
-    parts.extend(argumentNames(entry))
-    if entry.get('query'):
-        parts.append('options=None')
-    return ", ".join(parts)
-
-
-def argumentNames(entry):
     parts = []
+    if methodArgs:
+        parts.append('self')
     if 'args' in entry:
         parts.extend(entry['args'])
     if 'input' in entry:
         inputName = 'payload'
         parts.append(inputName)
-    return parts
-
-
-def argumentString(entry):
-    """Returns a string of a list of argument names, sans self
-    """
-    string = ''
-    for name in argumentNames(entry):
-        string += "'{name}', ".format(name=name)
-    return string
+    if methodArgs:
+        if entry.get('query'):
+            parts.append('options=None')
+        return ", ".join(parts)
+    else:
+        string = ""
+        for p in parts:
+            string += "'{}', ".format(p)
+        return string
 
 
 def anglesToBraces(s):
@@ -116,7 +115,6 @@ def render(env, templateName, serviceName, defn):
     return template.render(
         serviceName=serviceName,
         api=api,
-        methodArgumentString=methodArgumentString,
         argumentString=argumentString,
         createRoutes=createRoutes,
         createRoutingKeys=createRoutingKeys,

@@ -41,7 +41,7 @@ class {{serviceName}}(baseclient.BaseClient):
     {%- for entry in api['entries'] -%}
         {%- if entry['type'] == 'function' %}
 
-    def {{entry['name']}}({{methodArgumentString(entry)}}):
+    def {{entry['name']}}({{argumentString(entry, methodArgs=True)}}):
         '''
         {{entry['title']}}
 
