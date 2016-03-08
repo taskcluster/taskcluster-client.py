@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 _defaultConfig = copy.deepcopy(config)
 
-ROUTING_KEY_WHITELIST = ("name", "multipleWords", "constant")
+ROUTING_KEY_BLACKLIST = ("summary", )
 
 
 class RuntimeClient(BaseClient):

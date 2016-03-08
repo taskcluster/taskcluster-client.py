@@ -27,17 +27,20 @@ class PurgeCacheEvents(baseclient.BaseClient):
     routingKeys = {
         'purgeCache': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
+                'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
+                'multipleWords': False,
                 'name': 'provisionerId',
-                'multipleWords': False,
+                'required': True,
             },
             {
-                'name': 'workerType',
                 'multipleWords': False,
+                'name': 'workerType',
+                'required': True,
             },
         ],
     }

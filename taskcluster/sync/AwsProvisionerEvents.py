@@ -22,47 +22,56 @@ class AwsProvisionerEvents(baseclient.BaseClient):
     routingKeys = {
         'workerTypeCreated': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
-            },
-            {
-                'name': 'workerType',
                 'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
-                'name': 'reserved',
+                'multipleWords': False,
+                'name': 'workerType',
+                'required': True,
+            },
+            {
                 'multipleWords': True,
+                'name': 'reserved',
+                'required': False,
             },
         ],
         'workerTypeUpdated': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
-            },
-            {
-                'name': 'workerType',
                 'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
-                'name': 'reserved',
+                'multipleWords': False,
+                'name': 'workerType',
+                'required': True,
+            },
+            {
                 'multipleWords': True,
+                'name': 'reserved',
+                'required': False,
             },
         ],
         'workerTypeRemoved': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
-            },
-            {
-                'name': 'workerType',
                 'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
-                'name': 'reserved',
+                'multipleWords': False,
+                'name': 'workerType',
+                'required': True,
+            },
+            {
                 'multipleWords': True,
+                'name': 'reserved',
+                'required': False,
             },
         ],
     }

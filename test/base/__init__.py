@@ -9,7 +9,7 @@ import json
 import mock
 import re
 from operator import itemgetter
-from taskcluster.runtimeclient import ROUTING_KEY_WHITELIST
+from taskcluster.runtimeclient import ROUTING_KEY_BLACKLIST
 
 # Mocks really ought not to overwrite this
 _sleep = time.sleep
@@ -204,13 +204,13 @@ class GeneratedTC(TCTest):
                 routingKeys[str(entry['name'])] = []
                 for r in entry['routingKey']:
                     rk = {}
-                    for item in ROUTING_KEY_WHITELIST:
-                        if item in r:
+                    for item in r:
+                        if item not in ROUTING_KEY_BLACKLIST:
                             rk[item] = r[item]
                     routingKeys[entry['name']].append(rk)
         a = self.testClass()
-        # http://stackoverflow.com/a/73050
 
+        # http://stackoverflow.com/a/73050
         def sort_list_of_dicts(list_to_sort):
             return sorted(list_to_sort, key=itemgetter('name'))
 

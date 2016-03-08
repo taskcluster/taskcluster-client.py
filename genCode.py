@@ -13,7 +13,7 @@ import textwrap
 
 from jinja2 import Environment, FileSystemLoader
 
-from taskcluster.runtimeclient import ROUTING_KEY_WHITELIST
+from taskcluster.runtimeclient import ROUTING_KEY_BLACKLIST
 
 GENERATED_STRING = "# This file is generated!  Do not edit!"
 
@@ -61,8 +61,8 @@ def createRoutingKeys(api):
             parts.append("    '%s': [" % entry['name'])
             for routingKey in entry['routingKey']:
                 parts.append("        {")
-                for key in ROUTING_KEY_WHITELIST:
-                    if key in routingKey:
+                for key in sorted(routingKey.keys()):
+                    if key not in ROUTING_KEY_BLACKLIST:
                         value = routingKey[key]
                         if isinstance(value, (six.binary_type, six.text_type)):
                             value = "'{}'".format(value)

@@ -27,36 +27,43 @@ class GithubEvents(baseclient.BaseClient):
     routingKeys = {
         'pullRequest': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
+                'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
+                'multipleWords': False,
                 'name': 'organization',
-                'multipleWords': False,
+                'required': True,
             },
             {
+                'multipleWords': False,
                 'name': 'repository',
-                'multipleWords': False,
+                'required': True,
             },
             {
-                'name': 'action',
                 'multipleWords': False,
+                'name': 'action',
+                'required': True,
             },
         ],
         'push': [
             {
-                'name': 'routingKeyKind',
-                'multipleWords': False,
                 'constant': 'primary',
+                'multipleWords': False,
+                'name': 'routingKeyKind',
+                'required': True,
             },
             {
+                'multipleWords': False,
                 'name': 'organization',
-                'multipleWords': False,
+                'required': True,
             },
             {
-                'name': 'repository',
                 'multipleWords': False,
+                'name': 'repository',
+                'required': True,
             },
         ],
     }
