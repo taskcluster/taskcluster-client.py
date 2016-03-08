@@ -3,18 +3,14 @@
 {{generatedString}}
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import {{serviceName}}
-
-
-class Fake{{serviceName}}(FakeGenerated, {{serviceName}}):
-    pass
 
 
 class Test{{serviceName}}(GeneratedTC):
     """Test the generated Test{{serviceName}} class.
     """
-    testClass = Fake{{serviceName}}
+    testClass = {{serviceName}}
 
     def test_routes(self):
         """Test{{serviceName}} | all urls match the json baseUrls

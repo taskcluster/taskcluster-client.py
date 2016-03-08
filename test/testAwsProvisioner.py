@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import AwsProvisioner
-
-
-class FakeAwsProvisioner(FakeGenerated, AwsProvisioner):
-    pass
 
 
 class TestAwsProvisioner(GeneratedTC):
     """Test the generated TestAwsProvisioner class.
     """
-    testClass = FakeAwsProvisioner
+    testClass = AwsProvisioner
 
     def test_routes(self):
         """TestAwsProvisioner | all urls match the json baseUrls

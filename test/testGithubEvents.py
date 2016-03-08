@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import GithubEvents
-
-
-class FakeGithubEvents(FakeGenerated, GithubEvents):
-    pass
 
 
 class TestGithubEvents(GeneratedTC):
     """Test the generated TestGithubEvents class.
     """
-    testClass = FakeGithubEvents
+    testClass = GithubEvents
 
     def test_routes(self):
         """TestGithubEvents | all urls match the json baseUrls

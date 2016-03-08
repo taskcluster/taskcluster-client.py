@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import PurgeCache
-
-
-class FakePurgeCache(FakeGenerated, PurgeCache):
-    pass
 
 
 class TestPurgeCache(GeneratedTC):
     """Test the generated TestPurgeCache class.
     """
-    testClass = FakePurgeCache
+    testClass = PurgeCache
 
     def test_routes(self):
         """TestPurgeCache | all urls match the json baseUrls

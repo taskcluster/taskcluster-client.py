@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import SchedulerEvents
-
-
-class FakeSchedulerEvents(FakeGenerated, SchedulerEvents):
-    pass
 
 
 class TestSchedulerEvents(GeneratedTC):
     """Test the generated TestSchedulerEvents class.
     """
-    testClass = FakeSchedulerEvents
+    testClass = SchedulerEvents
 
     def test_routes(self):
         """TestSchedulerEvents | all urls match the json baseUrls

@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import QueueEvents
-
-
-class FakeQueueEvents(FakeGenerated, QueueEvents):
-    pass
 
 
 class TestQueueEvents(GeneratedTC):
     """Test the generated TestQueueEvents class.
     """
-    testClass = FakeQueueEvents
+    testClass = QueueEvents
 
     def test_routes(self):
         """TestQueueEvents | all urls match the json baseUrls

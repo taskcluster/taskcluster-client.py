@@ -115,18 +115,13 @@ class AuthClient(object):
         }
 
 
-class FakeGenerated(object):
-    """Inherit this before the generated object.
-
-    e.g. class FakeAuth(FakeGenerated, Auth):
+def createFakeApi(cls, *args, **kwargs):
+    """For generated tests.
     """
-    def __init__(self, *args, **kwargs):
-        super(FakeGenerated, self).__init__(*args, **kwargs)
-        self.replaceMethods()
-
-    def replaceMethods(self):
-        self._makeHttpRequest = mock.MagicMock()
-        self._makeTopicExchange = mock.MagicMock()
+    instance = cls(*args, **kwargs)
+    instance._makeHttpRequest = mock.MagicMock()
+    instance._makeTopicExchange = mock.MagicMock()
+    return instance
 
 
 class GeneratedTC(TCTest):
@@ -142,7 +137,7 @@ class GeneratedTC(TCTest):
 
         Each {var} is replaced with 'var', e.g. {clientId} -> 'clientId'
         """
-        a = self.testClass()
+        a = createFakeApi(self.testClass)
         replDict = {'baseUrl': a.options['baseUrl']}
         for name in argumentNames:
             replDict[name] = name
@@ -152,7 +147,7 @@ class GeneratedTC(TCTest):
         """For entry functions, verify the _makeHttpRequest arguments are
         correct.
         """
-        a = self.testClass()
+        a = createFakeApi(self.testClass)
         argumentNames = argumentNames or []
         kwargs = {}
         replDict = self._get_replDict(argumentNames)
@@ -170,7 +165,7 @@ class GeneratedTC(TCTest):
         """For entry topic exchanges, verify the _makeTopicExchange arguments
         are correct.
         """
-        a = self.testClass()
+        a = createFakeApi(self.testClass)
         exchangeUrl = '%s/%s' % (a.options['exchangePrefix'].rstrip('/'),
                                  exchangeName)
         getattr(a, functionName)("routingKeyPattern")
@@ -187,7 +182,7 @@ class GeneratedTC(TCTest):
         for entry in APIS_JSON[className]['reference']['entries']:
             if entry['type'] == 'function':
                 routes[entry['name']] = re.sub('<(.*?)>', '{\\1}', (entry['route']))
-        a = self.testClass()
+        a = createFakeApi(self.testClass)
         if routes:
             self.assertEqual(routes, a.routes)
         else:
@@ -208,7 +203,7 @@ class GeneratedTC(TCTest):
                         if item not in ROUTING_KEY_BLACKLIST:
                             rk[item] = r[item]
                     routingKeys[entry['name']].append(rk)
-        a = self.testClass()
+        a = createFakeApi(self.testClass)
 
         # http://stackoverflow.com/a/73050
         def sort_list_of_dicts(list_to_sort):

@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import Auth
-
-
-class FakeAuth(FakeGenerated, Auth):
-    pass
 
 
 class TestAuth(GeneratedTC):
     """Test the generated TestAuth class.
     """
-    testClass = FakeAuth
+    testClass = Auth
 
     def test_routes(self):
         """TestAuth | all urls match the json baseUrls

@@ -3,18 +3,14 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import FakeGenerated, GeneratedTC
+from base import GeneratedTC
 from taskcluster.sync import Index
-
-
-class FakeIndex(FakeGenerated, Index):
-    pass
 
 
 class TestIndex(GeneratedTC):
     """Test the generated TestIndex class.
     """
-    testClass = FakeIndex
+    testClass = Index
 
     def test_routes(self):
         """TestIndex | all urls match the json baseUrls
