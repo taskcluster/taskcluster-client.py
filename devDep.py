@@ -1,4 +1,5 @@
 #!/usr/bin/env python
 import setup
 import pip
-pip.main(['install', '--upgrade'] + setup.tests_require + setup.install_requires)
+pip.main(['install', '--upgrade'] + setup.tests_require + setup.install_requires
+         + setup.gencode_requires)

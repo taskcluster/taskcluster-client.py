@@ -33,6 +33,10 @@ install_requires = [
     'six',
 ]
 
+gencode_requires = [
+    'jinja2',
+]
+
 # from http://testrun.org/tox/latest/example/basic.html
 class Tox(TestCommand):
     user_options = [('tox-args=', 'a', "Arguments to pass to tox")]
