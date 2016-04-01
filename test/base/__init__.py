@@ -267,7 +267,6 @@ class BaseAuthentication(TCTest):
         async tests.
         """
         # mock this request so we don't depend on the existence of a client
-        # TODO make this async override friendly
         @httmock.all_requests
         def auth_response(url, request):
             self.assertEqual(urllib.parse.urlunsplit(url),

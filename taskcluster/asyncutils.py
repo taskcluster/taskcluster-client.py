@@ -48,7 +48,7 @@ async def makeHttpRequest(method, url, payload, headers, retries=utils.MAX_RETRI
         # Handle non 2xx status code and retry if possible
         status = response.status
         if 500 <= status and status < 600 and retry < retries:
-            log.warn('Retrying because of: %d status' % status)  # TODO
+            log.warn('Retrying because of: %d status' % status)
             continue
         if status >= 200 and status < 300:
             return response

@@ -167,7 +167,6 @@ def renderCode(name, apiDefn, codeDefn):
               'w', encoding='utf-8') as fh:
         print(code, file=fh)
     test = render(env, codeDefn['testTemplate'], name, apiDefn, codeDefn)
-    # TODO do we need to rename the async files to not conflict?
     with open(os.path.join(codeDefn['testDir'], 'test{}.py'.format(name)),
               'w', encoding='utf-8') as fh:
         print(test, file=fh)
