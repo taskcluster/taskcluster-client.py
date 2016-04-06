@@ -25,13 +25,11 @@ class TestAsyncclient(TCTest):
         session = getFakeSession(payload=payload)
         client = newClient(session=session)
 
-        async def _helper_run():
-            result = await client.makeHttpRequest('get', 'http://example.com',
-                                                  '{"clientScopes": ["a"]}',
-                                                  {})
-            self.assertEqual(payload, result)
-
-        asyncio.get_event_loop().run_until_complete(_helper_run())
+        result = asyncio.get_event_loop().run_until_complete(
+            client.makeHttpRequest('get', 'http://example.com',
+                                   '{"clientScopes": ["a"]}', {})
+        )
+        self.assertEqual(payload, result)
 
     def test_too_many_retries(self):
         """test_asyncclient | too many retries
@@ -39,15 +37,13 @@ class TestAsyncclient(TCTest):
         session = getFailFirstSession(firstSuccess=10)
         client = newClient(session=session)
 
-        async def _helper_retries():
-            with mock.patch.object(utils, 'calculateSleepTime') as p:
-                p.return_value = .001
-                with self.assertRaises(exceptions.TaskclusterRestFailure):
-                    await client.makeHttpRequest('get', 'http://example.com',
-                                                 '{"clientScopes": ["a"]}',
-                                                 {})
-
-        asyncio.get_event_loop().run_until_complete(_helper_retries())
+        with mock.patch.object(utils, 'calculateSleepTime') as p:
+            p.return_value = .001
+            with self.assertRaises(exceptions.TaskclusterRestFailure):
+                asyncio.get_event_loop().run_until_complete(
+                    client.makeHttpRequest('get', 'http://example.com',
+                                           '{"clientScopes": ["a"]}', {})
+                )
 
     def test_exception(self):
         """test_asyncclient | exception retries
@@ -55,15 +51,14 @@ class TestAsyncclient(TCTest):
         session = getExceptionSession()
         client = newClient(session=session)
 
-        async def _helper_retries():
-            with mock.patch.object(utils, 'calculateSleepTime') as p:
-                p.return_value = .001
-                with self.assertRaises(exceptions.TaskclusterConnectionError):
-                    await client._makeHttpRequest('get', 'http://example.com',
-                                                  '{"clientScopes": ["a"]}',
-                                                  {}, session=session)
-
-        asyncio.get_event_loop().run_until_complete(_helper_retries())
+        with mock.patch.object(utils, 'calculateSleepTime') as p:
+            p.return_value = .001
+            with self.assertRaises(exceptions.TaskclusterConnectionError):
+                asyncio.get_event_loop().run_until_complete(
+                    client._makeHttpRequest('get', 'http://example.com',
+                                            '{"clientScopes": ["a"]}',
+                                            {}, session=session)
+                )
 
     def test_bad_json_status_200(self):
         """test_asyncclient | bad json 200 status
@@ -77,13 +72,12 @@ class TestAsyncclient(TCTest):
         session = getFakeSession(response=response)
         client = newClient(session=session)
 
-        async def _helper_json():
-            result = await client._makeHttpRequest('get', 'http://example.com',
-                                                   '{"clientScopes": ["a"]}',
-                                                   {}, session=session)
-            self.assertEqual(result, {'response': response})
-
-        asyncio.get_event_loop().run_until_complete(_helper_json())
+        result = asyncio.get_event_loop().run_until_complete(
+            client._makeHttpRequest('get', 'http://example.com',
+                                    '{"clientScopes": ["a"]}',
+                                    {}, session=session)
+        )
+        self.assertEqual(result, {'response': response})
 
     def test_bad_json_status_404(self):
         """test_asyncclient | bad json non-200 status
@@ -97,13 +91,12 @@ class TestAsyncclient(TCTest):
         session = getFakeSession(response=response)
         client = newClient(session=session)
 
-        async def _helper_json():
-            with self.assertRaises(exceptions.TaskclusterRestFailure):
-                await client._makeHttpRequest('get', 'http://example.com',
-                                              '{"clientScopes": ["a"]}',
-                                              {}, session=session)
-
-        asyncio.get_event_loop().run_until_complete(_helper_json())
+        with self.assertRaises(exceptions.TaskclusterRestFailure):
+            asyncio.get_event_loop().run_until_complete(
+                client._makeHttpRequest('get', 'http://example.com',
+                                        '{"clientScopes": ["a"]}',
+                                        {}, session=session)
+            )
 
     def test_auth_error(self):
         """test_asyncclient | AuthenticationError
@@ -117,13 +110,12 @@ class TestAsyncclient(TCTest):
         session = getFakeSession(response=response)
         client = newClient(session=session)
 
-        async def _helper_autherror():
-            with self.assertRaises(exceptions.TaskclusterAuthFailure):
-                await client._makeHttpRequest('get', 'http://example.com',
-                                              '{"clientScopes": ["a"]}',
-                                              {}, session=session)
-
-        asyncio.get_event_loop().run_until_complete(_helper_autherror())
+        with self.assertRaises(exceptions.TaskclusterAuthFailure):
+            asyncio.get_event_loop().run_until_complete(
+                client._makeHttpRequest('get', 'http://example.com',
+                                        '{"clientScopes": ["a"]}',
+                                        {}, session=session)
+            )
 
     def test_status_204(self):
         """test_asyncclient | 204 status
@@ -131,11 +123,10 @@ class TestAsyncclient(TCTest):
         session = getFakeSession(status=204)
         client = newClient(session=session)
 
-        async def _helper_json():
-            response = await client._makeHttpRequest('get', 'http://example.com',
-                                                     '{"clientScopes": ["a"]}',
-                                                     {}, session=session)
-            pprint.pprint(response)
-            self.assertTrue(response is None)
-
-        asyncio.get_event_loop().run_until_complete(_helper_json())
+        response = asyncio.get_event_loop().run_until_complete(
+            client._makeHttpRequest('get', 'http://example.com',
+                                    '{"clientScopes": ["a"]}',
+                                    {}, session=session)
+        )
+        pprint.pprint(response)
+        self.assertTrue(response is None)

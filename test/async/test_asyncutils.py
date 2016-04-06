@@ -18,15 +18,15 @@ class TestAsyncutils(TCTest):
         """
         session = getExceptionSession(exception=exception)
 
-        async def _helper_retries():
-            with mock.patch.object(utils, 'calculateSleepTime') as p:
-                p.return_value = .001
-                with self.assertRaises(exception):
-                    await asyncutils.makeHttpRequest('get', 'http://example.com',
-                                                     '{"clientScopes": ["a"]}',
-                                                     {}, session=session)
+        with mock.patch.object(utils, 'calculateSleepTime') as p:
+            p.return_value = .001
+            with self.assertRaises(exception):
+                asyncio.get_event_loop().run_until_complete(
+                    asyncutils.makeHttpRequest('get', 'http://example.com',
+                                               '{"clientScopes": ["a"]}',
+                                               {}, session=session)
+                )
 
-        asyncio.get_event_loop().run_until_complete(_helper_retries())
         self.assertEqual(expectedRetries, session.count)
 
     def test_putFile(self):
@@ -34,27 +34,26 @@ class TestAsyncutils(TCTest):
         """
         payload = {'a': 'b'}
         session = getFakeSession(payload=payload)
-        async def _helper_putfile():
-            result = await asyncutils.putFile(__file__, "http://example.com",
-                                              "text/plain", session=session)
-            return await result.json()
-        result = asyncio.get_event_loop().run_until_complete(_helper_putfile())
-        self.assertEqual(result, payload)
+        result = asyncio.get_event_loop().run_until_complete(
+            asyncutils.putFile(__file__, "http://example.com",
+                               "text/plain", session=session)
+        )
+        result_json = yield from result.json()
+        self.assertEqual(result_json, payload)
 
     def test_too_many_retries(self):
         """test_asyncutils | too many retries
         """
         session = getFailFirstSession(firstSuccess=10)
 
-        async def _helper_retries():
-            with mock.patch.object(utils, 'calculateSleepTime') as p:
-                p.return_value = .001
-                with self.assertRaises(exceptions.TaskclusterRestFailure):
-                    await asyncutils.makeHttpRequest('get', 'http://example.com',
-                                                     '{"clientScopes": ["a"]}',
-                                                     {}, session=session)
-
-        asyncio.get_event_loop().run_until_complete(_helper_retries())
+        with mock.patch.object(utils, 'calculateSleepTime') as p:
+            p.return_value = .001
+            with self.assertRaises(exceptions.TaskclusterRestFailure):
+                asyncio.get_event_loop().run_until_complete(
+                    asyncutils.makeHttpRequest('get', 'http://example.com',
+                                               '{"clientScopes": ["a"]}',
+                                               {}, session=session)
+                )
 
     def test_too_many_exception_retries(self):
         """test_asyncutils | too many exception retries

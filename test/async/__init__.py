@@ -138,13 +138,10 @@ class AsyncGeneratedTC(base.GeneratedTC):
         replDict = self._get_replDict(argumentNames)
         expectedRoute = a.routes[functionName].format(**replDict).lstrip('/')
 
-        async def main():
-            return await asyncio.wait([
-                getattr(a, functionName)(*argumentNames, **kwargs)
-            ])
-
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
+        yield from loop.run_until_complete(
+            getattr(a, functionName)(*argumentNames, **kwargs)
+        )
         if validOptions:
             kwargs['validOptions'] = validOptions
             kwargs['options'] = None
@@ -169,7 +166,7 @@ class AsyncGeneratedTC(base.GeneratedTC):
         expectedRoute1 = a.routes[functionName].format(**replDict1).lstrip('/')
         expectedRoute2 = a.routes[functionName].format(**replDict2).lstrip('/')
 
-        async def main():
+        async def _helper_async():
             return await asyncio.wait([
                 getattr(a, functionName)(*args2, **kwargs),
                 getattr(a, functionName)(*args1, **kwargs),
@@ -178,7 +175,7 @@ class AsyncGeneratedTC(base.GeneratedTC):
         with mock.patch.object(utils, 'calculateSleepTime') as p:
             p.return_value = .001
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(main())
+            loop.run_until_complete(_helper_async())
 
         args = a.http_request_args
         pprint.pprint(args)
@@ -236,19 +233,20 @@ class AsyncAuthentication(base.BaseAuthentication):
         async def _helper_json():
             r = await aiohttp.request('get', url)
             return await r.json()
-        return asyncio.get_event_loop().run_until_complete(_helper_json())
+
+        result = asyncio.get_event_loop().run_until_complete(_helper_json())
+        return result
 
     def _get_error(self, url, expectedStatus, **kwargs):
-        async def _helper_error():
-            return await aiohttp.request('get', url)
-        resp = asyncio.get_event_loop().run_until_complete(_helper_error())
+        resp = asyncio.get_event_loop().run_until_complete(
+            aiohttp.request('get', url)
+        )
         self.assertEqual(expectedStatus, resp.status)
 
     def _get_result(self, function, *args, **kwargs):
-        async def _helper_result():
-            return await function(*args, **kwargs)
-
-        result = asyncio.get_event_loop().run_until_complete(_helper_result())
+        result = asyncio.get_event_loop().run_until_complete(
+            function(*args, **kwargs)
+        )
         return result
 
     def no_creds_needed(self):
@@ -267,10 +265,9 @@ class AsyncAuthentication(base.BaseAuthentication):
 
         client = Auth({"credentials": {}}, session=session)
 
-        async def _helper_client():
-            return await client.client('abc')
-
-        result = asyncio.get_event_loop().run_until_complete(_helper_client())
+        result = asyncio.get_event_loop().run_until_complete(
+            client.client('abc')
+        )
         self.assertEqual(result, {"clientId": "abc"})
 
     def async_auth(self):
@@ -287,7 +284,7 @@ class AsyncAuthentication(base.BaseAuthentication):
         with mock.patch.object(utils, 'calculateSleepTime') as p:
             p.return_value = .001
 
-            async def main():
+            async def _helper_async():
                 return await asyncio.wait([
                     client.testAuthenticate({
                         'clientScopes': ['test:a'],
@@ -300,7 +297,7 @@ class AsyncAuthentication(base.BaseAuthentication):
                 ])
 
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(main())
+            loop.run_until_complete(_helper_async())
 
         pprint.pprint(session.arg_tracker)
         # The first and third attempts should be the same scope;
