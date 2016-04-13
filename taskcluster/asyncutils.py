@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import aiohttp
+import aiohttp.hdrs
 import asyncio
 import logging
 import os
@@ -63,12 +64,17 @@ async def makeSingleHttpRequest(method, url, payload, headers, session=None,
     log.debug('HTTP Headers: %s' % str(headers))
     log.debug('HTTP Payload: %s (limit 100 char)' % str(payload)[:100])
     obj = session or createSession(*args, **kwargs)
-    async with obj.request(method, url, data=payload, headers=headers) as resp:
-        await resp.text()
+    skip_auto_headers = [aiohttp.hdrs.CONTENT_TYPE]
+
+    async with obj.request(
+        method, url, data=payload, headers=headers,
+        skip_auto_headers=skip_auto_headers, compress=False
+    ) as resp:
+        response_text = await resp.text()
         log.debug('Received HTTP Status:    %s' % resp.status)
         log.debug('Received HTTP Headers: %s' % str(resp.headers))
         log.debug('Received HTTP Payload: %s (limit 1024 char)' %
-                  six.text_type(resp.content)[:1024])
+                  six.text_type(response_text)[:1024])
         return resp
 
 
