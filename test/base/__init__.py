@@ -1,15 +1,24 @@
 """ Basic and helper things for testing the Taskcluster Python client"""
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-import unittest
-import os
-import logging
-import time
+import datetime
+import httmock
 import json
+import logging
 import mock
+import os
 import re
+import requests
+import time
+import unittest
+
 from operator import itemgetter
+from six.moves import urllib
+
 from taskcluster.runtimeclient import ROUTING_KEY_BLACKLIST
+import taskcluster.client as subject
+import taskcluster.exceptions as exc
+
 
 # Mocks really ought not to overwrite this
 _sleep = time.sleep
@@ -119,7 +128,7 @@ def createFakeApi(cls, *args, **kwargs):
     """For generated tests.
     """
     instance = cls(*args, **kwargs)
-    instance._makeHttpRequest = mock.MagicMock()
+    instance.makeHttpRequest = mock.MagicMock()
     instance._makeTopicExchange = mock.MagicMock()
     return instance
 
@@ -132,7 +141,7 @@ class GeneratedTC(TCTest):
     maxDiff = None
     testClass = None
 
-    def _get_replDict(self, argumentNames):
+    def _get_replDict(self, argumentNames, suffix=""):
         """Create a replacement dictionary to string format a url.
 
         Each {var} is replaced with 'var', e.g. {clientId} -> 'clientId'
@@ -140,11 +149,11 @@ class GeneratedTC(TCTest):
         a = createFakeApi(self.testClass)
         replDict = {'baseUrl': a.options['baseUrl']}
         for name in argumentNames:
-            replDict[name] = name
+            replDict[name] = "{}{}".format(name, suffix)
         return replDict
 
     def try_function(self, functionName, method, argumentNames=None, validOptions=None):
-        """For entry functions, verify the _makeHttpRequest arguments are
+        """For entry functions, verify the makeHttpRequest arguments are
         correct.
         """
         a = createFakeApi(self.testClass)
@@ -159,7 +168,7 @@ class GeneratedTC(TCTest):
         expectedArgs = [method, expectedRoute]
         if 'payload' in argumentNames:
             expectedArgs.append('payload')
-        a._makeHttpRequest.assert_called_once_with(*expectedArgs, **kwargs)
+        a.makeHttpRequest.assert_called_once_with(*expectedArgs, **kwargs)
 
     def try_topic(self, functionName, exchangeName):
         """For entry topic exchanges, verify the _makeTopicExchange arguments
@@ -219,3 +228,283 @@ class GeneratedTC(TCTest):
                 )
         else:
             self.assertFalse(hasattr(a, 'routingKeys'))
+
+
+class BaseAuthentication(TCTest):
+    """Base Authentication test class, for integration testing.
+
+    This will be run against both the runtime- and buildtime- generated
+    Auth classes.
+
+    The methods don't begin with test_ because nosetests sniff those out.
+    """
+
+    def testClass(self, *args, **kwargs):
+        """Define this with Auth
+        """
+        pass
+
+    def _get_json(self, url):
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+
+    def _get_error(self, url, expectedStatus,
+                   exception=requests.exceptions.RequestException):
+        response = requests.get(url)
+        with self.assertRaises(exception):
+            response.raise_for_status()
+        self.assertEqual(expectedStatus, response.status_code)
+
+    def _get_result(self, function, *args, **kwargs):
+        return function(*args, **kwargs)
+
+    def no_creds_needed(self):
+        """we can call methods which require no scopes with an unauthenticated
+        client.
+
+        httmock is requests-specific, so we'll need to override this method for
+        async tests.
+        """
+        # mock this request so we don't depend on the existence of a client
+        @httmock.all_requests
+        def auth_response(url, request):
+            self.assertEqual(urllib.parse.urlunsplit(url),
+                             'https://auth.taskcluster.net/v1/clients/abc')
+            self.failIf('Authorization' in request.headers)
+            headers = {'content-type': 'application/json'}
+            content = {"clientId": "abc"}
+            return httmock.response(200, content, headers, None, 5, request)
+
+        with httmock.HTTMock(auth_response):
+            client = self.testClass({"credentials": {}})
+            result = client.client('abc')
+            self.assertEqual(result, {"clientId": "abc"})
+
+    def permacred_simple(self):
+        """we can call methods which require authentication with valid
+        permacreds"""
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'no-secret',
+            }
+        })
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:a'],
+            'requiredScopes': ['test:a'],
+        })
+        self.assertEqual(result, {'scopes': ['test:a'], 'clientId': 'tester'})
+
+    def permacred_simple_authorizedScopes(self):
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'no-secret',
+            },
+            'authorizedScopes': ['test:a', 'test:b'],
+        })
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:*'],
+            'requiredScopes': ['test:a'],
+        })
+        self.assertEqual(result, {'scopes': ['test:a', 'test:b'],
+                                  'clientId': 'tester'})
+
+    def unicode_permacred_simple(self):
+        """Unicode strings that encode to ASCII in credentials do not cause issues"""
+        client = self.testClass({
+            'credentials': {
+                'clientId': u'tester',
+                'accessToken': u'no-secret',
+            }
+        })
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:a'],
+            'requiredScopes': ['test:a'],
+        })
+        self.assertEqual(result, {'scopes': ['test:a'], 'clientId': 'tester'})
+
+    def invalid_unicode_permacred_simple(self):
+        """Unicode strings that do not encode to ASCII in credentials cause issues"""
+        with self.assertRaises(exc.TaskclusterAuthFailure):
+            self._get_result(self.testClass, {
+                'credentials': {
+                    'clientId': u"\U0001F4A9",
+                    'accessToken': u"\U0001F4A9",
+                }
+            })
+
+    def permacred_insufficient_scopes(self):
+        """A call with insufficient scopes results in an error"""
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'no-secret',
+            }
+        })
+        # TODO: this should be TaskclsuterAuthFailure; most likely the client
+        # is expecting AuthorizationFailure instead of AuthenticationFailure
+        with self.assertRaises(exc.TaskclusterRestFailure):
+            self._get_result(client.testAuthenticate, {
+                'clientScopes': ['test:*'],
+                'requiredScopes': ['something-more'],
+            })
+
+    def temporary_credentials(self):
+        """we can call methods which require authentication with temporary
+        credentials generated by python client"""
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:xyz'],
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+        })
+
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:*'],
+            'requiredScopes': ['test:xyz'],
+        })
+        self.assertEqual(result, {'scopes': ['test:xyz'], 'clientId': 'tester'})
+
+    def named_temporary_credentials(self):
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:xyz'],
+            name='credName'
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+        })
+
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:*', 'auth:create-client:credName'],
+            'requiredScopes': ['test:xyz'],
+        })
+        self.assertEqual(result, {'scopes': ['test:xyz'], 'clientId': 'credName'})
+
+    def temporary_credentials_authorizedScopes(self):
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:xyz:*'],
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+            'authorizedScopes': ['test:xyz:abc'],
+        })
+
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:*'],
+            'requiredScopes': ['test:xyz:abc'],
+        })
+        self.assertEqual(result, {'scopes': ['test:xyz:abc'],
+                                  'clientId': 'tester'})
+
+    def named_temporary_credentials_authorizedScopes(self):
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:xyz:*'],
+            name='credName'
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+            'authorizedScopes': ['test:xyz:abc'],
+        })
+
+        result = self._get_result(client.testAuthenticate, {
+            'clientScopes': ['test:*', 'auth:create-client:credName'],
+            'requiredScopes': ['test:xyz:abc'],
+        })
+        self.assertEqual(result, {'scopes': ['test:xyz:abc'],
+                                  'clientId': 'credName'})
+
+    def signed_url(self):
+        """we can use a signed url built with the python client"""
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'no-secret',
+            }
+        })
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
+        response = self._get_json(signedUrl)
+        response['scopes'].sort()
+        self.assertEqual(response, {
+            'scopes': sorted(['test:*', u'auth:create-client:test:*']),
+            'clientId': 'tester',
+        })
+
+    def signed_url_bad_credentials(self):
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'wrong-secret',
+            }
+        })
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
+        self._get_error(signedUrl, 401)
+
+    def temp_credentials_signed_url(self):
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:*'],
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+        })
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
+        response = self._get_json(signedUrl)
+        self.assertEqual(response, {
+            'scopes': ['test:*'],
+            'clientId': 'tester',
+        })
+
+    def signed_url_authorizedScopes(self):
+        client = self.testClass({
+            'credentials': {
+                'clientId': 'tester',
+                'accessToken': 'no-secret',
+            },
+            'authorizedScopes': ['test:authenticate-get'],
+        })
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
+        response = self._get_json(signedUrl)
+        self.assertEqual(response, {
+            'scopes': ['test:authenticate-get'],
+            'clientId': 'tester',
+        })
+
+    def temp_credentials_signed_url_authorizedScopes(self):
+        tempCred = subject.createTemporaryCredentials(
+            'tester',
+            'no-secret',
+            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
+            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+            ['test:*'],
+        )
+        client = self.testClass({
+            'credentials': tempCred,
+            'authorizedScopes': ['test:authenticate-get'],
+        })
+        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
+        response = self._get_json(signedUrl)
+        self.assertEqual(response, {
+            'scopes': ['test:authenticate-get'],
+            'clientId': 'tester',
+        })

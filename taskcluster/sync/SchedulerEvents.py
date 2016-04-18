@@ -7,12 +7,12 @@ Scheduler AMQP Exchanges
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class SchedulerEvents(baseclient.BaseClient):
+class SchedulerEvents(SyncClient):
     '''
     Scheduler AMQP Exchanges
     The scheduler, typically available at `scheduler.taskcluster.net` is

@@ -7,12 +7,12 @@ TaskCluster-Github Exchanges
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class GithubEvents(baseclient.BaseClient):
+class GithubEvents(SyncClient):
     '''
     TaskCluster-Github Exchanges
     The github service, typically available at

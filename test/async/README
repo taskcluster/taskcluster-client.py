@@ -1,0 +1,2 @@
+This directory contains the async tests.  All filenames must contain the word 'async'
+for tox to skip them in py27.

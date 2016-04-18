@@ -7,12 +7,12 @@ Hooks API Documentation
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class Hooks(baseclient.BaseClient):
+class Hooks(SyncClient):
     '''
     Hooks API Documentation
     Hooks are a mechanism for creating tasks in response to events.
@@ -57,7 +57,7 @@ class Hooks(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('listHookGroups')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def listHooks(self, hookGroupId):
         '''
@@ -72,7 +72,7 @@ class Hooks(baseclient.BaseClient):
         route = self.makeRoute('listHooks', replDict={
             'hookGroupId': hookGroupId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def hook(self, hookGroupId, hookId):
         '''
@@ -89,7 +89,7 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def getHookStatus(self, hookGroupId, hookId):
         '''
@@ -106,7 +106,7 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def getHookSchedule(self, hookGroupId, hookId):
         '''
@@ -123,7 +123,7 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
 
     def createHook(self, hookGroupId, hookId, payload):
         '''
@@ -143,7 +143,7 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('put', route, payload)
+        return self.makeHttpRequest('put', route, payload)
 
     def updateHook(self, hookGroupId, hookId, payload):
         '''
@@ -160,7 +160,7 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def removeHook(self, hookGroupId, hookId):
         '''
@@ -176,4 +176,4 @@ class Hooks(baseclient.BaseClient):
             'hookGroupId': hookGroupId,
             'hookId': hookId,
         })
-        return self._makeHttpRequest('delete', route)
+        return self.makeHttpRequest('delete', route)

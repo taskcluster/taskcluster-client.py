@@ -7,12 +7,12 @@ AWS Provisioner Pulse Exchanges
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class AwsProvisionerEvents(baseclient.BaseClient):
+class AwsProvisionerEvents(SyncClient):
     '''
     AWS Provisioner Pulse Exchanges
     Exchanges from the provisioner... more docs later

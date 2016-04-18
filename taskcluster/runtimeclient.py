@@ -4,13 +4,10 @@ from __future__ import absolute_import, division, print_function
 
 import logging
 import copy
-import hashlib
-import hmac
-import datetime
-import calendar
 import six
 
-from taskcluster.baseclient import BaseClient, config
+from taskcluster.baseclient import config
+from taskcluster.sync.syncclient import SyncClient
 import taskcluster.exceptions as exceptions
 import taskcluster.utils as utils
 
@@ -21,7 +18,7 @@ _defaultConfig = copy.deepcopy(config)
 ROUTING_KEY_BLACKLIST = ("summary", )
 
 
-class RuntimeClient(BaseClient):
+class RuntimeClient(SyncClient):
 
     def _makeApiCall(self, entry, *args, **kwargs):
         """ This function is used to dispatch calls to other functions
@@ -40,7 +37,7 @@ class RuntimeClient(BaseClient):
         route = self._subArgsInRoute(entry, apiArgs)
         log.debug('Route is: %s', route)
 
-        return self._makeHttpRequest(entry['method'], route, payload)
+        return self.makeHttpRequest(entry['method'], route, payload)
 
     def _processArgs(self, entry, *args, **kwargs):
         """ Take the list of required arguments, positional arguments
@@ -222,74 +219,3 @@ def createApiClient(name, api):
         attributes[entry['name']] = f
 
     return type(utils.toStr(name), (RuntimeClient,), attributes)
-
-
-def createTemporaryCredentials(clientId, accessToken, start, expiry, scopes, name=None):
-    """ Create a set of temporary credentials
-
-    clientId: the issuing clientId
-    accessToken: the issuer's accessToken
-    start: start time of credentials, seconds since epoch
-    expiry: expiration time of credentials, seconds since epoch
-    scopes: list of scopes granted
-    name: credential name (optional)
-
-    Returns a dictionary in the form:
-        { 'clientId': str, 'accessToken: str, 'certificate': str}
-    """
-
-    now = datetime.datetime.utcnow()
-    now = now - datetime.timedelta(minutes=10)  # Subtract 5 minutes for clock drift
-
-    for scope in scopes:
-        if not isinstance(scope, six.string_types):
-            raise exceptions.TaskclusterFailure('Scope must be string')
-
-    # Credentials can only be valid for 31 days.  I hope that
-    # this is validated on the server somehow...
-
-    if expiry - start > datetime.timedelta(days=31):
-        raise exceptions.TaskclusterFailure('Only 31 days allowed')
-
-    # We multiply times by 1000 because the auth service is JS and as a result
-    # uses milliseconds instead of seconds
-    cert = dict(
-        version=1,
-        scopes=scopes,
-        start=calendar.timegm(start.utctimetuple()) * 1000,
-        expiry=calendar.timegm(expiry.utctimetuple()) * 1000,
-        seed=utils.slugId() + utils.slugId(),
-    )
-
-    # if this is a named temporary credential, include the issuer in the certificate
-    if name:
-        cert['issuer'] = utils.toStr(clientId)
-
-    sig = ['version:' + utils.toStr(cert['version'])]
-    if name:
-        sig.extend([
-            'clientId:' + utils.toStr(name),
-            'issuer:' + utils.toStr(clientId),
-        ])
-    sig.extend([
-        'seed:' + utils.toStr(cert['seed']),
-        'start:' + utils.toStr(cert['start']),
-        'expiry:' + utils.toStr(cert['expiry']),
-        'scopes:'
-    ] + scopes)
-    sigStr = '\n'.join(sig).encode()
-
-    if isinstance(accessToken, six.text_type):
-        accessToken = accessToken.encode()
-    sig = hmac.new(accessToken, sigStr, hashlib.sha256).digest()
-
-    cert['signature'] = utils.encodeStringForB64Header(sig)
-
-    newToken = hmac.new(accessToken, cert['seed'], hashlib.sha256).digest()
-    newToken = utils.makeB64UrlSafe(utils.encodeStringForB64Header(newToken)).replace(b'=', b'')
-
-    return {
-        'clientId': name or clientId,
-        'accessToken': newToken,
-        'certificate': utils.dumpJson(cert),
-    }

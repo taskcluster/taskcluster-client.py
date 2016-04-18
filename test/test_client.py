@@ -1,10 +1,7 @@
 from __future__ import division, print_function
 import types
-import unittest
 import time
-import datetime
 from six.moves import urllib
-import os
 import re
 import json
 
@@ -12,9 +9,8 @@ import mock
 import httmock
 import requests
 
-import base
+import test.base as base
 import taskcluster.client as subject
-import taskcluster.runtimeclient as rtclient
 import taskcluster.exceptions as exc
 import taskcluster.utils as utils
 
@@ -182,7 +178,7 @@ class TestMakeHttpRequest(ClientTest):
             expected = {'test': 'works'}
             p.return_value = ObjWithDotJson(200, expected)
 
-            v = self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+            v = self.client.makeHttpRequest('GET', 'http://www.example.com', None)
             p.assert_called_once_with('GET', 'http://www.example.com', None, mock.ANY)
             self.assertEqual(expected, v)
 
@@ -191,7 +187,7 @@ class TestMakeHttpRequest(ClientTest):
             expected = {'test': 'works'}
             p.return_value = ObjWithDotJson(200, expected)
 
-            v = self.client._makeHttpRequest('GET', 'http://www.example.com', {'payload': 2})
+            v = self.client.makeHttpRequest('GET', 'http://www.example.com', {'payload': 2})
             p.assert_called_once_with('GET', 'http://www.example.com',
                                       utils.dumpJson({'payload': 2}), mock.ANY)
             self.assertEqual(expected, v)
@@ -210,7 +206,7 @@ class TestMakeHttpRequest(ClientTest):
             expectedCalls = [mock.call('GET', 'http://www.example.com', None, mock.ANY)
                              for x in range(self.client.options['maxRetries'])]
 
-            v = self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+            v = self.client.makeHttpRequest('GET', 'http://www.example.com', None)
             p.assert_has_calls(expectedCalls)
             self.assertEqual(expected, v)
 
@@ -237,9 +233,12 @@ class TestMakeHttpRequest(ClientTest):
 
             with self.assertRaises(exc.TaskclusterRestFailure):
                 try:
-                    self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+                    self.client.makeHttpRequest('GET', 'http://www.example.com', None)
                 except exc.TaskclusterRestFailure as err:
-                    self.assertEqual('msg', str(err))
+                    message = "msg - {}".format(
+                        json.dumps(msg, indent=4, separators=(',', ': '))
+                    )
+                    self.assertEqual(message, str(err))
                     self.assertEqual(500, err.status_code)
                     self.assertEqual(msg, err.body)
                     raise err
@@ -259,7 +258,7 @@ class TestMakeHttpRequest(ClientTest):
             expectedCalls = [mock.call('GET', 'http://www.example.com', None, mock.ANY)
                              for x in range(self.client.options['maxRetries'])]
 
-            v = self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+            v = self.client.makeHttpRequest('GET', 'http://www.example.com', None)
             p.assert_has_calls(expectedCalls)
             self.assertEqual(expected, v)
 
@@ -269,7 +268,7 @@ class TestMakeHttpRequest(ClientTest):
             expectedCalls = [mock.call('GET', 'http://www.example.com', None, mock.ANY)
                              for x in range(self.client.options['maxRetries'])]
             with self.assertRaises(exc.TaskclusterRestFailure):
-                self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+                self.client.makeHttpRequest('GET', 'http://www.example.com', None)
             p.assert_has_calls(expectedCalls)
 
     def test_failure_connection_errors(self):
@@ -278,7 +277,7 @@ class TestMakeHttpRequest(ClientTest):
             expectedCalls = [mock.call('GET', 'http://www.example.com', None, mock.ANY)
                              for x in range(self.client.options['maxRetries'])]
             with self.assertRaises(exc.TaskclusterConnectionError):
-                self.client._makeHttpRequest('GET', 'http://www.example.com', None)
+                self.client.makeHttpRequest('GET', 'http://www.example.com', None)
             p.assert_has_calls(expectedCalls)
 
 
@@ -330,7 +329,7 @@ class TestMakeApiCall(ClientTest):
 
     def test_hits_no_args_no_input(self):
         expected = 'works'
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.no_args_no_input()
@@ -340,7 +339,7 @@ class TestMakeApiCall(ClientTest):
 
     def test_hits_two_args_no_input(self):
         expected = 'works'
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.two_args_no_input('argone', 'argtwo')
@@ -350,7 +349,7 @@ class TestMakeApiCall(ClientTest):
 
     def test_hits_no_args_with_input(self):
         expected = 'works'
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.no_args_with_input({})
@@ -360,7 +359,7 @@ class TestMakeApiCall(ClientTest):
 
     def test_hits_two_args_with_input(self):
         expected = 'works'
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.two_args_with_input('argone', 'argtwo', {})
@@ -371,7 +370,7 @@ class TestMakeApiCall(ClientTest):
     def test_input_is_procesed(self):
         expected = 'works'
         expected_input = {'test': 'does work'}
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.no_args_with_input(expected_input)
@@ -381,7 +380,7 @@ class TestMakeApiCall(ClientTest):
 
     def test_kwargs(self):
         expected = 'works'
-        with mock.patch.object(self.client, '_makeHttpRequest') as patcher:
+        with mock.patch.object(self.client, 'makeHttpRequest') as patcher:
             patcher.return_value = expected
 
             actual = self.client.two_args_with_input({}, arg0='argone', arg1='argtwo')
@@ -532,379 +531,3 @@ class TestMockHttpCalls(ClientTest):
         self.assertEqual(self.gotUrl,
                          'https://fake.taskcluster.net/v1/two_args_with_input/a/b')
         self.assertEqual(json.loads(self.gotRequest.body), {"x": 1})
-
-
-class BaseAuthentication(base.TCTest):
-    """Base Authentication test class, for integration testing.
-
-    This will be run against both the runtime- and buildtime- generated
-    Auth classes.
-
-    The methods don't begin with test_ because nosetests sniff those out.
-    """
-
-    def testClass(self, *args, **kwargs):
-        """Define this with Auth
-        """
-        pass
-
-    def no_creds_needed(self):
-        """we can call methods which require no scopes with an unauthenticated
-        client"""
-        # mock this request so we don't depend on the existence of a client
-        @httmock.all_requests
-        def auth_response(url, request):
-            self.assertEqual(urllib.parse.urlunsplit(url),
-                             'https://auth.taskcluster.net/v1/clients/abc')
-            self.failIf('Authorization' in request.headers)
-            headers = {'content-type': 'application/json'}
-            content = {"clientId": "abc"}
-            return httmock.response(200, content, headers, None, 5, request)
-
-        with httmock.HTTMock(auth_response):
-            client = self.testClass({"credentials": {}})
-            result = client.client('abc')
-            self.assertEqual(result, {"clientId": "abc"})
-
-    def permacred_simple(self):
-        """we can call methods which require authentication with valid
-        permacreds"""
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'no-secret',
-            }
-        })
-        result = client.testAuthenticate({
-            'clientScopes': ['test:a'],
-            'requiredScopes': ['test:a'],
-        })
-        self.assertEqual(result, {'scopes': ['test:a'], 'clientId': 'tester'})
-
-    def permacred_simple_authorizedScopes(self):
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'no-secret',
-            },
-            'authorizedScopes': ['test:a', 'test:b'],
-        })
-        result = client.testAuthenticate({
-            'clientScopes': ['test:*'],
-            'requiredScopes': ['test:a'],
-        })
-        self.assertEqual(result, {'scopes': ['test:a', 'test:b'],
-                                  'clientId': 'tester'})
-
-    def unicode_permacred_simple(self):
-        """Unicode strings that encode to ASCII in credentials do not cause issues"""
-        client = self.testClass({
-            'credentials': {
-                'clientId': u'tester',
-                'accessToken': u'no-secret',
-            }
-        })
-        result = client.testAuthenticate({
-            'clientScopes': ['test:a'],
-            'requiredScopes': ['test:a'],
-        })
-        self.assertEqual(result, {'scopes': ['test:a'], 'clientId': 'tester'})
-
-    def invalid_unicode_permacred_simple(self):
-        """Unicode strings that do not encode to ASCII in credentials cause issues"""
-        with self.assertRaises(exc.TaskclusterAuthFailure):
-            self.testClass({
-                'credentials': {
-                    'clientId': u"\U0001F4A9",
-                    'accessToken': u"\U0001F4A9",
-                }
-            })
-
-    def permacred_insufficient_scopes(self):
-        """A call with insufficient scopes results in an error"""
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'no-secret',
-            }
-        })
-        # TODO: this should be TaskclsuterAuthFailure; most likely the client
-        # is expecting AuthorizationFailure instead of AuthenticationFailure
-        with self.assertRaises(exc.TaskclusterRestFailure):
-            client.testAuthenticate({
-                'clientScopes': ['test:*'],
-                'requiredScopes': ['something-more'],
-            })
-
-    def temporary_credentials(self):
-        """we can call methods which require authentication with temporary
-        credentials generated by python client"""
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:xyz'],
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-        })
-
-        result = client.testAuthenticate({
-            'clientScopes': ['test:*'],
-            'requiredScopes': ['test:xyz'],
-        })
-        self.assertEqual(result, {'scopes': ['test:xyz'], 'clientId': 'tester'})
-
-    def named_temporary_credentials(self):
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:xyz'],
-            name='credName'
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-        })
-
-        result = client.testAuthenticate({
-            'clientScopes': ['test:*', 'auth:create-client:credName'],
-            'requiredScopes': ['test:xyz'],
-        })
-        self.assertEqual(result, {'scopes': ['test:xyz'], 'clientId': 'credName'})
-
-    def temporary_credentials_authorizedScopes(self):
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:xyz:*'],
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-            'authorizedScopes': ['test:xyz:abc'],
-        })
-
-        result = client.testAuthenticate({
-            'clientScopes': ['test:*'],
-            'requiredScopes': ['test:xyz:abc'],
-        })
-        self.assertEqual(result, {'scopes': ['test:xyz:abc'],
-                                  'clientId': 'tester'})
-
-    def named_temporary_credentials_authorizedScopes(self):
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:xyz:*'],
-            name='credName'
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-            'authorizedScopes': ['test:xyz:abc'],
-        })
-
-        result = client.testAuthenticate({
-            'clientScopes': ['test:*', 'auth:create-client:credName'],
-            'requiredScopes': ['test:xyz:abc'],
-        })
-        self.assertEqual(result, {'scopes': ['test:xyz:abc'],
-                                  'clientId': 'credName'})
-
-    def signed_url(self):
-        """we can use a signed url built with the python client"""
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'no-secret',
-            }
-        })
-        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
-        response = requests.get(signedUrl)
-        response.raise_for_status()
-        response = response.json()
-        response['scopes'].sort()
-        self.assertEqual(response, {
-            'scopes': sorted(['test:*', u'auth:create-client:test:*']),
-            'clientId': 'tester',
-        })
-
-    def signed_url_bad_credentials(self):
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'wrong-secret',
-            }
-        })
-        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
-        response = requests.get(signedUrl)
-        with self.assertRaises(requests.exceptions.RequestException):
-            response.raise_for_status()
-        self.assertEqual(401, response.status_code)
-
-    def temp_credentials_signed_url(self):
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:*'],
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-        })
-        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
-        response = requests.get(signedUrl)
-        response.raise_for_status()
-        response = response.json()
-        self.assertEqual(response, {
-            'scopes': ['test:*'],
-            'clientId': 'tester',
-        })
-
-    def signed_url_authorizedScopes(self):
-        client = self.testClass({
-            'credentials': {
-                'clientId': 'tester',
-                'accessToken': 'no-secret',
-            },
-            'authorizedScopes': ['test:authenticate-get'],
-        })
-        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
-        response = requests.get(signedUrl)
-        response.raise_for_status()
-        response = response.json()
-        self.assertEqual(response, {
-            'scopes': ['test:authenticate-get'],
-            'clientId': 'tester',
-        })
-
-    def temp_credentials_signed_url_authorizedScopes(self):
-        tempCred = subject.createTemporaryCredentials(
-            'tester',
-            'no-secret',
-            datetime.datetime.utcnow() - datetime.timedelta(hours=10),
-            datetime.datetime.utcnow() + datetime.timedelta(hours=10),
-            ['test:*'],
-        )
-        client = self.testClass({
-            'credentials': tempCred,
-            'authorizedScopes': ['test:authenticate-get'],
-        })
-        signedUrl = client.buildSignedUrl(methodName='testAuthenticateGet')
-        response = requests.get(signedUrl)
-        response.raise_for_status()
-        response = response.json()
-        self.assertEqual(response, {
-            'scopes': ['test:authenticate-get'],
-            'clientId': 'tester',
-        })
-
-
-@unittest.skipIf(os.environ.get('NO_TESTS_OVER_WIRE'), "Skipping tests over wire")
-class TestRuntimeAuthentication(BaseAuthentication):
-
-    @property
-    def testClass(self):
-        return rtclient.createApiClient('Auth', base.APIS_JSON['Auth'])
-
-    def test_no_creds_needed(self):
-        self.no_creds_needed()
-
-    def test_permacred_simple(self):
-        self.permacred_simple()
-
-    def test_permacred_simple_authorizedScopes(self):
-        self.permacred_simple_authorizedScopes()
-
-    def test_unicode_permacred_simple(self):
-        self.unicode_permacred_simple()
-
-    def test_invalid_unicode_permacred_simple(self):
-        self.invalid_unicode_permacred_simple()
-
-    def test_permacred_insufficient_scopes(self):
-        self.permacred_insufficient_scopes()
-
-    def test_temporary_credentials(self):
-        self.temporary_credentials()
-
-    def test_named_temporary_credentials(self):
-        self.named_temporary_credentials()
-
-    def test_temporary_credentials_authorizedScopes(self):
-        self.temporary_credentials_authorizedScopes()
-
-    def test_named_temporary_credentials_authorizedScopes(self):
-        self.named_temporary_credentials_authorizedScopes()
-
-    def test_signed_url(self):
-        self.signed_url()
-
-    def test_signed_url_bad_credentials(self):
-        self.signed_url_bad_credentials()
-
-    def test_temp_credentials_signed_url(self):
-        self.temp_credentials_signed_url()
-
-    def test_signed_url_authorizedScopes(self):
-        self.signed_url_authorizedScopes()
-
-    def test_temp_credentials_signed_url_authorizedScopes(self):
-        self.temp_credentials_signed_url_authorizedScopes()
-
-
-@unittest.skipIf(os.environ.get('NO_TESTS_OVER_WIRE'), "Skipping tests over wire")
-class TestBuildtimeAuthentication(BaseAuthentication):
-
-    testClass = subject.Auth
-
-    def test_no_creds_needed(self):
-        self.no_creds_needed()
-
-    def test_permacred_simple(self):
-        self.permacred_simple()
-
-    def test_permacred_simple_authorizedScopes(self):
-        self.permacred_simple_authorizedScopes()
-
-    def test_unicode_permacred_simple(self):
-        self.unicode_permacred_simple()
-
-    def test_invalid_unicode_permacred_simple(self):
-        self.invalid_unicode_permacred_simple()
-
-    def test_permacred_insufficient_scopes(self):
-        self.permacred_insufficient_scopes()
-
-    def test_temporary_credentials(self):
-        self.temporary_credentials()
-
-    def test_named_temporary_credentials(self):
-        self.named_temporary_credentials()
-
-    def test_temporary_credentials_authorizedScopes(self):
-        self.temporary_credentials_authorizedScopes()
-
-    def test_named_temporary_credentials_authorizedScopes(self):
-        self.named_temporary_credentials_authorizedScopes()
-
-    def test_signed_url(self):
-        self.signed_url()
-
-    def test_signed_url_bad_credentials(self):
-        self.signed_url_bad_credentials()
-
-    def test_temp_credentials_signed_url(self):
-        self.temp_credentials_signed_url()
-
-    def test_signed_url_authorizedScopes(self):
-        self.signed_url_authorizedScopes()
-
-    def test_temp_credentials_signed_url_authorizedScopes(self):
-        self.temp_credentials_signed_url_authorizedScopes()

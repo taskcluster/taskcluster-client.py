@@ -7,7 +7,7 @@ import mock
 import os
 import requests
 
-import base
+import test.base as base
 from unittest import TestCase
 from hypothesis import given
 import hypothesis.strategies as st

@@ -7,12 +7,12 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from {{clientModule}} import {{clientClass}}
 
 log = logging.getLogger(__name__)
 
 
-class {{serviceName}}(baseclient.BaseClient):
+class {{serviceName}}({{clientClass}}):
     '''
     {{api['title']}}
     {{api['description'] | docstring}}
@@ -41,7 +41,7 @@ class {{serviceName}}(baseclient.BaseClient):
     {%- for entry in api['entries'] -%}
         {%- if entry['type'] == 'function' %}
 
-    def {{entry['name']}}({{argumentString(entry, methodArgs=True)}}):
+    {{defStatement}} {{entry['name']}}({{argumentString(entry, methodArgs=True)}}):
         '''
         {{entry['title']}}
 
@@ -67,7 +67,7 @@ class {{serviceName}}(baseclient.BaseClient):
             {%- if entry.query %}
         validOptions = {{entry.query}}
             {%- endif %}
-        return self._makeHttpRequest('{{entry.method}}', route{% if entry.input %}, payload{% endif %}{% if entry.query %}, options=options, validOptions=validOptions{% endif %})
+        {{returnStatement}} self.makeHttpRequest('{{entry.method}}', route{% if entry.input %}, payload{% endif %}{% if entry.query %}, options=options, validOptions=validOptions{% endif %})
         {%- elif entry['type'] == 'topic-exchange' %}
 
     def {{entry['name']}}(self, routingKeyPattern=None):

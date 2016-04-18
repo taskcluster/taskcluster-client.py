@@ -7,12 +7,12 @@ TaskCluster GitHub API Documentation
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class Github(baseclient.BaseClient):
+class Github(SyncClient):
     '''
     TaskCluster GitHub API Documentation
     The github service, typically available at
@@ -44,7 +44,7 @@ class Github(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('githubWebHookConsumer')
-        return self._makeHttpRequest('post', route)
+        return self.makeHttpRequest('post', route)
 
     def ping(self):
         '''
@@ -57,4 +57,4 @@ class Github(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('ping')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)

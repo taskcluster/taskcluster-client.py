@@ -6,7 +6,6 @@ import os
 import json
 import logging
 import copy
-import requests
 import re
 import time
 import six
@@ -37,21 +36,15 @@ _defaultConfig = config = {
 }
 
 
-def createSession(*args, **kwargs):
-    """ Create a new requests session.  This passes through all positional and
-    keyword arguments to the requests.Session() constructor
-    """
-    return requests.Session(*args, **kwargs)
-
-
 class BaseClient(object):
     """ Base Class for API Client Classes. Each individual Client class
     needs to set up its own methods for REST endpoints and Topic Exchange
-    routing key patterns.  The _makeApiCall() and _topicExchange() methods
-    help with this.
+    routing key patterns.
     """
+    session = None
+    classOptions = {}
 
-    def __init__(self, options=None, session=None):
+    def __init__(self, options=None, session=None, args=(), kwargs=None):
         o = copy.deepcopy(self.classOptions)
         o.update(_defaultConfig)
         if options:
@@ -72,10 +65,10 @@ class BaseClient(object):
             log.debug('credentials key scrubbed from logging output')
         log.debug(dict((k, v) for k, v in o.items() if k != 'credentials'))
 
-        if session:
-            self.session = session
-        else:
-            self.session = createSession()
+        self.createSession(session=session, args=args, kwargs=kwargs)
+
+    def createSession(self, session=None, args=(), kwargs=None):
+        pass
 
     def makeHawkExt(self):
         """ Make an 'ext' for Hawk authentication """
@@ -287,110 +280,59 @@ class BaseClient(object):
             baseUrl += '/'
         return urllib.parse.urljoin(baseUrl, route.lstrip('/') + queryString)
 
-    def _makeHttpRequest(self, method, route, payload=None, **kwargs):
-        """ Make an HTTP Request for the API endpoint.  This method wraps
-        the logic about doing failure retry and passes off the actual work
-        of doing an HTTP request to another method."""
+    def makeHeaders(self, method, url, payload, hawkExt):
+        if self._hasCredentials():
+            sender = mohawk.Sender(
+                credentials={
+                    'id': self.options['credentials']['clientId'],
+                    'key': self.options['credentials']['accessToken'],
+                    'algorithm': 'sha256',
+                },
+                ext=hawkExt if hawkExt else {},
+                url=url,
+                content=payload if payload else '',
+                content_type='application/json' if payload else '',
+                method=method,
+            )
 
-        url = self.makeFullUrl(route, **kwargs)
-        log.debug('Full URL used is: %s', url)
+            headers = {'Authorization': sender.request_header}
+        else:
+            log.debug('Not using hawk!')
+            headers = {}
+        if payload:
+            # Set header for JSON if payload is given, note that we serialize
+            # outside this loop.
+            headers['Content-Type'] = 'application/json'
+        return headers
 
-        hawkExt = self.makeHawkExt()
-
-        # Serialize payload if given
-        if payload is not None:
-            payload = utils.dumpJson(payload)
-
-        # Do a loop of retries
-        retry = -1  # we plus first in the loop, and attempt 1 is retry 0
-        retries = self.options['maxRetries']
-        while retry < retries:
-            retry += 1
-            time.sleep(utils.calculateSleepTime(retry))
-            # Construct header
-            if self._hasCredentials():
-                sender = mohawk.Sender(
-                    credentials={
-                        'id': self.options['credentials']['clientId'],
-                        'key': self.options['credentials']['accessToken'],
-                        'algorithm': 'sha256',
-                    },
-                    ext=hawkExt if hawkExt else {},
-                    url=url,
-                    content=payload if payload else '',
-                    content_type='application/json' if payload else '',
-                    method=method,
-                )
-
-                headers = {'Authorization': sender.request_header}
-            else:
-                log.debug('Not using hawk!')
-                headers = {}
-            if payload:
-                # Set header for JSON if payload is given, note that we serialize
-                # outside this loop.
-                headers['Content-Type'] = 'application/json'
-
-            log.debug('Making attempt %d', retry)
-            try:
-                response = utils.makeSingleHttpRequest(method, url, payload, headers)
-            except requests.exceptions.RequestException as rerr:
-                if retry < retries:
-                    log.warn('Retrying because of: %s' % rerr)
-                    continue
-                # raise a connection exception
-                raise exceptions.TaskclusterConnectionError(
-                    "Failed to establish connection",
-                    superExc=rerr
-                )
-
-            # Handle non 2xx status code and retry if possible
-            try:
-                response.raise_for_status()
-                if response.status_code == 204:
-                    return None
-
-            except requests.exceptions.RequestException as rerr:
-                status = response.status_code
-                if 500 <= status and status < 600 and retry < retries:
-                    log.warn('Retrying because of: %s' % rerr)
-                    continue
-                # Parse messages from errors
-                data = {}
-                try:
-                    data = response.json()
-                except:
-                    pass  # Ignore JSON errors in error messages
-                # Find error message
-                message = "Unknown Server Error"
-                if isinstance(data, dict):
-                    message = data.get('message')
-                else:
-                    if status == 401:
-                        message = "Authentication Error"
-                    elif status == 500:
-                        message = "Internal Server Error"
-                # Raise TaskclusterAuthFailure if this is an auth issue
-                if status == 401:
-                    raise exceptions.TaskclusterAuthFailure(
-                        message,
-                        status_code=status,
-                        body=data,
-                        superExc=rerr
-                    )
-                # Raise TaskclusterRestFailure for all other issues
-                raise exceptions.TaskclusterRestFailure(
-                    message,
-                    status_code=status,
-                    body=data,
-                    superExc=rerr
-                )
-
-            # Try to load JSON
-            try:
-                return response.json()
-            except ValueError:
-                return {"response": response}
-
-        # This code-path should be unreachable
-        assert False, "Error from last retry should have been raised!"
+    def _raiseHttpError(self, status, data, rerr):
+        """Helper method to avoid code duplication between AsyncClient and
+        SyncClient.
+        """
+        # Find error message
+        message = "Unknown Server Error"
+        if isinstance(data, dict):
+            message = "{} - {}".format(
+                data.get('message'),
+                json.dumps(data, indent=4, separators=(',', ': '))
+            )
+        else:
+            if status == 401:
+                message = "Authentication Error"
+            elif status == 500:
+                message = "Internal Server Error"
+        # Raise TaskclusterAuthFailure if this is an auth issue
+        if status == 401:
+            raise exceptions.TaskclusterAuthFailure(
+                message,
+                status_code=status,
+                body=data,
+                superExc=rerr
+            )
+        # Raise TaskclusterRestFailure for all other issues
+        raise exceptions.TaskclusterRestFailure(
+            message,
+            status_code=status,
+            body=data,
+            superExc=rerr
+        )

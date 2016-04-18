@@ -3,7 +3,7 @@
 # This file is generated!  Do not edit!
 from __future__ import absolute_import, division, print_function
 
-from base import GeneratedTC
+from test.base import GeneratedTC
 from taskcluster.sync import AwsProvisionerEvents
 
 

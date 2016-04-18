@@ -1,6 +1,8 @@
 PYTHON := python
 TOX_ENV ?= py35
 VENV := .tox/$(TOX_ENV)
+PY2VENV := .tox/py27
+PY3VENV := .tox/py35
 
 JS_CLIENT_BRANCH=master
 APIS_JSON=$(PWD)/taskcluster/apis.json
@@ -15,8 +17,9 @@ nosetests: $(VENV)/bin/python
 	$(VENV)/bin/coverage html
 
 .PHONY: lint
-lint: $(VENV)/bin/python
-	$(VENV)/bin/flake8 --max-line-length=100 taskcluster test
+lint: $(VENV)/bin/python $(PY2VENV)/bin/python
+	$(PY3VENV)/bin/flake8 --max-line-length=100 taskcluster test
+	$(PY2VENV)/bin/flake8 --max-line-length=100 --exclude="async,asyncutils.py" taskcluster test
 
 .PHONY: update
 update: update-api gencode update-readme docs
@@ -34,11 +37,17 @@ gencode: $(VENV)/bin/python
 update-readme: $(VENV)/bin/python
 	README_FILE=README.md APIS_JSON=$(APIS_JSON) $(VENV)/bin/python genDocs.py
 
-$(VENV)/bin/python:
-	tox --notest
-	$(VENV)/bin/pip install --upgrade setuptools
-	$(VENV)/bin/python devDep.py
-	$(VENV)/bin/python setup.py develop
+$(PY3VENV)/bin/python:
+	tox --notest -e py35
+	$(PY3VENV)/bin/pip install --upgrade setuptools
+	$(PY3VENV)/bin/python devDep.py
+	$(PY3VENV)/bin/python setup.py develop
+
+$(PY2VENV)/bin/python:
+	tox --notest -e py27
+	$(PY2VENV)/bin/pip install --upgrade setuptools
+	$(PY2VENV)/bin/python devDep.py
+	$(PY2VENV)/bin/python setup.py develop
 
 .PHONY: dev-env
 dev-env: $(VENV)/bin/python

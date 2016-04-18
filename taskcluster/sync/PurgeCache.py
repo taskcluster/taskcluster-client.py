@@ -7,12 +7,12 @@ Purge Cache API Documentation
 from __future__ import absolute_import, division, print_function
 
 import logging
-import taskcluster.baseclient as baseclient
+from taskcluster.sync.syncclient import SyncClient
 
 log = logging.getLogger(__name__)
 
 
-class PurgeCache(baseclient.BaseClient):
+class PurgeCache(SyncClient):
     '''
     Purge Cache API Documentation
     The purge-cache service, typically available at
@@ -50,7 +50,7 @@ class PurgeCache(baseclient.BaseClient):
             'provisionerId': provisionerId,
             'workerType': workerType,
         })
-        return self._makeHttpRequest('post', route, payload)
+        return self.makeHttpRequest('post', route, payload)
 
     def ping(self):
         '''
@@ -63,4 +63,4 @@ class PurgeCache(baseclient.BaseClient):
         This method takes no arguments.
         '''
         route = self.makeRoute('ping')
-        return self._makeHttpRequest('get', route)
+        return self.makeHttpRequest('get', route)
