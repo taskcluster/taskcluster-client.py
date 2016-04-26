@@ -21,6 +21,7 @@ EXPECTED_FILES = {
     "async": (
         os.path.join(SOURCE_DIR, 'async', '__init__.py'),
         os.path.join(SOURCE_DIR, 'async', 'asyncclient.py'),
+        os.path.join(SOURCE_DIR, 'async', 'asyncutils.py'),
     ),
 }
 

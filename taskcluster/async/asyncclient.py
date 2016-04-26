@@ -11,7 +11,7 @@ from contextlib import contextmanager
 import taskcluster.exceptions as exceptions
 import taskcluster.baseclient as baseclient
 import taskcluster.utils as utils
-import taskcluster.asyncutils as asyncutils
+from taskcluster.async.asyncutils import createSession, makeSingleHttpRequest
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class AsyncClient(baseclient.BaseClient):
             self.session = session
         else:
             kwargs = kwargs or {}
-            self.session = self.session or asyncutils.createSession(*args, **kwargs)
+            self.session = self.session or createSession(*args, **kwargs)
         return self.session
 
     async def makeHttpRequest(self, method, route, payload=None, session=None, **kwargs):
@@ -71,7 +71,7 @@ class AsyncClient(baseclient.BaseClient):
         """Asynchronous aiohttp-based
         """
         try:
-            response = await asyncutils.makeSingleHttpRequest(
+            response = await makeSingleHttpRequest(
                 method, url, payload, headers, session=session
             )
         except aiohttp.ClientError as rerr:

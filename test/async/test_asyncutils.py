@@ -5,7 +5,7 @@ import mock
 
 from test.async import getExceptionSession, getFailFirstSession, getFakeSession
 from test.base import TCTest
-import taskcluster.asyncutils as asyncutils
+import taskcluster.async.asyncutils as asyncutils
 import taskcluster.exceptions as exceptions
 import taskcluster.utils as utils
 
