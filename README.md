@@ -12,9 +12,6 @@ The library builds the REST API methods from the same [API Reference
 format](http://docs.taskcluster.net/tools/references/index.html) as the
 Javascript client library.
 
-## Notes on using Temporary Credentials
-Generating temporary credentials didn't work for a long time but does now
-
 ## API Documentation
 
 The REST API methods are documented on
@@ -26,7 +23,13 @@ The REST API methods are documented on
 
     ```python
     import taskcluster
-    index = taskcluster.Index({'credentials': {'clientId': 'id', 'accessToken': 'accessToken'}})
+    index = taskcluster.Index({
+        'credentials': {
+            'clientId': 'id',
+            'accessToken': 'accessToken',
+            'certificate':  {...}   # Only applicable for temporary credentials
+        }
+    })
     index.ping()
     ```
 
@@ -82,6 +85,65 @@ environment variable is set, the `__init__.py` module will set the `logging` mod
 for its logger to `logging.DEBUG` and if there are no existing handlers, add a
 `logging.StreamHandler()` instance.  This is meant to assist those who do not wish to bother
 figuring out how to configure the python logging module but do want debug messages
+
+
+## Generating Temporary Credentials
+If you have non-temporary taskcluster credentials you can generate a set of
+temporary credentials as follows. Notice that the credentials cannot last more
+than 31 days, and you can only revoke them by revoking the credentials that was
+used to issue them (this takes up to one hour).
+
+```python
+import datetime
+
+credentials = taskcluster.createTemporaryCredentials(
+    # issuing clientId
+    clientId,
+    # issuing accessToken
+    accessToken,
+    # Validity of temporary credentials starts here, in timestamp
+    start,
+    # Expiration of temporary credentials, in timestamp
+    expiry,
+    # Scopes to grant the temporary credentials
+    scopes: ['ScopeA', 'ScopeB', ...],
+    # credential name (optional)
+    name='...'
+)
+```
+
+You cannot use temporary credentials to issue new temporary credentials.  You
+must have `auth:create-client:<name>` to create a named temporary credential,
+but unnamed temporary credentials can be created regardless of your scopes.
+
+## Async support
+
+There is support for async clients, for python 3.5.  To use those client calls, import from `taskcluster.async` instead of from `taskcluster` or `taskcluster.sync`.  These methods need to be `await`ed or run through the event loop.
+
+```python
+# Create Auth client instance
+from taskcluster.async import Auth
+import asyncio
+auth = Auth(options)
+# The below will essentially make a synchronous call, since we're waiting on a single async method.
+loop = asyncio.get_event_loop()
+result = loop.run_until_complete(auth.ping())
+```
+
+## createApiClient
+
+We no longer need to use `createApiClient`, because all of the APIs defined in the APIS_JSON have code generated at buildtime via `make gencode`.
+
+However, if you want to generate a runtime api client,
+
+```python
+# Create a runtime client instance
+from taskcluster.runtimeclient import createApiClient
+API_DEFN = {
+    ...
+}
+client = createApiClient('Name', API_DEFN)
+```
 
 ## Methods contained in the client library
 
