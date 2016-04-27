@@ -1,12 +1,9 @@
-PYTHON := python
 TOX_ENV ?= py35
 VENV := .tox/$(TOX_ENV)
 PY2VENV := .tox/py27
 PY3VENV := .tox/py35
 
-JS_CLIENT_BRANCH=master
 APIS_JSON=$(PWD)/taskcluster/apis.json
-APIS_JS_HREF=https://raw.githubusercontent.com/taskcluster/taskcluster-client/$(JS_CLIENT_BRANCH)/lib/apis.js
 
 .PHONY: test
 test: nosetests lint
@@ -54,10 +51,12 @@ dev-env: $(VENV)/bin/python
 
 .PHONY: clean
 clean:
-	rm -rf node-$(NODE_VER)-$(NODE_PLAT) node_modules
 	rm -rf *.egg *.egg-info dist/
 	find . -name "*.py?" -exec rm {} +
+	find . -name "__pycache__" -type d -exec rm -rf {} +
 	rm -rf .tox htmlcov .coverage nosetests.xml
+	rm -rf docs/_build docs/client.rst
+	rm -rf .hypothesis
 	rm -rf env-*
 
 .PHONY: docs
