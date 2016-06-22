@@ -15,8 +15,8 @@ nosetests: $(VENV)/bin/python
 
 .PHONY: lint
 lint: $(VENV)/bin/python $(PY2VENV)/bin/python
-	$(PY3VENV)/bin/flake8 --max-line-length=100 taskcluster test
-	$(PY2VENV)/bin/flake8 --max-line-length=100 --exclude="async" taskcluster test
+	$(PY3VENV)/bin/flake8 --max-line-length=400 taskcluster test
+	$(PY2VENV)/bin/flake8 --max-line-length=400 --exclude="async" taskcluster test
 
 .PHONY: update
 update: update-api gencode update-readme docs

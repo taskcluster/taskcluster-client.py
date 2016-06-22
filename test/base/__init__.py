@@ -15,7 +15,6 @@ import unittest
 from operator import itemgetter
 from six.moves import urllib
 
-from taskcluster.runtimeclient import ROUTING_KEY_BLACKLIST
 import taskcluster.client as subject
 import taskcluster.exceptions as exc
 
@@ -209,8 +208,7 @@ class GeneratedTC(TCTest):
                 for r in entry['routingKey']:
                     rk = {}
                     for item in r:
-                        if item not in ROUTING_KEY_BLACKLIST:
-                            rk[item] = r[item]
+                        rk[item] = r[item]
                     routingKeys[entry['name']].append(rk)
         a = createFakeApi(self.testClass)
 
