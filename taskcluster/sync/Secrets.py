@@ -15,9 +15,13 @@ log = logging.getLogger(__name__)
 class Secrets(SyncClient):
     '''
     TaskCluster Secrets API Documentation
-    The secrets service, is a simple key/value store for secret data
-    guarded by TaskCluster scopes.  It is typically available at
-    `secrets.taskcluster.net`.
+    The secrets service provides a simple key/value store for small bits of secret
+    data.  Access is limited by scopes, so values can be considered secret from
+    those who do not have the relevant scopes.
+
+    Secrets also have an expiration date, and once a secret has expired it can no
+    longer be read.  This is useful for short-term secrets such as a temporary
+    service credential or a one-time signing key.
     '''
     version = 0
     referenceUrl = 'http://references.taskcluster.net/secrets/v1/api.json'
@@ -36,9 +40,10 @@ class Secrets(SyncClient):
 
     def set(self, name, payload):
         '''
-        Create Secret
+        Set Secret
 
-        Set a secret associated with some key.  If the secret already exists, it is updated instead.
+        Set the secret associated with some key.  If the secret already exists, it is
+        updated instead.
 
         This method takes:
         - ``name``
@@ -52,7 +57,7 @@ class Secrets(SyncClient):
         '''
         Delete Secret
 
-        Delete the secret attached to some key.
+        Delete the secret associated with some key.
 
         This method takes:
         - ``name``
@@ -66,7 +71,10 @@ class Secrets(SyncClient):
         '''
         Read Secret
 
-        Read the secret attached to some key.
+        Read the secret associated with some key.  If the secret has recently
+        expired, the response code 410 is returned.  If the caller lacks the
+        scope necessary to get the secret, the call will fail with a 403 code
+        regardless of whether the secret exists.
 
         This method takes:
         - ``name``
@@ -80,7 +88,9 @@ class Secrets(SyncClient):
         '''
         List Secrets
 
-        List the names of all visible secrets.
+        List the names of all secrets that you would have access to read. In
+        other words, secret name `<X>` will only be returned if a) a secret
+        with name `<X>` exists, and b) you posses the scope `secrets:get:<X>`.
 
         This method takes no arguments.
         '''
@@ -91,9 +101,8 @@ class Secrets(SyncClient):
         '''
         Ping Server
 
-        Documented later...
-
-        **Warning** this api end-point is **not stable**.
+        Respond without doing anything.  This endpoint is used to check that
+        the service is up.
 
         This method takes no arguments.
         '''

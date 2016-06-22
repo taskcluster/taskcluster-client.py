@@ -215,6 +215,14 @@ auth = taskcluster.Auth(options)
  * `auth.azureTableSAS(account, table) -> result`
  * `auth.azureTableSAS(account='value', table='value') -> result`
 
+#### Get DSN for Sentry Project
+ * `auth.sentryDSN(project) -> result`
+ * `auth.sentryDSN(project='value') -> result`
+
+#### Get Token for Statsum Project
+ * `auth.statsumToken(project) -> result`
+ * `auth.statsumToken(project='value') -> result`
+
 #### Authenticate Hawk Request
  * `auth.authenticateHawk(payload) -> result`
 
@@ -230,12 +238,48 @@ auth = taskcluster.Auth(options)
 
 
 
+### Exchanges in `taskcluster.AuthEvents`
+```python
+// Create AuthEvents client instance
+import taskcluster
+authEvents = taskcluster.AuthEvents(options)
+```
+#### Client Created Messages
+ * `authEvents.clientCreated(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+#### Client Updated Messages
+ * `authEvents.clientUpdated(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+#### Client Deleted Messages
+ * `authEvents.clientDeleted(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+#### Role Created Messages
+ * `authEvents.roleCreated(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+#### Role Updated Messages
+ * `authEvents.roleUpdated(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+#### Role Deleted Messages
+ * `authEvents.roleDeleted(routingKeyPattern) -> routingKey`
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
+
+
+
+
 ### Methods in `taskcluster.AwsProvisioner`
 ```python
 // Create AwsProvisioner client instance
 import taskcluster
 awsProvisioner = taskcluster.AwsProvisioner(options)
 ```
+#### List worker types with details
+ * `awsProvisioner.listWorkerTypeSummaries() -> result`
+
 #### Create new Worker Type
  * `awsProvisioner.createWorkerType(workerType, payload) -> result`
  * `awsProvisioner.createWorkerType(payload, workerType='value') -> result`
@@ -275,9 +319,6 @@ awsProvisioner = taskcluster.AwsProvisioner(options)
  * `awsProvisioner.getLaunchSpecs(workerType) -> result`
  * `awsProvisioner.getLaunchSpecs(workerType='value') -> result`
 
-#### Get AWS State for all worker types
- * `awsProvisioner.awsState() -> None`
-
 #### Get AWS State for a worker type
  * `awsProvisioner.state(workerType) -> None`
  * `awsProvisioner.state(workerType='value') -> None`
@@ -286,10 +327,7 @@ awsProvisioner = taskcluster.AwsProvisioner(options)
  * `awsProvisioner.ping() -> None`
 
 #### Backend Status
- * `awsProvisioner.backendStatus() -> None`
-
-#### api reference
- * `awsProvisioner.apiReference() -> None`
+ * `awsProvisioner.backendStatus() -> result`
 
 
 
@@ -344,14 +382,14 @@ githubEvents = taskcluster.GithubEvents(options)
 ```
 #### GitHub Pull Request Event
  * `githubEvents.pullRequest(routingKeyPattern) -> routingKey`
-   * routingKeyKind is constant of `primary`  is required  Description: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key.
+   * routingKeyKind is constant of `primary`  is required  Description: Identifier for the routing-key kind. This is always `"primary"` for the formalized routing key.
    * organization is required  Description: The GitHub `organization` which had an event. All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.
    * repository is required  Description: The GitHub `repository` which had an event.All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.
    * action is required  Description: The GitHub `action` which triggered an event. See for possible values see the payload actions property.
 
 #### GitHub push Event
  * `githubEvents.push(routingKeyPattern) -> routingKey`
-   * routingKeyKind is constant of `primary`  is required  Description: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key.
+   * routingKeyKind is constant of `primary`  is required  Description: Identifier for the routing-key kind. This is always `"primary"` for the formalized routing key.
    * organization is required  Description: The GitHub `organization` which had an event. All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.
    * repository is required  Description: The GitHub `repository` which had an event.All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.
 
@@ -430,6 +468,21 @@ index = taskcluster.Index(options)
 
 
 
+### Methods in `taskcluster.Login`
+```python
+// Create Login client instance
+import taskcluster
+login = taskcluster.Login(options)
+```
+#### Get TaskCluster credentials given a Persona assertion
+ * `login.credentialsFromPersonaAssertion(payload) -> result`
+
+#### Ping Server
+ * `login.ping() -> None`
+
+
+
+
 ### Methods in `taskcluster.PurgeCache`
 ```python
 // Create PurgeCache client instance
@@ -478,6 +531,10 @@ queue = taskcluster.Queue(options)
 #### List Task Group
  * `queue.listTaskGroup(taskGroupId) -> result`
  * `queue.listTaskGroup(taskGroupId='value') -> result`
+
+#### List Dependent Tasks
+ * `queue.listDependentTasks(taskId) -> result`
+ * `queue.listDependentTasks(taskId='value') -> result`
 
 #### Create New Task
  * `queue.createTask(taskId, payload) -> result`
@@ -756,7 +813,7 @@ schedulerEvents = taskcluster.SchedulerEvents(options)
 import taskcluster
 secrets = taskcluster.Secrets(options)
 ```
-#### Create Secret
+#### Set Secret
  * `secrets.set(name, payload) -> None`
  * `secrets.set(payload, name='value') -> None`
 
@@ -773,6 +830,21 @@ secrets = taskcluster.Secrets(options)
 
 #### Ping Server
  * `secrets.ping() -> None`
+
+
+
+
+### Exchanges in `taskcluster.TreeherderEvents`
+```python
+// Create TreeherderEvents client instance
+import taskcluster
+treeherderEvents = taskcluster.TreeherderEvents(options)
+```
+#### Job Messages
+ * `treeherderEvents.jobs(routingKeyPattern) -> routingKey`
+   * destination is required  Description: destination
+   * project is required  Description: project
+   * reserved Description: Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.
 
 
 

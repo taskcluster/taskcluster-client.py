@@ -50,6 +50,16 @@ class TestQueue(GeneratedTC):
             validOptions=['continuationToken', 'limit'],
         )
 
+    def test_listDependentTasks(self):
+        """TestQueue | Queue.listDependentTasks
+        """
+        self.try_function(
+            'listDependentTasks',
+            'get',
+            argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
+        )
+
     def test_createTask(self):
         """TestQueue | Queue.createTask
         """
@@ -183,6 +193,7 @@ class TestQueue(GeneratedTC):
             'listArtifacts',
             'get',
             argumentNames=['taskId', 'runId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_listLatestArtifacts(self):
@@ -192,6 +203,7 @@ class TestQueue(GeneratedTC):
             'listLatestArtifacts',
             'get',
             argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_pendingTasks(self):

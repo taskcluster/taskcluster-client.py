@@ -78,6 +78,26 @@ class TestAsyncQueue(AsyncGeneratedTC):
             validOptions=['continuationToken', 'limit'],
         )
 
+    def test_single_async_listDependentTasks(self):
+        """TestAsyncQueue | Queue.listDependentTasks single
+        """
+        self.try_function(
+            'listDependentTasks',
+            'get',
+            argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
+        )
+
+    def test_multi_async_listDependentTasks(self):
+        """TestAsyncQueue | Queue.listDependentTasks multi
+        """
+        self.try_async_function(
+            'listDependentTasks',
+            'get',
+            argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
+        )
+
     def test_single_async_createTask(self):
         """TestAsyncQueue | Queue.createTask single
         """
@@ -337,6 +357,7 @@ class TestAsyncQueue(AsyncGeneratedTC):
             'listArtifacts',
             'get',
             argumentNames=['taskId', 'runId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_multi_async_listArtifacts(self):
@@ -346,6 +367,7 @@ class TestAsyncQueue(AsyncGeneratedTC):
             'listArtifacts',
             'get',
             argumentNames=['taskId', 'runId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_single_async_listLatestArtifacts(self):
@@ -355,6 +377,7 @@ class TestAsyncQueue(AsyncGeneratedTC):
             'listLatestArtifacts',
             'get',
             argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_multi_async_listLatestArtifacts(self):
@@ -364,6 +387,7 @@ class TestAsyncQueue(AsyncGeneratedTC):
             'listLatestArtifacts',
             'get',
             argumentNames=['taskId', ],
+            validOptions=['continuationToken', 'limit'],
         )
 
     def test_single_async_pendingTasks(self):

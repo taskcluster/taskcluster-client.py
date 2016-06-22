@@ -22,6 +22,24 @@ class TestAsyncAwsProvisioner(AsyncGeneratedTC):
         """
         self.routingKeys_check('AwsProvisioner')
 
+    def test_single_async_listWorkerTypeSummaries(self):
+        """TestAsyncAwsProvisioner | AwsProvisioner.listWorkerTypeSummaries single
+        """
+        self.try_function(
+            'listWorkerTypeSummaries',
+            'get',
+            argumentNames=[],
+        )
+
+    def test_multi_async_listWorkerTypeSummaries(self):
+        """TestAsyncAwsProvisioner | AwsProvisioner.listWorkerTypeSummaries multi
+        """
+        self.try_async_function(
+            'listWorkerTypeSummaries',
+            'get',
+            argumentNames=[],
+        )
+
     def test_single_async_createWorkerType(self):
         """TestAsyncAwsProvisioner | AwsProvisioner.createWorkerType single
         """
@@ -202,24 +220,6 @@ class TestAsyncAwsProvisioner(AsyncGeneratedTC):
             argumentNames=['workerType', ],
         )
 
-    def test_single_async_awsState(self):
-        """TestAsyncAwsProvisioner | AwsProvisioner.awsState single
-        """
-        self.try_function(
-            'awsState',
-            'get',
-            argumentNames=[],
-        )
-
-    def test_multi_async_awsState(self):
-        """TestAsyncAwsProvisioner | AwsProvisioner.awsState multi
-        """
-        self.try_async_function(
-            'awsState',
-            'get',
-            argumentNames=[],
-        )
-
     def test_single_async_state(self):
         """TestAsyncAwsProvisioner | AwsProvisioner.state single
         """
@@ -270,24 +270,6 @@ class TestAsyncAwsProvisioner(AsyncGeneratedTC):
         """
         self.try_async_function(
             'backendStatus',
-            'get',
-            argumentNames=[],
-        )
-
-    def test_single_async_apiReference(self):
-        """TestAsyncAwsProvisioner | AwsProvisioner.apiReference single
-        """
-        self.try_function(
-            'apiReference',
-            'get',
-            argumentNames=[],
-        )
-
-    def test_multi_async_apiReference(self):
-        """TestAsyncAwsProvisioner | AwsProvisioner.apiReference multi
-        """
-        self.try_async_function(
-            'apiReference',
             'get',
             argumentNames=[],
         )

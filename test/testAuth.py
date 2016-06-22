@@ -176,6 +176,24 @@ class TestAuth(GeneratedTC):
             argumentNames=['account', 'table', ],
         )
 
+    def test_sentryDSN(self):
+        """TestAuth | Auth.sentryDSN
+        """
+        self.try_function(
+            'sentryDSN',
+            'get',
+            argumentNames=['project', ],
+        )
+
+    def test_statsumToken(self):
+        """TestAuth | Auth.statsumToken
+        """
+        self.try_function(
+            'statsumToken',
+            'get',
+            argumentNames=['project', ],
+        )
+
     def test_authenticateHawk(self):
         """TestAuth | Auth.authenticateHawk
         """

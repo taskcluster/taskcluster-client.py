@@ -46,6 +46,7 @@ class AwsProvisioner(SyncClient):
     version = 0
     referenceUrl = 'http://references.taskcluster.net/aws-provisioner/v1/api.json'
     routes = {
+        'listWorkerTypeSummaries': '/list-worker-type-summaries',
         'createWorkerType': '/worker-type/{workerType}',
         'updateWorkerType': '/worker-type/{workerType}/update',
         'workerType': '/worker-type/{workerType}',
@@ -56,17 +57,29 @@ class AwsProvisioner(SyncClient):
         'instanceStarted': '/instance-started/{instanceId}/{token}',
         'removeSecret': '/secret/{token}',
         'getLaunchSpecs': '/worker-type/{workerType}/launch-specifications',
-        'awsState': '/aws-state',
         'state': '/state/{workerType}',
         'ping': '/ping',
         'backendStatus': '/backend-status',
-        'apiReference': '/api-reference',
     }
 
     def __init__(self, *args, **kwargs):
         self.classOptions = {}
         self.classOptions['baseUrl'] = 'https://aws-provisioner.taskcluster.net/v1'
         super(AwsProvisioner, self).__init__(*args, **kwargs)
+
+    def listWorkerTypeSummaries(self):
+        '''
+        List worker types with details
+
+        Return a list of worker types, including some summary information about
+        current capacity for each.  While this list includes all defined worker types,
+        there may be running EC2 instances for deleted worker types that are not
+        included here.  The list is unordered.
+
+        This method takes no arguments.
+        '''
+        route = self.makeRoute('listWorkerTypeSummaries')
+        return self.makeHttpRequest('get', route)
 
     def createWorkerType(self, workerType, payload):
         '''
@@ -279,20 +292,6 @@ class AwsProvisioner(SyncClient):
         })
         return self.makeHttpRequest('get', route)
 
-    def awsState(self):
-        '''
-        Get AWS State for all worker types
-
-        This method is a left over and will be removed as soon as the
-        tools.tc.net UI is updated to use the per-worker state
-
-        **DEPRECATED.**
-
-        This method takes no arguments.
-        '''
-        route = self.makeRoute('awsState')
-        return self.makeHttpRequest('get', route)
-
     def state(self, workerType):
         '''
         Get AWS State for a worker type
@@ -300,7 +299,8 @@ class AwsProvisioner(SyncClient):
         Return the state of a given workertype as stored by the provisioner.
         This state is stored as three lists: 1 for all instances, 1 for requests
         which show in the ec2 api and 1 list for those only tracked internally
-        in the provisioner.
+        in the provisioner.  The `summary` property contains an updated summary
+        similar to that returned from `listWorkerTypeSummaries`.
 
         This method takes:
         - ``workerType``
@@ -327,22 +327,15 @@ class AwsProvisioner(SyncClient):
         '''
         Backend Status
 
+        This endpoint is used to show when the last time the provisioner
+        has checked in.  A check in is done through the deadman's snitch
+        api.  It is done at the conclusion of a provisioning iteration
+        and used to tell if the background provisioning process is still
+        running.
+
         **Warning** this api end-point is **not stable**.
 
         This method takes no arguments.
         '''
         route = self.makeRoute('backendStatus')
-        return self.makeHttpRequest('get', route)
-
-    def apiReference(self):
-        '''
-        api reference
-
-        Get an API reference!
-
-        **Warning** this api end-point is **not stable**.
-
-        This method takes no arguments.
-        '''
-        route = self.makeRoute('apiReference')
         return self.makeHttpRequest('get', route)

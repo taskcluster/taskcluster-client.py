@@ -31,21 +31,25 @@ class GithubEvents(AsyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `"primary"` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'organization',
                 'required': True,
+                'summary': 'The GitHub `organization` which had an event. All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.',
             },
             {
                 'multipleWords': False,
                 'name': 'repository',
                 'required': True,
+                'summary': 'The GitHub `repository` which had an event.All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.',
             },
             {
                 'multipleWords': False,
                 'name': 'action',
                 'required': True,
+                'summary': 'The GitHub `action` which triggered an event. See for possible values see the payload actions property.',
             },
         ],
         'push': [
@@ -54,16 +58,19 @@ class GithubEvents(AsyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `"primary"` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'organization',
                 'required': True,
+                'summary': 'The GitHub `organization` which had an event. All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.',
             },
             {
                 'multipleWords': False,
                 'name': 'repository',
                 'required': True,
+                'summary': 'The GitHub `repository` which had an event.All periods have been replaced by % - such that foo.bar becomes foo%bar - and all other special characters aside from - and _ have been stripped.',
             },
         ],
     }

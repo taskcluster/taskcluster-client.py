@@ -330,6 +330,42 @@ class TestAsyncAuth(AsyncGeneratedTC):
             argumentNames=['account', 'table', ],
         )
 
+    def test_single_async_sentryDSN(self):
+        """TestAsyncAuth | Auth.sentryDSN single
+        """
+        self.try_function(
+            'sentryDSN',
+            'get',
+            argumentNames=['project', ],
+        )
+
+    def test_multi_async_sentryDSN(self):
+        """TestAsyncAuth | Auth.sentryDSN multi
+        """
+        self.try_async_function(
+            'sentryDSN',
+            'get',
+            argumentNames=['project', ],
+        )
+
+    def test_single_async_statsumToken(self):
+        """TestAsyncAuth | Auth.statsumToken single
+        """
+        self.try_function(
+            'statsumToken',
+            'get',
+            argumentNames=['project', ],
+        )
+
+    def test_multi_async_statsumToken(self):
+        """TestAsyncAuth | Auth.statsumToken multi
+        """
+        self.try_async_function(
+            'statsumToken',
+            'get',
+            argumentNames=['project', ],
+        )
+
     def test_single_async_authenticateHawk(self):
         """TestAsyncAuth | Auth.authenticateHawk single
         """

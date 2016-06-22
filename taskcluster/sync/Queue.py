@@ -31,6 +31,7 @@ class Queue(SyncClient):
         'task': '/task/{taskId}',
         'status': '/task/{taskId}/status',
         'listTaskGroup': '/task-group/{taskGroupId}/list',
+        'listDependentTasks': '/task/{taskId}/dependents',
         'createTask': '/task/{taskId}',
         'defineTask': '/task/{taskId}/define',
         'scheduleTask': '/task/{taskId}/schedule',
@@ -90,18 +91,18 @@ class Queue(SyncClient):
         '''
         List Task Group
 
-        List taskIds of all tasks sharing the same `taskGroupId`.
+        List tasks sharing the same `taskGroupId`.
 
         As a task-group may contain an unbounded number of tasks, this end-point
-        may return a `continuationToken`. To continue listing tasks you must
-        `listTaskGroup` again with the `continuationToken` as the query-string
-        option `continuationToken`.
+        may return a `continuationToken`. To continue listing tasks you must call
+        the `listTaskGroup` again with the `continuationToken` as the
+        query-string option `continuationToken`.
 
         By default this end-point will try to return up to 1000 members in one
         request. But it **may return less**, even if more tasks are available.
         It may also return a `continuationToken` even though there are no more
         results. However, you can only be sure to have seen all results if you
-        keep calling `listTaskGroup` with the last `continationToken` until you
+        keep calling `listTaskGroup` with the last `continuationToken` until you
         get a result without a `continuationToken`.
 
         If you're not interested in listing all the members at once, you may
@@ -112,6 +113,36 @@ class Queue(SyncClient):
         '''
         route = self.makeRoute('listTaskGroup', replDict={
             'taskGroupId': taskGroupId,
+        })
+        validOptions = ['continuationToken', 'limit']
+        return self.makeHttpRequest('get', route, options=options, validOptions=validOptions)
+
+    def listDependentTasks(self, taskId, options=None):
+        '''
+        List Dependent Tasks
+
+        List tasks that depend on the given `taskId`.
+
+        As many tasks from different task-groups may dependent on a single tasks,
+        this end-point may return a `continuationToken`. To continue listing
+        tasks you must call `listDependentTasks` again with the
+        `continuationToken` as the query-string option `continuationToken`.
+
+        By default this end-point will try to return up to 1000 tasks in one
+        request. But it **may return less**, even if more tasks are available.
+        It may also return a `continuationToken` even though there are no more
+        results. However, you can only be sure to have seen all results if you
+        keep calling `listDependentTasks` with the last `continuationToken` until
+        you get a result without a `continuationToken`.
+
+        If you're not interested in listing all the tasks at once, you may
+        use the query-string option `limit` to return fewer.
+
+        This method takes:
+        - ``taskId``
+        '''
+        route = self.makeRoute('listDependentTasks', replDict={
+            'taskId': taskId,
         })
         validOptions = ['continuationToken', 'limit']
         return self.makeHttpRequest('get', route, options=options, validOptions=validOptions)
@@ -136,7 +167,11 @@ class Queue(SyncClient):
         routing-key: `<route>`, then when the AMQP message about the task is
         published, the message will be CC'ed with the routing-key:
         `route.<route>`. This is useful if you want another component to listen
-        for completed tasks you have posted.
+        for completed tasks you have posted.  The caller must have scope
+        `queue:route:<route>` for each route.
+
+        **Dependencies**, any tasks referenced in `task.dependencies` must have
+        already been created at the time of this call.
 
         **Important** Any scopes the task requires are also required for creating
         the task. Please see the Request Payload (Task Definition) for details.
@@ -499,11 +534,19 @@ class Queue(SyncClient):
         })
         return self.makeHttpRequest('get', route)
 
-    def listArtifacts(self, taskId, runId):
+    def listArtifacts(self, taskId, runId, options=None):
         '''
         Get Artifacts from Run
 
         Returns a list of artifacts and associated meta-data for a given run.
+
+        As a task may have many artifacts paging may be necessary. If this
+        end-point returns a `continuationToken`, you should call the end-point
+        again with the `continuationToken` as the query-string option:
+        `continuationToken`.
+
+        By default this end-point will list up-to 1000 artifacts in a single page
+        you may limit this with the query-string parameter `limit`.
 
         This method takes:
         - ``taskId``
@@ -513,14 +556,23 @@ class Queue(SyncClient):
             'taskId': taskId,
             'runId': runId,
         })
-        return self.makeHttpRequest('get', route)
+        validOptions = ['continuationToken', 'limit']
+        return self.makeHttpRequest('get', route, options=options, validOptions=validOptions)
 
-    def listLatestArtifacts(self, taskId):
+    def listLatestArtifacts(self, taskId, options=None):
         '''
         Get Artifacts from Latest Run
 
         Returns a list of artifacts and associated meta-data for the latest run
         from the given task.
+
+        As a task may have many artifacts paging may be necessary. If this
+        end-point returns a `continuationToken`, you should call the end-point
+        again with the `continuationToken` as the query-string option:
+        `continuationToken`.
+
+        By default this end-point will list up-to 1000 artifacts in a single page
+        you may limit this with the query-string parameter `limit`.
 
         This method takes:
         - ``taskId``
@@ -528,7 +580,8 @@ class Queue(SyncClient):
         route = self.makeRoute('listLatestArtifacts', replDict={
             'taskId': taskId,
         })
-        return self.makeHttpRequest('get', route)
+        validOptions = ['continuationToken', 'limit']
+        return self.makeHttpRequest('get', route, options=options, validOptions=validOptions)
 
     def pendingTasks(self, provisionerId, workerType):
         '''

@@ -31,16 +31,19 @@ class PurgeCacheEvents(AsyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `\'primary\'` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'provisionerId',
                 'required': True,
+                'summary': '`provisionerId` under which to purge cache.',
             },
             {
                 'multipleWords': False,
                 'name': 'workerType',
                 'required': True,
+                'summary': '`workerType` for which to purge cache.',
             },
         ],
     }

@@ -15,9 +15,6 @@ log = logging.getLogger(__name__)
 
 _defaultConfig = copy.deepcopy(config)
 
-ROUTING_KEY_BLACKLIST = ("summary", )
-
-
 class RuntimeClient(SyncClient):
 
     def _makeApiCall(self, entry, *args, **kwargs):

@@ -30,9 +30,6 @@ class Auth(AsyncClient):
 
     The client's scopes control the client's access to TaskCluster resources.
     The scopes are *expanded* by substituting roles, as defined below.
-    Every client has an implicit scope named `assume:client-id:<clientId>`,
-    allowing additional access to be granted to the client without directly
-    editing the client's scopes.
 
     ### Roles
     A _role_ consists of a `roleId`, a set of scopes and a description.
@@ -45,13 +42,6 @@ class Auth(AsyncClient):
     located at the end of a `roleId`. If you have a role with the following
     `roleId`: `my-prefix*`, then any client which has a scope staring with
     `assume:my-prefix` will be allowed to assume the role.
-
-    As previously mentioned each client gets the scope:
-    `assume:client-id:<clientId>`, it trivially follows that you can create a
-    role with the `roleId`: `client-id:<clientId>` to assign additional
-    scopes to a client. You can also create a role `client-id:user-*`
-    if you wish to assign a set of scopes to all clients whose `clientId`
-    starts with `user-`.
 
     ### Guarded Services
     The authentication service also has API end-points for delegating access
@@ -80,6 +70,8 @@ class Auth(AsyncClient):
         'currentScopes': '/scopes/current',
         'awsS3Credentials': '/aws/s3/{level}/{bucket}/{prefix}',
         'azureTableSAS': '/azure/{account}/table/{table}/read-write',
+        'sentryDSN': '/sentry/{project}/dsn',
+        'statsumToken': '/statsum/{project}/token',
         'authenticateHawk': '/authenticate-hawk',
         'testAuthenticate': '/test-authenticate',
         'testAuthenticateGet': '/test-authenticate-get/',
@@ -341,7 +333,40 @@ class Auth(AsyncClient):
         a given `bucket` and `prefix` within that bucket.
         The `level` parameter can be `read-write` or `read-only` and determines
         which type of credentials are returned. Please note that the `level`
-        parameter is required in the scope guarding access.
+        parameter is required in the scope guarding access.  The bucket name must
+        not contain `.`, as recommended by Amazon.
+
+        This method can only allow access to a whitelisted set of buckets.  To add
+        a bucket to that whitelist, contact the TaskCluster team, who will add it to
+        the appropriate IAM policy.  If the bucket is in a different AWS account, you
+        will also need to add a bucket policy allowing access from the TaskCluster
+        account.  That policy should look like this:
+
+        ```js
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "allow-taskcluster-auth-to-delegate-access",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::692406183521:root"
+              },
+              "Action": [
+                "s3:ListBucket",
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject",
+                "s3:GetBucketLocation"
+              ],
+              "Resource": [
+                "arn:aws:s3:::<bucket>",
+                "arn:aws:s3:::<bucket>/*"
+              ]
+            }
+          ]
+        }
+        ```
 
         The credentials are set to expire after an hour, but this behavior is
         subject to change. Hence, you should always read the `expires` property
@@ -384,6 +409,42 @@ class Auth(AsyncClient):
         route = self.makeRoute('azureTableSAS', replDict={
             'account': account,
             'table': table,
+        })
+        return await self.makeHttpRequest('get', route)
+
+    async def sentryDSN(self, project):
+        '''
+        Get DSN for Sentry Project
+
+        Get temporary DSN (access credentials) for a sentry project.
+        The credentials returned can be used with any Sentry client for up to
+        24 hours, after which the credentials will be automatically disabled.
+
+        If the project doesn't exist it will be created, and assigned to the
+        initial team configured for this component. Contact a Sentry admin
+        to have the project transferred to a team you have access to if needed
+
+        This method takes:
+        - ``project``
+        '''
+        route = self.makeRoute('sentryDSN', replDict={
+            'project': project,
+        })
+        return await self.makeHttpRequest('get', route)
+
+    async def statsumToken(self, project):
+        '''
+        Get Token for Statsum Project
+
+        Get temporary `token` and `baseUrl` for sending metrics to statsum.
+
+        The token is valid for 24 hours, clients should refresh after expiration.
+
+        This method takes:
+        - ``project``
+        '''
+        route = self.makeRoute('statsumToken', replDict={
+            'project': project,
         })
         return await self.makeHttpRequest('get', route)
 

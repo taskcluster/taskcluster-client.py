@@ -22,6 +22,15 @@ class TestAwsProvisioner(GeneratedTC):
         """
         self.routingKeys_check('AwsProvisioner')
 
+    def test_listWorkerTypeSummaries(self):
+        """TestAwsProvisioner | AwsProvisioner.listWorkerTypeSummaries
+        """
+        self.try_function(
+            'listWorkerTypeSummaries',
+            'get',
+            argumentNames=[],
+        )
+
     def test_createWorkerType(self):
         """TestAwsProvisioner | AwsProvisioner.createWorkerType
         """
@@ -112,15 +121,6 @@ class TestAwsProvisioner(GeneratedTC):
             argumentNames=['workerType', ],
         )
 
-    def test_awsState(self):
-        """TestAwsProvisioner | AwsProvisioner.awsState
-        """
-        self.try_function(
-            'awsState',
-            'get',
-            argumentNames=[],
-        )
-
     def test_state(self):
         """TestAwsProvisioner | AwsProvisioner.state
         """
@@ -144,15 +144,6 @@ class TestAwsProvisioner(GeneratedTC):
         """
         self.try_function(
             'backendStatus',
-            'get',
-            argumentNames=[],
-        )
-
-    def test_apiReference(self):
-        """TestAwsProvisioner | AwsProvisioner.apiReference
-        """
-        self.try_function(
-            'apiReference',
             'get',
             argumentNames=[],
         )

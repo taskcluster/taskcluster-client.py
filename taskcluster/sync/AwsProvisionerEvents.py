@@ -26,16 +26,19 @@ class AwsProvisionerEvents(SyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `\'primary\'` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'workerType',
                 'required': True,
+                'summary': 'WorkerType that this message concerns.',
             },
             {
                 'multipleWords': True,
                 'name': 'reserved',
                 'required': False,
+                'summary': 'Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.',
             },
         ],
         'workerTypeUpdated': [
@@ -44,16 +47,19 @@ class AwsProvisionerEvents(SyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `\'primary\'` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'workerType',
                 'required': True,
+                'summary': 'WorkerType that this message concerns.',
             },
             {
                 'multipleWords': True,
                 'name': 'reserved',
                 'required': False,
+                'summary': 'Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.',
             },
         ],
         'workerTypeRemoved': [
@@ -62,16 +68,19 @@ class AwsProvisionerEvents(SyncClient):
                 'multipleWords': False,
                 'name': 'routingKeyKind',
                 'required': True,
+                'summary': 'Identifier for the routing-key kind. This is always `\'primary\'` for the formalized routing key.',
             },
             {
                 'multipleWords': False,
                 'name': 'workerType',
                 'required': True,
+                'summary': 'WorkerType that this message concerns.',
             },
             {
                 'multipleWords': True,
                 'name': 'reserved',
                 'required': False,
+                'summary': 'Space reserved for future routing-key entries, you should always match this entry with `#`. As automatically done by our tooling, if not specified.',
             },
         ],
     }
