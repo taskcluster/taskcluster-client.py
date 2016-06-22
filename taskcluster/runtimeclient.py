@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 
 _defaultConfig = copy.deepcopy(config)
 
+
 class RuntimeClient(SyncClient):
 
     def _makeApiCall(self, entry, *args, **kwargs):
