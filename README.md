@@ -126,6 +126,31 @@ loop = asyncio.get_event_loop()
 result = loop.run_until_complete(auth.ping())
 ```
 
+## Scopes
+
+The `scope_match(assumed_scopes, required_scope_sets)` function determines
+whether one or more of a set of required scopes are satisfied by the assumed
+scopes, taking *-expansion into account.  This is useful for making local
+decisions on scope satisfaction, but note that `assumed_scopes` must be the
+*expanded* scopes, as this function cannot perform expansion.
+
+It takes a list of a assumed scopes, and a list of required scope sets on
+disjunctive normal form, and checks if any of the required scope sets are
+satisfied.
+
+Example:
+
+```
+    required_scope_sets = [
+        ["scopeA", "scopeB"],
+        ["scopeC:*"]
+    ]
+    assert     scopes_match(['scopeA', 'scopeB'], required_scope_sets)
+    assert     scopes_match(['scopeC:xyz'], required_scope_sets)
+    assert not scopes_match(['scopeA'], required_scope_sets)
+    assert not scopes_match(['scopeC'], required_scope_sets)
+```
+
 ## createApiClient
 
 We no longer need to use `createApiClient`, because all of the APIs defined in the APIS_JSON have code generated at buildtime via `make gencode`.
