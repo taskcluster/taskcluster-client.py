@@ -13,6 +13,7 @@ import calendar
 import requests
 import time
 import six
+import warnings
 from six.moves import urllib
 
 import mohawk
@@ -305,6 +306,10 @@ class BaseClient(object):
                     payload = args.pop()
                 kwApiArgs = kwargs
                 log.debug('Using method(payload, k1=v1, k2=v2) calling convention')
+                warnings.warn(
+                    "The method(payload, k1=v1, k2=v2) calling convention will soon be deprecated",
+                    PendingDeprecationWarning
+                )
             else:
                 kwApiArgs = kwargs.get('params', {})
                 payload = kwargs.get('payload', None)
