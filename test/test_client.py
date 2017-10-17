@@ -519,6 +519,19 @@ class TestBuildUrl(ClientTest):
         actual = self.client.buildUrl('two_args_no_input', arg0='arg0', arg1='arg1')
         self.assertEqual(expected, actual)
 
+    def test_build_url_query_string(self):
+        expected = 'https://fake.taskcluster.net/v1/two_args_no_input/arg0/arg1?qs0=1'
+        actual = self.client.buildUrl(
+            'two_args_no_input',
+            params={
+                'arg0': 'arg0',
+                'arg1': 'arg1'
+            },
+            query={'qs0': 1}
+        )
+        self.assertEqual(expected, actual)
+
+
     def test_fails_to_build_url_for_missing_method(self):
         with self.assertRaises(exc.TaskclusterFailure):
             self.client.buildUrl('non-existing')
