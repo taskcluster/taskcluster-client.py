@@ -1,4 +1,3 @@
-PYTHON := python
 TOX_ENV ?= py35
 VENV := .tox/$(TOX_ENV)
 
@@ -7,11 +6,7 @@ VENV := .tox/$(TOX_ENV)
 
 .PHONY: test
 test: generate-classes devel
-	@echo "linting"
-	FLAKE8=$(VENV)/bin/flake8 ./lint.sh
-	@echo "linted, running unit tests"
 	tox
-	@echo "tested"
 
 APIS_JSON=$(PWD)/apis.json
 
@@ -57,7 +52,7 @@ docs: devel
 
 .PHONY: devel
 devel:
-	tox --develop --notest
+	tox --develop --notest -e ${TOX_ENV}
 	@set -e ; for env in $$(tox -l) ; do \
 		echo installing dev deps for $${env} ; \
 		.tox/$${env}/bin/python devDep.py ; \
