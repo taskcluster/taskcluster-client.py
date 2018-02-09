@@ -181,11 +181,12 @@ class AsyncBaseClient(BaseClient):
             status = response.status
             if status == 204:
                 return None
+            statusMsg = response.reason
 
             # Catch retryable errors and go to the beginning of the loop
             # to do the retry
             if 500 <= status and status < 600 and retry < retries:
-                log.warn('Retrying because of a %s status code' % status)
+                log.warn('Retrying because of %s: %s' % (status, statusMsg))
                 continue
 
             # Throw errors for non-retryable errors
@@ -197,16 +198,10 @@ class AsyncBaseClient(BaseClient):
                 except:
                     pass  # Ignore JSON errors in error messages
                 # Find error message
-                message = "Unknown Server Error"
-                if isinstance(data, dict):
+                if isinstance(data, dict) and data.get('message'):
                     message = data.get('message')
                 else:
-                    if status == 401:
-                        message = "Authentication Error"
-                    elif status == 500:
-                        message = "Internal Server Error"
-                    else:
-                        message = "Unknown Server Error %s\n%s" % (str(status), str(data)[:1024])
+                    message = '%d: %s' % (status, statusMsg)
                 # Raise TaskclusterAuthFailure if this is an auth issue
                 if status == 401:
                     raise exceptions.TaskclusterAuthFailure(

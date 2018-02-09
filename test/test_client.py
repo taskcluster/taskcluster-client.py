@@ -273,6 +273,7 @@ class ObjWithDotJson(object):
     def __init__(self, status_code, x):
         self.status_code = status_code
         self.x = x
+        self.reason = 'status message would go here'
 
     def json(self):
         return self.x
