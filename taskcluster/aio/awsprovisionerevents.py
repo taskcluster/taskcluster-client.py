@@ -28,7 +28,7 @@ class AwsProvisionerEvents(AsyncBaseClient):
         When a new `workerType` is created a message will be published to this
         exchange.
 
-        This exchange outputs: ``http://schemas.taskcluster.net/aws-provisioner/v1/worker-type-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -66,7 +66,7 @@ class AwsProvisionerEvents(AsyncBaseClient):
         When a `workerType` is updated a message will be published to this
         exchange.
 
-        This exchange outputs: ``http://schemas.taskcluster.net/aws-provisioner/v1/worker-type-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -104,7 +104,7 @@ class AwsProvisionerEvents(AsyncBaseClient):
         When a `workerType` is removed a message will be published to this
         exchange.
 
-        This exchange outputs: ``http://schemas.taskcluster.net/aws-provisioner/v1/worker-type-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 

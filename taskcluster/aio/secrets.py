@@ -46,7 +46,7 @@ class Secrets(AsyncBaseClient):
         Set the secret associated with some key.  If the secret already exists, it is
         updated instead.
 
-        This method takes input: ``v1/secret.json#``
+        This method takes input
 
         This method is ``stable``
         """
@@ -73,7 +73,7 @@ class Secrets(AsyncBaseClient):
         scope necessary to get the secret, the call will fail with a 403 code
         regardless of whether the secret exists.
 
-        This method gives output: ``v1/secret.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -96,7 +96,7 @@ class Secrets(AsyncBaseClient):
         If you are not interested in listing all the members at once, you may
         use the query-string option `limit` to return fewer.
 
-        This method gives output: ``v1/secret-list.json#``
+        This method gives output
 
         This method is ``stable``
         """

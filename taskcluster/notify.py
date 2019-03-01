@@ -13,9 +13,8 @@ _defaultConfig = config
 
 class Notify(BaseClient):
     """
-    The notification service, typically available at `notify.taskcluster.net`
-    listens for tasks with associated notifications and handles requests to
-    send emails and post pulse messages.
+    The notification service listens for tasks with associated notifications
+    and handles requests to send emails and post pulse messages.
     """
 
     classOptions = {
@@ -44,7 +43,7 @@ class Notify(BaseClient):
         email. If a link is included, it will be rendered to a nice button in the
         HTML version of the email
 
-        This method takes input: ``v1/email-request.json#``
+        This method takes input
 
         This method is ``experimental``
         """
@@ -57,7 +56,7 @@ class Notify(BaseClient):
 
         Publish a message on pulse with the given `routingKey`.
 
-        This method takes input: ``v1/pulse-request.json#``
+        This method takes input
 
         This method is ``experimental``
         """
@@ -80,14 +79,82 @@ class Notify(BaseClient):
         error. We maybe improve this behavior in the future. For now just keep
         in mind that IRC is a best-effort service.
 
-        This method takes input: ``v1/irc-request.json#``
+        This method takes input
 
         This method is ``experimental``
         """
 
         return self._makeApiCall(self.funcinfo["irc"], *args, **kwargs)
 
+    def addDenylistAddress(self, *args, **kwargs):
+        """
+        Denylist Given Address
+
+        Add the given address to the notification denylist. The address
+        can be of either of the three supported address type namely pulse, email
+        or IRC(user or channel). Addresses in the denylist will be ignored
+        by the notification service.
+
+        This method takes input
+
+        This method is ``experimental``
+        """
+
+        return self._makeApiCall(self.funcinfo["addDenylistAddress"], *args, **kwargs)
+
+    def deleteDenylistAddress(self, *args, **kwargs):
+        """
+        Delete Denylisted Address
+
+        Delete the specified address from the notification denylist.
+
+        This method takes input
+
+        This method is ``experimental``
+        """
+
+        return self._makeApiCall(self.funcinfo["deleteDenylistAddress"], *args, **kwargs)
+
+    def list(self, *args, **kwargs):
+        """
+        List Denylisted Notifications
+
+        Lists all the denylisted addresses.
+
+        By default this end-point will try to return up to 1000 addresses in one
+        request. But it **may return less**, even if more tasks are available.
+        It may also return a `continuationToken` even though there are no more
+        results. However, you can only be sure to have seen all results if you
+        keep calling `list` with the last `continuationToken` until you
+        get a result without a `continuationToken`.
+
+        If you are not interested in listing all the members at once, you may
+        use the query-string option `limit` to return fewer.
+
+        This method gives output
+
+        This method is ``experimental``
+        """
+
+        return self._makeApiCall(self.funcinfo["list"], *args, **kwargs)
+
     funcinfo = {
+        "addDenylistAddress": {
+            'args': [],
+            'input': 'v1/notification-address.json#',
+            'method': 'post',
+            'name': 'addDenylistAddress',
+            'route': '/denylist/add',
+            'stability': 'experimental',
+        },
+        "deleteDenylistAddress": {
+            'args': [],
+            'input': 'v1/notification-address.json#',
+            'method': 'delete',
+            'name': 'deleteDenylistAddress',
+            'route': '/denylist/delete',
+            'stability': 'experimental',
+        },
         "email": {
             'args': [],
             'input': 'v1/email-request.json#',
@@ -102,6 +169,15 @@ class Notify(BaseClient):
             'method': 'post',
             'name': 'irc',
             'route': '/irc',
+            'stability': 'experimental',
+        },
+        "list": {
+            'args': [],
+            'method': 'get',
+            'name': 'list',
+            'output': 'v1/notification-address-list.json#',
+            'query': ['continuationToken', 'limit'],
+            'route': '/denylist/list',
             'stability': 'experimental',
         },
         "ping": {

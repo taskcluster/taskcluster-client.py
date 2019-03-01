@@ -45,7 +45,7 @@ class PurgeCache(AsyncBaseClient):
         `provisionerId` and `workerType` in the routing-key. Workers should
         be listening for this message and purge caches when they see it.
 
-        This method takes input: ``v1/purge-cache-request.json#``
+        This method takes input
 
         This method is ``stable``
         """
@@ -62,7 +62,7 @@ class PurgeCache(AsyncBaseClient):
         endpoint that is specific to their workerType and
         provisionerId.
 
-        This method gives output: ``v1/all-purge-cache-request-list.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -77,7 +77,7 @@ class PurgeCache(AsyncBaseClient):
         a certain time. This is safe to be used in automation from
         workers.
 
-        This method gives output: ``v1/purge-cache-request-list.json#``
+        This method gives output
 
         This method is ``stable``
         """

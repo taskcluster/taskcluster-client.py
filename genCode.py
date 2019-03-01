@@ -123,9 +123,9 @@ def createStaticClient(name, api, genAsync=False):
                 if entry.get('title'):
                     ds = entry.get('title') + '\n\n' + ds
                 if entry.get('input'):
-                    ds = '%s\n\nThis method takes input: ``%s``' % (ds, entry['input'])
+                    ds = '%s\n\nThis method takes input' % ds
                 if entry.get('output'):
-                    ds = '%s\n\nThis method gives output: ``%s``' % (ds, entry['output'])
+                    ds = '%s\n\nThis method gives output' % ds
                 if entry.get('stability'):
                     ds = '%s\n\nThis method is ``%s``' % (ds, entry['stability'])
 
@@ -167,7 +167,7 @@ def createStaticClient(name, api, genAsync=False):
                 if entry.get('title'):
                     ds = entry.get('title') + '\n\n' + ds
                 if entry.get('schema'):
-                    ds = '%s\n\nThis exchange outputs: ``%s``' % (ds, entry['schema'])
+                    ds = '%s\n\nThis exchange has outputs' % ds
                 if entry.get('stability'):
                     ds = '%s\n\nThis method is ``%s``' % (ds, entry['stability'])
 

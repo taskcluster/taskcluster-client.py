@@ -13,9 +13,9 @@ _defaultConfig = config
 
 class QueueEvents(AsyncBaseClient):
     """
-    The queue, typically available at `queue.taskcluster.net`, is responsible
-    for accepting tasks and track their state as they are executed by
-    workers. In order ensure they are eventually resolved.
+    The queue service is responsible for accepting tasks and track their state
+    as they are executed by workers. In order ensure they are eventually
+    resolved.
 
     This document describes AMQP exchanges offered by the queue, which allows
     third-party listeners to monitor tasks as they progress to resolution.
@@ -81,7 +81,7 @@ class QueueEvents(AsyncBaseClient):
         Please, note that messages are also published on this exchange if defined
         using `createTask`.
 
-        This exchange outputs: ``v1/task-defined-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -166,7 +166,7 @@ class QueueEvents(AsyncBaseClient):
         efficiently and they would be able to reduce their polling interval
         significantly without affecting general responsiveness.
 
-        This exchange outputs: ``v1/task-pending-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -246,7 +246,7 @@ class QueueEvents(AsyncBaseClient):
         Whenever a task is claimed by a worker, a run is started on the worker,
         and a message is posted on this exchange.
 
-        This exchange outputs: ``v1/task-running-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -342,7 +342,7 @@ class QueueEvents(AsyncBaseClient):
         smarter to index artifacts after the task in question have completed
         successfully.
 
-        This exchange outputs: ``v1/artifact-created-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -425,7 +425,7 @@ class QueueEvents(AsyncBaseClient):
         that completed the task. But information about additional runs is also
         available from the task status structure.
 
-        This exchange outputs: ``v1/task-completed-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -506,7 +506,7 @@ class QueueEvents(AsyncBaseClient):
         to this exchange. This is same as worker ran task-specific code, but the
         task specific code exited non-zero.
 
-        This exchange outputs: ``v1/task-failed-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -591,7 +591,7 @@ class QueueEvents(AsyncBaseClient):
         The specific _reason_ is evident from that task status structure, refer
         to the `reasonResolved` property for the last run.
 
-        This exchange outputs: ``v1/task-exception-message.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 
@@ -674,7 +674,7 @@ class QueueEvents(AsyncBaseClient):
         not. A task group may be resolved multiple times, since new tasks may
         be submitted against an already resolved task group.
 
-        This exchange outputs: ``v1/task-group-resolved.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * routingKeyKind: Identifier for the routing-key kind. This is always `'primary'` for the formalized routing key. (required)
 

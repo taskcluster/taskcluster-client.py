@@ -13,9 +13,9 @@ _defaultConfig = config
 
 class Queue(BaseClient):
     """
-    The queue, typically available at `queue.taskcluster.net`, is responsible
-    for accepting tasks and track their state as they are executed by
-    workers. In order ensure they are eventually resolved.
+    The queue service is responsible for accepting tasks and track their state
+    as they are executed by workers. In order ensure they are eventually
+    resolved.
 
     This document describes the API end-points offered by the queue. These
     end-points targets the following audience:
@@ -49,7 +49,7 @@ class Queue(BaseClient):
         definition may have been modified by queue, if an optional property is
         not specified the queue may provide a default value.
 
-        This method gives output: ``v1/task.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -62,7 +62,7 @@ class Queue(BaseClient):
 
         Get task status structure from `taskId`
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -90,7 +90,7 @@ class Queue(BaseClient):
         If you are not interested in listing all the members at once, you may
         use the query-string option `limit` to return fewer.
 
-        This method gives output: ``v1/list-task-group-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -118,7 +118,7 @@ class Queue(BaseClient):
         If you are not interested in listing all the tasks at once, you may
         use the query-string option `limit` to return fewer.
 
-        This method gives output: ``v1/list-dependent-tasks-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -160,9 +160,9 @@ class Queue(BaseClient):
         legacy and should not be used. Note that the new, non-legacy scopes require
         a `queue:scheduler-id:..` scope as well as scopes for the proper priority.
 
-        This method takes input: ``v1/create-task-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -176,9 +176,9 @@ class Queue(BaseClient):
         **Deprecated**, this is the same as `createTask` with a **self-dependency**.
         This is only present for legacy.
 
-        This method takes input: ``v1/create-task-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``deprecated``
         """
@@ -204,7 +204,7 @@ class Queue(BaseClient):
         if called with a `taskId` that is already scheduled, or even resolved.
         To reschedule a task previously resolved, use `rerunTask`.
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -220,6 +220,9 @@ class Queue(BaseClient):
         you just want to run it from scratch again. This will also reset the
         number of `retries` allowed.
 
+        This method is deprecated in favour of creating a new task with the same
+        task definition (but with a new taskId).
+
         Remember that `retries` in the task status counts the number of runs that
         the queue have started because the worker stopped responding, for example
         because a spot node died.
@@ -228,7 +231,7 @@ class Queue(BaseClient):
         is not either `failed` or `completed`, this operation will just return
         the current task status.
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``deprecated``
         """
@@ -252,7 +255,7 @@ class Queue(BaseClient):
         isn't `unscheduled`, `pending` or `running`, this operation will just
         return the current task status.
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -272,9 +275,9 @@ class Queue(BaseClient):
         service in an error condition) and call the endpoint again.  This is a
         simple implementation of "long polling".
 
-        This method takes input: ``v1/claim-work-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/claim-work-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -287,9 +290,9 @@ class Queue(BaseClient):
 
         claim a task - never documented
 
-        This method takes input: ``v1/task-claim-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/task-claim-response.json#``
+        This method gives output
 
         This method is ``deprecated``
         """
@@ -322,7 +325,7 @@ class Queue(BaseClient):
         should abort the task and forget about the given `runId`. There is no
         need to resolve the run or upload artifacts.
 
-        This method gives output: ``v1/task-reclaim-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -335,7 +338,7 @@ class Queue(BaseClient):
 
         Report a task completed, resolving the run as `completed`.
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -354,7 +357,7 @@ class Queue(BaseClient):
         payload, or other unexpected condition. In these cases we have a task
         exception, which should be reported with `reportException`.
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -379,9 +382,9 @@ class Queue(BaseClient):
         reason specific to this code. If user-specific code hits a resource that
         is temporarily unavailable worker should report task _failed_.
 
-        This method takes input: ``v1/task-exception-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/task-status-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -462,9 +465,9 @@ class Queue(BaseClient):
         updated. You should only use this to update the `url` property for
         reference artifacts your process has created.
 
-        This method takes input: ``v1/post-artifact-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/post-artifact-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -485,7 +488,7 @@ class Queue(BaseClient):
         artifact is now present and a message published to pulse.  NOTE: This
         endpoint *must* be called for all artifacts of storageType 'blob'
 
-        This method takes input: ``v1/put-artifact-request.json#``
+        This method takes input
 
         This method is ``experimental``
         """
@@ -619,7 +622,7 @@ class Queue(BaseClient):
         By default this end-point will list up-to 1000 artifacts in a single page
         you may limit this with the query-string parameter `limit`.
 
-        This method gives output: ``v1/list-artifacts-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -641,7 +644,7 @@ class Queue(BaseClient):
         By default this end-point will list up-to 1000 artifacts in a single page
         you may limit this with the query-string parameter `limit`.
 
-        This method gives output: ``v1/list-artifacts-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -663,7 +666,7 @@ class Queue(BaseClient):
         option. By default this end-point will list up to 1000 provisioners in a single
         page. You may limit this with the query-string parameter `limit`.
 
-        This method gives output: ``v1/list-provisioners-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -680,7 +683,7 @@ class Queue(BaseClient):
         This does not necessarily mean there is an associated service performing any
         provisioning activity.
 
-        This method gives output: ``v1/provisioner-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -702,9 +705,9 @@ class Queue(BaseClient):
         This does not necessarily mean there is an associated service performing any
         provisioning activity.
 
-        This method takes input: ``v1/update-provisioner-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/provisioner-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -723,7 +726,7 @@ class Queue(BaseClient):
         should be no means expect this to be an accurate number.
         It is, however, a solid estimate of the number of pending tasks.
 
-        This method gives output: ``v1/pending-tasks-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -741,7 +744,7 @@ class Queue(BaseClient):
         option. By default this end-point will list up to 1000 worker-types in a single
         page. You may limit this with the query-string parameter `limit`.
 
-        This method gives output: ``v1/list-workertypes-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -754,7 +757,7 @@ class Queue(BaseClient):
 
         Get a worker-type from a provisioner.
 
-        This method gives output: ``v1/workertype-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -772,9 +775,9 @@ class Queue(BaseClient):
         provisioner with a body `{description: 'This worker type is great'}` would require you to have the scope
         `queue:declare-worker-type:aws-provisioner-v1/gecko-b-1-w2008#description`.
 
-        This method takes input: ``v1/update-workertype-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/workertype-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -796,7 +799,7 @@ class Queue(BaseClient):
         option. By default this end-point will list up to 1000 workers in a single
         page. You may limit this with the query-string parameter `limit`.
 
-        This method gives output: ``v1/list-workers-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -809,7 +812,7 @@ class Queue(BaseClient):
 
         Get a worker from a worker-type.
 
-        This method gives output: ``v1/worker-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -822,9 +825,9 @@ class Queue(BaseClient):
 
         Quarantine a worker
 
-        This method takes input: ``v1/quarantine-worker-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/worker-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -840,9 +843,9 @@ class Queue(BaseClient):
         `declareWorker` allows updating one or more properties of a worker as long as the required scopes are
         possessed.
 
-        This method takes input: ``v1/update-worker-request.json#``
+        This method takes input
 
-        This method gives output: ``v1/worker-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """

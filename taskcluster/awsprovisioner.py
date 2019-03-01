@@ -57,7 +57,7 @@ class AwsProvisioner(BaseClient):
         there may be running EC2 instances for deleted worker types that are not
         included here.  The list is unordered.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/list-worker-types-summaries-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -92,9 +92,9 @@ class AwsProvisioner(BaseClient):
         will be used to generate a set of temporary credentials available with
         the other secrets.
 
-        This method takes input: ``http://schemas.taskcluster.net/aws-provisioner/v1/create-worker-type-request.json#``
+        This method takes input
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -117,9 +117,9 @@ class AwsProvisioner(BaseClient):
         Otherwise, all input requirements and actions are the same as the
         create method.
 
-        This method takes input: ``http://schemas.taskcluster.net/aws-provisioner/v1/create-worker-type-request.json#``
+        This method takes input
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -136,7 +136,7 @@ class AwsProvisioner(BaseClient):
         If the worker type definition has not been changed, the date
         should be identical as it is the same stored value.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-last-modified.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -153,7 +153,7 @@ class AwsProvisioner(BaseClient):
         use the results of this method to submit date to the update
         method.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-worker-type-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -189,7 +189,7 @@ class AwsProvisioner(BaseClient):
         not include worker types which are left overs from a deleted worker
         type definition but are still running in AWS.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/list-worker-types-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -207,7 +207,7 @@ class AwsProvisioner(BaseClient):
         This method is not ordinarily used in production; instead, the provisioner
         creates a new secret directly for each spot bid.
 
-        This method takes input: ``http://schemas.taskcluster.net/aws-provisioner/v1/create-secret-request.json#``
+        This method takes input
 
         This method is ``stable``
         """
@@ -226,7 +226,7 @@ class AwsProvisioner(BaseClient):
         or else the secrets will be visible to any process which can access the
         user data associated with the instance.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-secret-response.json#``
+        This method gives output
 
         This method is ``stable``
         """
@@ -274,7 +274,7 @@ class AwsProvisioner(BaseClient):
 
         **This API end-point is experimental and may be subject to change without warning.**
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/get-launch-specs-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -307,7 +307,7 @@ class AwsProvisioner(BaseClient):
 
         **Warning** this api end-point is **not stable**.
 
-        This method gives output: ``http://schemas.taskcluster.net/aws-provisioner/v1/backend-status-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """

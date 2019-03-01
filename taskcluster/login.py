@@ -60,7 +60,7 @@ class Login(BaseClient):
         monitor this expiration and refresh the credentials if necessary, by calling
         this endpoint again, if they have expired.
 
-        This method gives output: ``v1/oidc-credentials-response.json#``
+        This method gives output
 
         This method is ``experimental``
         """

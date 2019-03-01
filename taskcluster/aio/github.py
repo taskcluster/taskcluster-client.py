@@ -60,7 +60,7 @@ class Github(AsyncBaseClient):
         Taskcluster. Can be filtered on various git-specific
         fields.
 
-        This method gives output: ``v1/build-list.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -86,7 +86,7 @@ class Github(AsyncBaseClient):
         Returns any repository metadata that is
         useful within Taskcluster related services.
 
-        This method gives output: ``v1/repository.json#``
+        This method gives output
 
         This method is ``experimental``
         """
@@ -117,7 +117,7 @@ class Github(AsyncBaseClient):
         The status is either OK (green check) or FAILURE (red cross),
         made of a custom title and link.
 
-        This method takes input: ``v1/create-status.json#``
+        This method takes input
 
         This method is ``experimental``
         """
@@ -130,7 +130,7 @@ class Github(AsyncBaseClient):
 
         For a given Issue or Pull Request of a repository, this will write a new message.
 
-        This method takes input: ``v1/create-comment.json#``
+        This method takes input
 
         This method is ``experimental``
         """

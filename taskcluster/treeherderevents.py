@@ -14,7 +14,7 @@ _defaultConfig = config
 class TreeherderEvents(BaseClient):
     """
     The taskcluster-treeherder service is responsible for processing
-    task events published by TaskCluster Queue and producing job messages
+    task events published by Taskcluster Queue and producing job messages
     that are consumable by Treeherder.
 
     This exchange provides that job messages to be consumed by any queue that
@@ -35,7 +35,7 @@ class TreeherderEvents(BaseClient):
         When a task run is scheduled or resolved, a message is posted to
         this exchange in a Treeherder consumable format.
 
-        This exchange outputs: ``v1/pulse-job.json#``This exchange takes the following keys:
+        This exchange has outputsThis exchange takes the following keys:
 
          * destination: destination (required)
 
